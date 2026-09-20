@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
+import { speakVedicVoice, stopVedicVoice } from '@/lib/voice';
 import { PanchangInfo, calculatePanchang } from '@/lib/panchang';
 import {
   Calendar,
@@ -68,13 +69,20 @@ export default function HomePage() {
     };
   }, [panchangConfig?.defaultCity]);
 
-  const handleMantraPlay = async (mantraId: string) => {
-    if (activeMantra === mantraId && isPlaying) {
+  const handleMantraPlay = async (mantra: { id: string; text: string; meaning: string }) => {
+    if (activeMantra === mantra.id) {
+      stopVedicVoice();
       pauseAudio();
       setActiveMantra(null);
     } else {
-      setActiveMantra(mantraId);
+      setActiveMantra(mantra.id);
       await playAudio();
+      speakVedicVoice(mantra.text, {
+        rate: 0.8,
+        pitch: 1.0,
+        onEnd: () => {},
+        onError: () => {},
+      });
     }
   };
 
@@ -601,7 +609,7 @@ export default function HomePage() {
 
             <div className="space-y-2.5">
               {popularMantras.map((m) => {
-                const isCurrentlyPlaying = activeMantra === m.id && isPlaying;
+                const isCurrentlyPlaying = activeMantra === m.id;
                 const isFav = favorites[m.id];
 
                 return (
@@ -612,7 +620,7 @@ export default function HomePage() {
                     <div className="flex items-center space-x-3">
                       {/* Round Audio Play / Pause Button */}
                       <button
-                        onClick={() => handleMantraPlay(m.id)}
+                        onClick={() => handleMantraPlay(m)}
                         className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition ${
                           isCurrentlyPlaying
                             ? 'bg-[#ea580c] text-white shadow-md shadow-orange-500/30'

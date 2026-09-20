@@ -3,21 +3,40 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { Home, Calendar, Flame, BookOpen, PlaySquare } from 'lucide-react';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const { locale } = useLanguage();
 
   if (pathname?.startsWith('/admin')) {
     return null;
   }
 
+  const getLabel = (key: string) => {
+    switch (key) {
+      case 'home':
+        return locale === 'en' ? 'Home' : locale === 'sa' ? 'गृहम्' : 'होम';
+      case 'calendar':
+        return locale === 'en' ? 'Panchang' : locale === 'sa' ? 'पञ्चाङ्गम्' : 'पंचांग';
+      case 'aartis':
+        return locale === 'en' ? 'Aartis' : locale === 'sa' ? 'आरती' : 'आरती';
+      case 'books':
+        return locale === 'en' ? 'Books' : locale === 'sa' ? 'ग्रन्थाः' : 'ग्रंथ';
+      case 'videos':
+        return locale === 'en' ? 'Videos' : locale === 'sa' ? 'दृश्यानि' : 'वीडियो';
+      default:
+        return '';
+    }
+  };
+
   const tabs = [
-    { href: '/', labelHi: 'होम', labelEn: 'Home', icon: Home },
-    { href: '/calendar', labelHi: 'पंचांग', labelEn: 'Panchang', icon: Calendar },
-    { href: '/aartis', labelHi: 'आरती', labelEn: 'Aartis', icon: Flame },
-    { href: '/books', labelHi: 'ग्रंथ', labelEn: 'Books', icon: BookOpen },
-    { href: '/videos', labelHi: 'वीडियो', labelEn: 'Videos', icon: PlaySquare },
+    { href: '/', label: getLabel('home'), icon: Home },
+    { href: '/calendar', label: getLabel('calendar'), icon: Calendar },
+    { href: '/aartis', label: getLabel('aartis'), icon: Flame },
+    { href: '/books', label: getLabel('books'), icon: BookOpen },
+    { href: '/videos', label: getLabel('videos'), icon: PlaySquare },
   ];
 
   return (
@@ -65,7 +84,7 @@ export default function MobileBottomNav() {
                     : 'font-medium text-stone-400'
                 }`}
               >
-                {tab.labelHi}
+                {tab.label}
               </span>
             </Link>
           );

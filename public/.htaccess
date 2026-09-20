@@ -1,4 +1,8 @@
 # Hostinger LiteSpeed / Apache configuration for SanatanRoop Next.js Static Export
+# Force Default Charset to UTF-8
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .json .xml .txt
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -57,6 +61,12 @@
   </FilesMatch>
   <FilesMatch "\.(html|json)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Content-Type "text/html; charset=UTF-8"
+  </FilesMatch>
+  <FilesMatch "\.txt$">
+    Header set Content-Type "text/plain; charset=UTF-8"
   </FilesMatch>
 </IfModule>
 

@@ -179,6 +179,13 @@ export default function RootLayout({
   return (
     <html lang="hi" suppressHydrationWarning>
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>SanatanRoop | सम्पूर्ण सनातन धर्म, पंचांग, आरती एवं ग्रंथ</title>
+        <meta
+          name="description"
+          content="सनातन ज्ञान की डिजिटल धरोहर - प्रामाणिक वेद, उपनिषद, श्रीमद्भगवद्गीता, नित्य पंचांग, पावन आरतियां, एवं आध्यात्मिक वीडियो।"
+        />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="application-name" content="SanatanRoop" />

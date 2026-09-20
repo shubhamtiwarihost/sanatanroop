@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   BookOpen,
   Bookmark,
@@ -101,36 +102,24 @@ export default function ScriptureReaderClient() {
   };
 
   const stopVoice = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopVedicVoice();
     setIsVoiceSpeaking(false);
   };
 
   const handleSpeakVerse = (sanskrit: string, hindi: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (!isVoiceSupported()) return;
     if (isVoiceSpeaking) {
       stopVoice();
       return;
     }
-    window.speechSynthesis.cancel();
-    const cleanText = `${sanskrit.replace(/[॥।\n]/g, ', ')}. हिन्दी अनुवाद: ${hindi}`;
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'hi-IN';
-    utterance.rate = 0.85;
-    utterance.pitch = 1.0;
-
-    const voices = window.speechSynthesis.getVoices();
-    const hindiVoice = voices.find(
-      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
-    );
-    if (hindiVoice) utterance.voice = hindiVoice;
-
-    utterance.onstart = () => setIsVoiceSpeaking(true);
-    utterance.onend = () => setIsVoiceSpeaking(false);
-    utterance.onerror = () => setIsVoiceSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
+    const cleanText = `${sanskrit}. हिन्दी अनुवाद: ${hindi}`;
+    speakVedicVoice(cleanText, {
+      rate: 0.85,
+      pitch: 1.0,
+      onStart: () => setIsVoiceSpeaking(true),
+      onEnd: () => setIsVoiceSpeaking(false),
+      onError: () => setIsVoiceSpeaking(false),
+    });
   };
 
   if (!scripture) {

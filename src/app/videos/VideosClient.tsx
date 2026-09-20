@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useCMS } from '@/context/CMSContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { Play, X, Clock, Eye, Sparkles, Film, CheckCircle2 } from 'lucide-react';
 
 interface VideoItem {
@@ -110,12 +111,20 @@ const VIDEOS_DATA: VideoItem[] = [
 ];
 
 export default function VideosPage() {
+  const { locale } = useLanguage();
   const { videos: cmsVideos } = useCMS();
   const videosList = cmsVideos && cmsVideos.length > 0 ? cmsVideos : VIDEOS_DATA;
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
-  const categories = ['All', 'Mantras', 'Discourses', 'Bhajans', 'Stories', 'Guided Meditation'];
+  const categories = useMemo(() => [
+    { id: 'All', label: locale === 'en' ? 'All' : locale === 'sa' ? 'सर्वाणि' : 'सभी (All)' },
+    { id: 'Mantras', label: locale === 'en' ? 'Mantras' : locale === 'sa' ? 'मन्त्राः' : 'मन्त्र (Mantras)' },
+    { id: 'Discourses', label: locale === 'en' ? 'Discourses' : locale === 'sa' ? 'प्रवचनानि' : 'प्रवचन (Discourses)' },
+    { id: 'Bhajans', label: locale === 'en' ? 'Bhajans' : locale === 'sa' ? 'भजनानि' : 'भजन (Bhajans)' },
+    { id: 'Stories', label: locale === 'en' ? 'Stories' : locale === 'sa' ? 'कथाः' : 'कथाएं (Stories)' },
+    { id: 'Guided Meditation', label: locale === 'en' ? 'Guided Meditation' : locale === 'sa' ? 'ध्यानम्' : 'ध्यान (Meditation)' },
+  ], [locale]);
 
   const filteredVideos = videosList.filter((vid) => {
     if (activeCategory === 'All') return true;
@@ -149,15 +158,15 @@ export default function VideosPage() {
         <div className="flex flex-wrap items-center justify-center gap-2">
           {categories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                activeCategory === cat
+                activeCategory === cat.id
                   ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
                   : 'bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-amber-400'
               }`}
             >
-              {cat}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -282,7 +291,7 @@ export default function VideosPage() {
             {/* Embedded YouTube Player */}
             <div className="relative w-full aspect-video bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                src={`https://www.youtube-nocookie.com/embed/${activeVideo.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`}
                 title={activeVideo.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -292,11 +301,22 @@ export default function VideosPage() {
 
             {/* Video Details Bar */}
             <div className="p-6 bg-[#16100c] text-stone-200 space-y-2 border-t border-stone-800">
-              <div className="flex items-center space-x-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-600/30 text-amber-300 text-xs font-semibold">
-                  {activeVideo.category}
-                </span>
-                <span className="text-xs text-stone-400">• {activeVideo.duration} • {activeVideo.views} views</span>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center space-x-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-600/30 text-amber-300 text-xs font-semibold">
+                    {activeVideo.category}
+                  </span>
+                  <span className="text-xs text-stone-400">• {activeVideo.duration} • {activeVideo.views} views</span>
+                </div>
+                <a
+                  href={`https://www.youtube.com/watch?v=${activeVideo.youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600/90 hover:bg-red-600 text-white text-xs font-semibold shadow-sm transition"
+                  title="Open video in YouTube app"
+                >
+                  <span>▶ YouTube ऐप में देखें</span>
+                </a>
               </div>
               <h3 className="font-serif font-bold text-lg sm:text-xl text-white">
                 {activeVideo.title}

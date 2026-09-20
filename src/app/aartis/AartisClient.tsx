@@ -2,8 +2,10 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useCMS } from '@/context/CMSContext';
+import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   Search,
   Play,
@@ -607,6 +609,7 @@ Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
 ];
 
 export default function AartisPage() {
+  const { locale } = useLanguage();
   const { aartis } = useCMS();
   const { isPlaying, currentTrack, playAudio, pauseAudio } = useAudio();
 
@@ -655,9 +658,7 @@ export default function AartisPage() {
   }, [selectedAarti]);
 
   const stopVoice = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopVedicVoice();
     setIsVoiceActive(false);
   };
 
@@ -672,51 +673,24 @@ export default function AartisPage() {
   };
 
   const startVoiceRecitation = (aarti: Aarti) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    if (!isVoiceSupported()) {
       handleToggleAudio(aarti);
       return;
     }
 
-    window.speechSynthesis.cancel();
-
-    // Clean text for natural Hindi recitation
-    const textToSpeak = `${aarti.titleHi}. ${aarti.lyricsHi.replace(/[॥।]/g, ', ')}`;
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-    // Pick Hindi voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const hindiVoice = voices.find(
-      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
-    );
-    if (hindiVoice) {
-      utterance.voice = hindiVoice;
-    }
-    utterance.lang = 'hi-IN';
-    utterance.rate = voiceSpeed;
-    utterance.pitch = 1.0;
-
-    utterance.onstart = () => {
-      setIsVoiceActive(true);
-      // Simultaneously play soft background devotional music
-      playAudio(aarti.audioTrack);
-    };
-
-    utterance.onend = () => {
-      setIsVoiceActive(false);
-    };
-
-    utterance.onerror = () => {
-      setIsVoiceActive(false);
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    const textToSpeak = `${aarti.titleHi}. ${aarti.lyricsHi}`;
+    speakVedicVoice(textToSpeak, {
+      rate: voiceSpeed,
+      pitch: 1.0,
+      onStart: () => setIsVoiceActive(true),
+      onEnd: () => setIsVoiceActive(false),
+      onError: () => setIsVoiceActive(false),
+    });
   };
 
   const handleToggleVoice = (aarti: Aarti) => {
     if (isVoiceActive) {
       stopVoice();
-      pauseAudio();
     } else {
       startVoiceRecitation(aarti);
     }
@@ -772,16 +746,16 @@ export default function AartisPage() {
     }
   };
 
-  const categories = [
-    { id: 'all', label: 'सभी आरती (All)' },
-    { id: 'ganesha', label: 'श्री गणेश' },
-    { id: 'shiva', label: 'भगवान शिव' },
-    { id: 'durga', label: 'माँ दुर्गा' },
-    { id: 'hanuman', label: 'श्री हनुमान' },
-    { id: 'vishnu', label: 'श्री विष्णु / कृष्ण' },
-    { id: 'lakshmi', label: 'माँ लक्ष्मी' },
-    { id: 'ram', label: 'श्री राम' },
-  ];
+  const categories = useMemo(() => [
+    { id: 'all', label: locale === 'en' ? 'All Aartis' : locale === 'sa' ? 'सर्वाः आरार्तिकाः' : 'सभी आरती (All)' },
+    { id: 'ganesha', label: locale === 'en' ? 'Shri Ganesha' : locale === 'sa' ? 'श्रीगणेशः' : 'श्री गणेश' },
+    { id: 'shiva', label: locale === 'en' ? 'Lord Shiva' : locale === 'sa' ? 'भगवान् शिवः' : 'भगवान शिव' },
+    { id: 'durga', label: locale === 'en' ? 'Maa Durga' : locale === 'sa' ? 'माता दुर्गा' : 'माँ दुर्गा' },
+    { id: 'hanuman', label: locale === 'en' ? 'Shri Hanuman' : locale === 'sa' ? 'श्रीहनुमान्' : 'श्री हनुमान' },
+    { id: 'vishnu', label: locale === 'en' ? 'Vishnu / Krishna' : locale === 'sa' ? 'श्रीविष्णुः' : 'श्री विष्णु / कृष्ण' },
+    { id: 'lakshmi', label: locale === 'en' ? 'Maa Lakshmi' : locale === 'sa' ? 'महालक्ष्मीः' : 'माँ लक्ष्मी' },
+    { id: 'ram', label: locale === 'en' ? 'Shri Rama' : locale === 'sa' ? 'श्रीरामचन्द्रः' : 'श्री राम' },
+  ], [locale]);
 
   return (
     <div className="min-h-screen bg-[#faf8f5] dark:bg-[#121216] text-[#1c1917] dark:text-stone-100 font-sans pb-20">
@@ -844,7 +818,7 @@ export default function AartisPage() {
           {/* Left: Aarti Selector List (5 Cols) */}
           <div className="lg:col-span-5 space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 px-1 font-serif">
-              उपलब्ध आरतियां ({filteredAartis.length})
+              {locale === 'en' ? 'Available Aartis' : locale === 'sa' ? 'उपलब्धाः आरार्तिकाः' : 'उपलब्ध आरतियां'} ({filteredAartis.length})
             </span>
 
             <div className="space-y-2.5">
@@ -1040,22 +1014,33 @@ export default function AartisPage() {
                   <div className="mt-4 pt-4 border-t border-amber-500/30 space-y-3">
                     <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video max-h-[360px] border border-amber-500/40">
                       <iframe
-                        src={`https://www.youtube.com/embed/${selectedAarti.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                        src={`https://www.youtube-nocookie.com/embed/${selectedAarti.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`}
                         title={`${selectedAarti.titleHi} - ${selectedAarti.singer}`}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         className="w-full h-full"
                       />
                     </div>
-                    <div className="flex items-center justify-between text-xs text-amber-200/80 font-serif px-1">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-amber-200/80 font-serif px-1">
                       <span>✨ पावन आरती सुनते हुए नीचे दिए गए संपूर्ण पदों का पाठ करें।</span>
-                      <button
-                        onClick={ringBell}
-                        className="hover:text-amber-300 transition flex items-center space-x-1 font-semibold"
-                      >
-                        <Bell className="w-3.5 h-3.5" />
-                        <span>मंदिर घंटी बजाएं</span>
-                      </button>
+                      <div className="flex items-center space-x-3">
+                        <a
+                          href={`https://www.youtube.com/watch?v=${selectedAarti.youtubeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-amber-300 hover:text-amber-100 underline font-semibold flex items-center space-x-1"
+                          title="Open directly in YouTube app"
+                        >
+                          <span>📱 YouTube ऐप में खोलें</span>
+                        </a>
+                        <button
+                          onClick={ringBell}
+                          className="hover:text-amber-300 transition flex items-center space-x-1 font-semibold"
+                        >
+                          <Bell className="w-3.5 h-3.5" />
+                          <span>मंदिर घंटी बजाएं</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}

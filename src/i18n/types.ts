@@ -37,6 +37,15 @@ export interface Dictionary {
     profile: string;
     orders: string;
     bookmarks: string;
+    aartis: string;
+    kathas: string;
+    divineVibrations: string;
+    blog: string;
+    videos: string;
+    community: string;
+    about: string;
+    contact: string;
+    panchang: string;
   };
   home: {
     heroTitle: string;

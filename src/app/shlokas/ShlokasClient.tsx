@@ -2,8 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useCMS } from '@/context/CMSContext';
+import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   Search,
   Play,
@@ -113,14 +115,21 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
   },
 ];
 
-const CATEGORIES = ['All', 'Gita Shlokas', 'Upanishad Shlokas', 'Shanti Mantras', 'Stotras'];
-
 export default function ShlokasPage() {
+  const { locale } = useLanguage();
   const { shlokas } = useCMS();
   const { isPlaying, playAudio, pauseAudio } = useAudio();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const categories = useMemo(() => [
+    { id: 'All', label: locale === 'en' ? 'All Shlokas' : locale === 'sa' ? 'सर्वे श्लोकाः' : 'सभी श्लोक (All)' },
+    { id: 'Gita Shlokas', label: locale === 'en' ? 'Gita Shlokas' : locale === 'sa' ? 'गीता श्लोकाः' : 'गीता श्लोक (Gita)' },
+    { id: 'Upanishad Shlokas', label: locale === 'en' ? 'Upanishad Shlokas' : locale === 'sa' ? 'उपनिषच्छ्लोकाः' : 'उपनिषद् श्लोक' },
+    { id: 'Shanti Mantras', label: locale === 'en' ? 'Shanti Mantras' : locale === 'sa' ? 'शान्तिमन्त्राः' : 'शान्ति मन्त्र' },
+    { id: 'Stotras', label: locale === 'en' ? 'Stotras' : locale === 'sa' ? 'स्तोत्राणि' : 'स्तोत्र (Stotras)' },
+  ], [locale]);
 
   // Active Shloka Devotional Song Player State
   const [activeSongShloka, setActiveSongShloka] = useState<ScriptureShloka | null>(null);
@@ -144,14 +153,12 @@ export default function ShlokasPage() {
   }, [shlokas]);
 
   const stopVoiceRecitation = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopVedicVoice();
     setSpeakingShlokaId(null);
   };
 
   const handleVoiceRecite = (shloka: ScriptureShloka) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    if (!isVoiceSupported()) {
       handlePlaySong(shloka);
       return;
     }
@@ -161,28 +168,17 @@ export default function ShlokasPage() {
       return;
     }
 
-    stopVoiceRecitation();
     setSpeakingShlokaId(shloka.id);
 
     // Clean text for natural Sanskrit recitation
-    const textToSpeak = `${shloka.sanskrit.replace(/[॥।]/g, ', ')}. ${shloka.hindi}`;
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-    const voices = window.speechSynthesis.getVoices();
-    const hindiVoice = voices.find(
-      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
-    );
-    if (hindiVoice) {
-      utterance.voice = hindiVoice;
-    }
-    utterance.lang = 'hi-IN';
-    utterance.rate = 0.85;
-    utterance.pitch = 1.0;
-
-    utterance.onend = () => setSpeakingShlokaId(null);
-    utterance.onerror = () => setSpeakingShlokaId(null);
-
-    window.speechSynthesis.speak(utterance);
+    const textToSpeak = `${shloka.sanskrit}. ${shloka.hindi}`;
+    speakVedicVoice(textToSpeak, {
+      rate: 0.85,
+      pitch: 1.0,
+      onStart: () => setSpeakingShlokaId(shloka.id),
+      onEnd: () => setSpeakingShlokaId(null),
+      onError: () => setSpeakingShlokaId(null),
+    });
   };
 
   const handlePlaySong = (shloka: ScriptureShloka) => {
@@ -262,17 +258,17 @@ export default function ShlokasPage() {
 
         {/* Filter Category Pills */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
               className={`px-4 py-2 rounded-full text-xs font-semibold transition whitespace-nowrap ${
-                activeCategory === cat
+                activeCategory === cat.id
                   ? 'bg-[#ea580c] text-white shadow-sm font-bold'
                   : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
               }`}
             >
-              {cat}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -444,7 +440,7 @@ export default function ShlokasPage() {
             {/* Video / Audio Embed with Autoplay */}
             <div className="relative w-full aspect-video bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${activeSongShloka.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                src={`https://www.youtube-nocookie.com/embed/${activeSongShloka.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`}
                 title={activeSongShloka.source}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

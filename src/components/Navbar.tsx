@@ -199,7 +199,7 @@ export default function Navbar() {
                   pathname === '/' ? 'text-amber-400' : 'text-stone-200'
                 }`}
               >
-                Home
+                {t.nav.home || 'Home'}
               </Link>
 
               {/* Slokas */}
@@ -209,7 +209,7 @@ export default function Navbar() {
                   pathname === '/shlokas' ? 'text-amber-400' : 'text-stone-200'
                 }`}
               >
-                Slokas
+                {t.nav.shlokas || 'Slokas'}
               </Link>
 
               {/* Aartis */}
@@ -219,7 +219,7 @@ export default function Navbar() {
                   pathname === '/aartis' ? 'text-amber-400' : 'text-stone-200'
                 }`}
               >
-                Aartis
+                {t.nav.aartis || 'Aartis'}
               </Link>
 
               {/* Kathas */}
@@ -229,7 +229,7 @@ export default function Navbar() {
                   pathname === '/kathas' ? 'text-amber-400' : 'text-stone-200'
                 }`}
               >
-                Kathas
+                {t.nav.kathas || 'Kathas'}
               </Link>
 
               {/* Spiritual Books */}
@@ -239,7 +239,7 @@ export default function Navbar() {
                   pathname === '/books' ? 'text-amber-400' : 'text-stone-200'
                 }`}
               >
-                Spiritual Books
+                {t.nav.books || 'Spiritual Books'}
               </Link>
 
               {/* Divine Vibrations */}
@@ -250,23 +250,23 @@ export default function Navbar() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                <span>Divine Vibrations</span>
+                <span>{t.nav.divineVibrations || 'Divine Vibrations'}</span>
               </Link>
 
               <Link href="/blog" className="transition hover:text-amber-400 font-medium">
-                Blog
+                {t.nav.blog || 'Blog'}
               </Link>
               <Link href="/videos" className="transition hover:text-amber-400 font-medium">
-                Videos
+                {t.nav.videos || 'Videos'}
               </Link>
               <Link href="/community" className="transition hover:text-amber-400 font-medium">
-                Community
+                {t.nav.community || 'Community'}
               </Link>
               <Link href="/about" className="transition hover:text-amber-400 font-medium">
-                About
+                {t.nav.about || 'About'}
               </Link>
               <Link href="/contact" className="transition hover:text-amber-400 font-medium">
-                Contact
+                {t.nav.contact || 'Contact'}
               </Link>
             </nav>
 
@@ -304,35 +304,35 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Home
+                {t.nav.home || 'Home'}
               </Link>
               <Link
                 href="/shlokas"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Slokas
+                {t.nav.shlokas || 'Slokas'}
               </Link>
               <Link
                 href="/aartis"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Aartis
+                {t.nav.aartis || 'Aartis'}
               </Link>
               <Link
                 href="/kathas"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Kathas
+                {t.nav.kathas || 'Kathas'}
               </Link>
               <Link
                 href="/books"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Spiritual Books
+                {t.nav.books || 'Spiritual Books'}
               </Link>
               <Link
                 href="/divine-vibrations"
@@ -340,42 +340,42 @@ export default function Navbar() {
                 className="p-2 rounded bg-stone-900/60 text-amber-300 font-medium hover:text-amber-400 flex items-center space-x-1"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Divine Vibrations</span>
+                <span>{t.nav.divineVibrations || 'Divine Vibrations'}</span>
               </Link>
               <Link
                 href="/blog"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Blog
+                {t.nav.blog || 'Blog'}
               </Link>
               <Link
                 href="/videos"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Videos
+                {t.nav.videos || 'Videos'}
               </Link>
               <Link
                 href="/community"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Community
+                {t.nav.community || 'Community'}
               </Link>
               <Link
                 href="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                About Us
+                {t.nav.about || 'About Us'}
               </Link>
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Contact
+                {t.nav.contact || 'Contact'}
               </Link>
             </div>
 

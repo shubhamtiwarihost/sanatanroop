@@ -16,15 +16,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Default language on first visit: HINDI
   const [locale, setLocaleState] = useState<Locale>('hi');
 
+  const TITLES: Record<Locale, string> = {
+    hi: 'SanatanRoop | सम्पूर्ण सनातन धर्म, पंचांग, आरती एवं ग्रंथ',
+    en: 'SanatanRoop | Eternal Sanatan Dharma, Panchang, Aartis & Scriptures',
+    sa: 'सनातनरूपम् | सम्पूर्ण सनातनधर्मः, पञ्चाङ्गम्, आरती एवं ग्रन्थाः',
+  };
+
   useEffect(() => {
     // Load persisted locale preference from localStorage
     const saved = localStorage.getItem('sanatan_locale') as Locale;
-    if (saved && ['hi', 'en', 'sa'].includes(saved)) {
-      setLocaleState(saved);
-      document.documentElement.lang = saved;
-    } else {
-      setLocaleState('hi');
-      document.documentElement.lang = 'hi';
+    const activeLocale = saved && ['hi', 'en', 'sa'].includes(saved) ? saved : 'hi';
+    setLocaleState(activeLocale);
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = activeLocale;
+      document.title = TITLES[activeLocale];
     }
   }, []);
 
@@ -32,7 +37,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(newLocale);
     localStorage.setItem('sanatan_locale', newLocale);
     document.cookie = `sanatan_locale=${newLocale}; path=/; max-age=31536000`;
-    document.documentElement.lang = newLocale;
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = newLocale;
+      document.title = TITLES[newLocale];
+    }
   };
 
   const t = getDictionary(locale);

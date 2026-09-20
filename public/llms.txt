@@ -1,0 +1,18 @@
+# SanatanRoop
+
+> SanatanRoop is a comprehensive digital platform dedicated to authentic Sanatan Dharma wisdom, including the four Vedas, 108 Upanishads, Shrimad Bhagavad Gita, daily Vedic Panchang, Sacred Aartis, Vrat Kathas, and spiritual discourses.
+
+## Core Resources
+
+- [Vedic Scriptures & Books](https://sanatanroop.com/books): Authentic digital library of Bhagavad Gita, Ramcharitmanas, Upanishads, and Vedas with Sanskrit shlokas, Hindi translation, and commentary.
+- [Sacred Aartis](https://sanatanroop.com/aartis): Complete devotional aarti collection for Lord Shiva, Ganesha, Durga, Hanuman, Vishnu, Lakshmi, and Rama with authentic lyrics, audio, and video.
+- [Daily Vedic Panchang](https://sanatanroop.com/calendar): Accurate daily Hindu calendar with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, and auspicious muhurats.
+- [Sacred Shlokas](https://sanatanroop.com/shlokas): Canonical Sanskrit verses from Bhagavad Gita and Upanishads with swara recitation and Hindi/English meanings.
+- [Spiritual Videos](https://sanatanroop.com/videos): Authenticated mantra chants, classical discourses, and guided meditations.
+- [Vrat Kathas](https://sanatanroop.com/kathas): Traditional sacred fast stories and puja vidhis.
+- [Spiritual Articles](https://sanatanroop.com/articles): Scholarly and practical guides on Sanatan Dharma, meditation, festivals, and philosophy.
+
+## Optional
+
+- [About SanatanRoop](https://sanatanroop.com/about): Mission, lineage, and scholarly contributors.
+- [Community](https://sanatanroop.com/#community): Connect with the global Sanatan community.

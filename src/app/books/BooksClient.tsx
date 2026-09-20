@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCMS } from '@/context/CMSContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 import {
   Search,
   BookOpen,
@@ -19,6 +20,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
+import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 
 interface BookItem {
   id: string;
@@ -442,6 +444,7 @@ export default function SpiritualBooksPage() {
     });
   }, [books]);
 
+  const { locale } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
@@ -449,36 +452,24 @@ export default function SpiritualBooksPage() {
   const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
 
   const stopVoice = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopVedicVoice();
     setIsVoiceSpeaking(false);
   };
 
   const handleSpeakVerse = (sanskrit: string, hindi: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (!isVoiceSupported()) return;
     if (isVoiceSpeaking) {
       stopVoice();
       return;
     }
-    window.speechSynthesis.cancel();
-    const cleanText = `${sanskrit.replace(/[॥।]/g, ', ')}. हिन्दी अनुवाद: ${hindi}`;
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'hi-IN';
-    utterance.rate = 0.85;
-    utterance.pitch = 1.0;
-
-    const voices = window.speechSynthesis.getVoices();
-    const hindiVoice = voices.find(
-      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
-    );
-    if (hindiVoice) utterance.voice = hindiVoice;
-
-    utterance.onstart = () => setIsVoiceSpeaking(true);
-    utterance.onend = () => setIsVoiceSpeaking(false);
-    utterance.onerror = () => setIsVoiceSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
+    const cleanText = `${sanskrit}. हिन्दी अनुवाद: ${hindi}`;
+    speakVedicVoice(cleanText, {
+      rate: 0.85,
+      pitch: 1.0,
+      onStart: () => setIsVoiceSpeaking(true),
+      onEnd: () => setIsVoiceSpeaking(false),
+      onError: () => setIsVoiceSpeaking(false),
+    });
   };
 
   const filteredBooks = useMemo(() => {
@@ -494,15 +485,15 @@ export default function SpiritualBooksPage() {
     });
   }, [allBooks, activeCategory, searchQuery]);
 
-  const categories = [
-    { id: 'all', label: 'सभी ग्रंथ (All Books)' },
-    { id: 'gita', label: 'श्रीमद्भगवद्गीता' },
-    { id: 'itihasa', label: 'रामायण व महाभारत' },
-    { id: 'upanishads', label: 'उपनिषद (Upanishads)' },
-    { id: 'vedas', label: 'चार वेद (Vedas)' },
-    { id: 'puranas', label: 'महापुराण (Puranas)' },
-    { id: 'darshana', label: 'दर्शन व नीति (Philosophy)' },
-  ];
+  const categories = useMemo(() => [
+    { id: 'all', label: locale === 'en' ? 'All Books' : locale === 'sa' ? 'सर्वे ग्रन्थाः' : 'सभी ग्रंथ (All Books)' },
+    { id: 'gita', label: locale === 'en' ? 'Bhagavad Gita' : locale === 'sa' ? 'श्रीमद्भगवद्गीता' : 'श्रीमद्भगवद्गीता' },
+    { id: 'itihasa', label: locale === 'en' ? 'Itihasa (Epics)' : locale === 'sa' ? 'इतिहासः' : 'रामायण व महाभारत' },
+    { id: 'upanishads', label: locale === 'en' ? 'Upanishads' : locale === 'sa' ? 'उपनिषदः' : 'उपनिषद (Upanishads)' },
+    { id: 'vedas', label: locale === 'en' ? 'Four Vedas' : locale === 'sa' ? 'चत्वारः वेदाः' : 'चार वेद (Vedas)' },
+    { id: 'puranas', label: locale === 'en' ? 'Maha Puranas' : locale === 'sa' ? 'महापुराणानि' : 'महापुराण (Puranas)' },
+    { id: 'darshana', label: locale === 'en' ? 'Philosophy' : locale === 'sa' ? 'दर्शनम्' : 'दर्शन व नीति (Philosophy)' },
+  ], [locale]);
 
   return (
     <div className="min-h-screen bg-[#faf8f5] dark:bg-[#121216] text-[#1c1917] dark:text-stone-100 font-sans pb-24">
