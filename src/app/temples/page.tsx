@@ -111,7 +111,7 @@ export default function TemplesPage() {
               </div>
 
               <div className="pt-3 border-t border-[#e8dac1] dark:border-[#2f2317] flex justify-between items-center text-xs font-serif font-bold text-saffron-700 dark:text-gold-400">
-                <Link href="/scriptures" className="hover:underline flex items-center space-x-1">
+                <Link href="/books" className="hover:underline flex items-center space-x-1">
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>{locale === 'hi' ? 'स्थल पुराण व शास्त्र' : 'Scriptures & Mahatmya'}</span>
                 </Link>

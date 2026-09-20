@@ -696,7 +696,7 @@ export default function SpiritualBooksPage() {
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <Link
-                href={previewBook.readOnlineUrl || '/scriptures'}
+                href={previewBook.readOnlineUrl || '/books'}
                 className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
               >
                 <span>संपूर्ण ग्रंथ पढ़ें</span>

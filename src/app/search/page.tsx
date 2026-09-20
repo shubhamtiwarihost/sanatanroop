@@ -66,7 +66,7 @@ function SearchPageContent() {
       subtitle: 'शिवपुराणम् — प्रथम संहिता',
       description:
         'Foundational scripture detailing the cosmology of Shiva, the genesis of the Jyotirlingas, and the efficacy of Bhasma and Rudraksha.',
-      url: '/scriptures',
+      url: '/books',
     },
     {
       id: 'res-4',
