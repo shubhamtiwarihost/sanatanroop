@@ -680,9 +680,9 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     announcementText: '',
     announcementLink: '',
     announcementActive: false,
-    contactPhone: '+91 98765 43210',
+    contactPhone: '',
     contactEmail: 'contact@sanatanroop.com',
-    varanasiAddress: 'Kashi (Varanasi), Uttar Pradesh, India',
+    varanasiAddress: '',
     copyrightText: '© 2026 SanatanRoop. All rights reserved. Sanatan Gyan, Har Ghar Tak.',
   });
 
