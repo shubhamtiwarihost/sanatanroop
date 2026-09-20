@@ -18,6 +18,7 @@ import {
   Layers,
   Volume2,
 } from 'lucide-react';
+import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
 
 interface BookItem {
   id: string;
@@ -444,6 +445,7 @@ export default function SpiritualBooksPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
+  const [modalTab, setModalTab] = useState<'CHAPTERS' | 'SAMPLE'>('CHAPTERS');
   const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
 
   const stopVoice = () => {
@@ -703,47 +705,135 @@ export default function SpiritualBooksPage() {
               {previewBook.fullOverview}
             </p>
 
-            {/* Sample Verse Preview */}
-            <div className="bg-[#faf6ee] dark:bg-[#23170e] border border-amber-300 dark:border-amber-900/60 rounded-2xl p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 font-serif block">
-                  📖 {previewBook.sampleChapterTitle}
-                </span>
-                <button
-                  onClick={() => handleSpeakVerse(previewBook.sampleVerseSanskrit, previewBook.sampleVerseHindi)}
-                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-600/15 text-amber-900 dark:text-amber-300 text-xs font-serif font-bold hover:bg-amber-600/25 transition"
-                  title="श्लोक स्वर पाठ सुनें"
-                >
-                  <Volume2 className="w-3.5 h-3.5" />
-                  <span>{isVoiceSpeaking ? 'स्वर रोकें' : 'स्वर पाठ'}</span>
-                </button>
-              </div>
+            {(() => {
+              const scriptureData =
+                SCRIPTURES_STATIC_DATA[previewBook.id] ||
+                (previewBook.readOnlineUrl
+                  ? SCRIPTURES_STATIC_DATA[
+                      previewBook.readOnlineUrl.replace('/scriptures/', '')
+                    ]
+                  : null);
+              const chaptersCount = scriptureData?.chapters?.length || 0;
+              const totalVerses = scriptureData?.totalVerses || 0;
 
-              <blockquote className="text-base sm:text-lg font-serif font-bold text-amber-950 dark:text-amber-100 whitespace-pre-line leading-relaxed">
-                {previewBook.sampleVerseSanskrit}
-              </blockquote>
+              return (
+                <>
+                  {/* Modal Tabs */}
+                  <div className="flex items-center space-x-2 border-b border-stone-200 dark:border-stone-800 pb-2">
+                    <button
+                      onClick={() => setModalTab('CHAPTERS')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-serif font-bold transition flex items-center space-x-1.5 ${
+                        modalTab === 'CHAPTERS'
+                          ? 'bg-amber-600 text-white shadow-sm'
+                          : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>सम्पूर्ण विषय-सूची ({chaptersCount} अध्याय/काण्ड)</span>
+                    </button>
+                    <button
+                      onClick={() => setModalTab('SAMPLE')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-serif font-bold transition flex items-center space-x-1.5 ${
+                        modalTab === 'SAMPLE'
+                          ? 'bg-amber-600 text-white shadow-sm'
+                          : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>प्रतिनिधि पावन श्लोक</span>
+                    </button>
+                  </div>
 
-              <div className="border-t border-amber-200 dark:border-amber-900/50 pt-2 space-y-2 text-xs sm:text-sm font-serif">
-                <p className="text-stone-800 dark:text-stone-200 leading-relaxed">
-                  <strong className="text-amber-800 dark:text-amber-300">हिन्दी अनुवाद: </strong>
-                  {previewBook.sampleVerseHindi}
-                </p>
-                <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                  <strong className="text-stone-700 dark:text-stone-300">English: </strong>
-                  {previewBook.sampleVerseEnglish}
-                </p>
-              </div>
-            </div>
+                  {/* Tab 1: Full Chapters List */}
+                  {modalTab === 'CHAPTERS' && (
+                    <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+                      {scriptureData?.chapters && scriptureData.chapters.length > 0 ? (
+                        scriptureData.chapters.map((ch: any) => (
+                          <div
+                            key={ch.id}
+                            className="p-3.5 rounded-2xl bg-[#faf6ee] dark:bg-[#20150d] border border-amber-300/60 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-500 transition"
+                          >
+                            <div className="space-y-1 flex-1">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-900 dark:text-amber-300">
+                                  अध्याय {ch.chapterNumber}
+                                </span>
+                                <span className="text-xs font-serif font-bold text-stone-900 dark:text-white">
+                                  {ch.titleHi || ch.titleEn}
+                                </span>
+                              </div>
+                              <p className="text-[11px] font-serif text-stone-600 dark:text-stone-400 line-clamp-2">
+                                {ch.summaryHi || ch.summaryEn}
+                              </p>
+                            </div>
+                            <Link
+                              href={`/scriptures/${scriptureData.slug || previewBook.id}?chapter=${ch.chapterNumber}`}
+                              className="inline-flex items-center space-x-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-serif font-bold px-3 py-1.5 rounded-xl shadow-sm shrink-0 self-start sm:self-center transition"
+                            >
+                              <span>अध्याय पढ़ें ({ch.verses?.length || 0} श्लोक)</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-4 text-center text-xs font-serif text-stone-500">
+                          सम्पूर्ण ग्रंथ का पाठ ऑनलाइन उपलब्ध है।
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <Link
-                href={previewBook.readOnlineUrl || '/books'}
-                className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
-              >
-                <span>संपूर्ण ग्रंथ पढ़ें</span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+                  {/* Tab 2: Sample Verse Preview */}
+                  {modalTab === 'SAMPLE' && (
+                    <div className="bg-[#faf6ee] dark:bg-[#23170e] border border-amber-300 dark:border-amber-900/60 rounded-2xl p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 font-serif block">
+                          📖 {previewBook.sampleChapterTitle}
+                        </span>
+                        <button
+                          onClick={() => handleSpeakVerse(previewBook.sampleVerseSanskrit, previewBook.sampleVerseHindi)}
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-600/15 text-amber-900 dark:text-amber-300 text-xs font-serif font-bold hover:bg-amber-600/25 transition"
+                          title="श्लोक स्वर पाठ सुनें"
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                          <span>{isVoiceSpeaking ? 'स्वर रोकें' : 'स्वर पाठ'}</span>
+                        </button>
+                      </div>
+
+                      <blockquote className="text-base sm:text-lg font-serif font-bold text-amber-950 dark:text-amber-100 whitespace-pre-line leading-relaxed">
+                        {previewBook.sampleVerseSanskrit}
+                      </blockquote>
+
+                      <div className="border-t border-amber-200 dark:border-amber-900/50 pt-2 space-y-2 text-xs sm:text-sm font-serif">
+                        <p className="text-stone-800 dark:text-stone-200 leading-relaxed">
+                          <strong className="text-amber-800 dark:text-amber-300">हिन्दी अनुवाद: </strong>
+                          {previewBook.sampleVerseHindi}
+                        </p>
+                        <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
+                          <strong className="text-stone-700 dark:text-stone-300">English: </strong>
+                          {previewBook.sampleVerseEnglish}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-stone-200 dark:border-stone-800">
+                    <div className="text-xs font-serif text-stone-500">
+                      {chaptersCount > 0
+                        ? `सम्पूर्ण ${chaptersCount} अध्याय • ${totalVerses} पावन श्लोक`
+                        : previewBook.versesCount}
+                    </div>
+                    <Link
+                      href={previewBook.readOnlineUrl || `/scriptures/${previewBook.id}`}
+                      className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
+                    >
+                      <span>सम्पूर्ण ग्रंथ ऑनलाइन पढ़ें</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </>
+              );
+            })()}
 
           </div>
         </div>

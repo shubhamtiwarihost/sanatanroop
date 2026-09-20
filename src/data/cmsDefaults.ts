@@ -1010,7 +1010,7 @@ export const DEFAULT_CMS_BOOKS: CMSBookItem[] = [
     sampleVerseSanskrit: 'अथ योगानुशासनम् ॥\nयोगश्चित्तवृत्तिनिरोधः ॥',
     sampleVerseHindi: 'अब योग का अनुशासन आरम्भ होता है। चित्त की वृत्तियों (विचारों व तरंगों) का पूर्ण निरोध ही योग है।',
     sampleVerseEnglish: 'Now begins the authoritative instruction on Yoga. Yoga is the restraint of the fluctuations of consciousness.',
-    readOnlineUrl: '/scriptures/patanjali-yoga-sutra',
+    readOnlineUrl: '/scriptures/patanjali-yoga',
     status: 'Published',
   },
   {
