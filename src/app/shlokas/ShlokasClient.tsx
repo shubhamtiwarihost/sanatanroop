@@ -132,9 +132,13 @@ export default function ShlokasPage() {
     if (!shlokas || shlokas.length === 0) return CANONICAL_SHLOKAS;
     return shlokas.map((s) => {
       const canonical = CANONICAL_SHLOKAS.find((c) => c.id === s.id);
+      const isBroken =
+        !s.youtubeId ||
+        s.youtubeId === '_jVVsBn2Fxc' ||
+        s.youtubeId === 'vV1139l9g44';
       return {
         ...s,
-        youtubeId: s.youtubeId || canonical?.youtubeId || 'Vnz8rJX9w-E',
+        youtubeId: isBroken ? (canonical?.youtubeId || 'KOCublNlE-U') : s.youtubeId,
       };
     });
   }, [shlokas]);
