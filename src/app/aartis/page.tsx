@@ -1146,6 +1146,95 @@ export default function AartisPage() {
 
       </div>
 
+      {/* Schema.org Structured Data for Rich Search Snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'सम्पूर्ण आरती संग्रह - SanatanRoop Aarti Sangrah',
+            description:
+              'भगवान श्री गणेश, शिव जी, माँ दुर्गा, हनुमान जी, लक्ष्मी माता, श्री कृष्ण और श्री राम की प्रामाणिक आरतियां, संपूर्ण लिरिक्स, भावार्थ एवं भजन।',
+            url: 'https://sanatanroop.com/aartis',
+            itemListElement: allAartis.map((aarti, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              item: {
+                '@type': 'MusicComposition',
+                name: aarti.titleHi,
+                alternateName: aarti.titleEn,
+                composer: {
+                  '@type': 'Person',
+                  name: aarti.singer,
+                },
+                text: aarti.lyricsHi,
+                description: aarti.meaning,
+                url: `https://sanatanroop.com/aartis#${aarti.id}`,
+              },
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'आरती करने की सही शास्त्रीय विधि क्या है?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'आरती करते समय थाल को भगवान के चरणों में चार बार, नाभि प्रदेश में दो बार, मुखारविन्द पर एक बार और सम्पूर्ण श्रीविग्रह पर सात बार ' +
+                    'प्रदक्षिणा क्रम (क्लॉकवाइज) में घुमाना चाहिए। आरती के समय मन को एकाग्र और श्रद्धावान रखना चाहिए।',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: 'आरती में कपूर और घी की ज्योति का क्या आध्यात्मिक महत्व है?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'कपूर जलने के बाद कोई अवशेष नहीं छोड़ता, जो अहंकार के पूर्ण विलय का प्रतीक है। गाय के शुद्ध घी की ज्योति नकारात्मक ऊर्जा को समाप्त कर वातावरण में सात्विक तरंगों का संचार करती है।',
+                },
+              },
+              {
+                '@type': 'Question',
+                name: 'आरती के समय ताली क्यों बजाई जाती है?',
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: 'शास्त्रों के अनुसार आरती के समय ताली बजाने और घंटी-शंख की ध्वनि से आलस्य, तन्द्रा और नकारात्मक विचार दूर होते हैं तथा हृदय में भक्ति रस का संचार होता है।',
+                },
+              },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'मुख्य पृष्ठ (Home)',
+                item: 'https://sanatanroop.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'आरती संग्रह (Aartis)',
+                item: 'https://sanatanroop.com/aartis',
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

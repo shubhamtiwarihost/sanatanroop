@@ -465,6 +465,57 @@ export default function ShlokasPage() {
           </div>
         </div>
       )}
+
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'सनातन पावन श्लोक संग्रह - SanatanRoop Sacred Shlokas',
+            description:
+              'श्रीमद्भगवद्गीता, उपनिषद, वेद एवं स्तोत्रों के अमर श्लोक, संस्कृत मूल पाठ, अन्वय एवं हिंदी-अंग्रेजी भावार्थ सहित।',
+            url: 'https://sanatanroop.com/shlokas',
+            itemListElement: allShlokas.map((shloka, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              item: {
+                '@type': 'CreativeWork',
+                name: `${shloka.source} ${shloka.chapterVerse}`,
+                text: shloka.sanskrit,
+                description: shloka.hindi,
+                inLanguage: ['sa', 'hi', 'en'],
+                genre: 'Vedic Scripture / Sanskrit Shloka',
+                url: `https://sanatanroop.com/shlokas#${shloka.id}`,
+              },
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'मुख्य पृष्ठ (Home)',
+                item: 'https://sanatanroop.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'पवित्र श्लोक (Shlokas)',
+                item: 'https://sanatanroop.com/shlokas',
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

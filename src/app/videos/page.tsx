@@ -307,6 +307,67 @@ export default function VideosPage() {
         </div>
       )}
 
+      {/* Schema.org VideoObject and ItemList Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'सनातन दृश्य दर्शन - SanatanRoop Spiritual Video Gallery',
+            description:
+              'प्रामाणिक वैदिक मन्त्र जप, शास्त्रीय प्रवचन, पावन भजन एवं निर्देशित ध्यान अभ्यास वीडियो।',
+            url: 'https://sanatanroop.com/videos',
+            itemListElement: VIDEOS_DATA.map((vid, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              item: {
+                '@type': 'VideoObject',
+                name: vid.title,
+                description: vid.description,
+                thumbnailUrl: [
+                  `https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`,
+                  `https://sanatanroop.com${vid.img}`,
+                ],
+                uploadDate: '2026-08-01T08:00:00+05:30',
+                duration: `PT${vid.duration.replace(':', 'M')}S`,
+                embedUrl: `https://www.youtube-nocookie.com/embed/${vid.youtubeId}`,
+                publisher: {
+                  '@type': 'Organization',
+                  name: 'SanatanRoop',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://sanatanroop.com/icons/icon-512x512.png',
+                  },
+                },
+              },
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'मुख्य पृष्ठ (Home)',
+                item: 'https://sanatanroop.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'आध्यात्मिक वीडियो (Videos)',
+                item: 'https://sanatanroop.com/videos',
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

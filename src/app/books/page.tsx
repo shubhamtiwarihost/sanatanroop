@@ -749,6 +749,60 @@ export default function SpiritualBooksPage() {
         </div>
       )}
 
+      {/* Schema.org Book & ItemList Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'सनातन डिजिटल पुस्तकालय - SanatanRoop Sacred Spiritual Books Library',
+            description:
+              'वेद, उपनिषद, श्रीमद्भगवद्गीता, रामायण, पुराण एवं दर्शन के प्रामाणिक डिजिटल ग्रन्थ सम्पूर्ण अर्थ एवं व्याख्या सहित।',
+            url: 'https://sanatanroop.com/books',
+            itemListElement: allBooks.map((book, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              item: {
+                '@type': 'Book',
+                name: book.titleHi,
+                alternateName: book.titleEn,
+                author: {
+                  '@type': 'Person',
+                  name: book.author,
+                },
+                description: book.shortSummary,
+                inLanguage: ['hi', 'sa', 'en'],
+                genre: book.categoryLabel,
+                url: `https://sanatanroop.com${book.readOnlineUrl || '/books'}`,
+              },
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'मुख्य पृष्ठ (Home)',
+                item: 'https://sanatanroop.com',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'डिजिटल ग्रन्थालय (Spiritual Books)',
+                item: 'https://sanatanroop.com/books',
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }
