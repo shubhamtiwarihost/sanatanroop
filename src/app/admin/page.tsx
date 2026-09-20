@@ -17,6 +17,11 @@ import {
   CMSKathaItem,
   CMSBookItem,
   CMSShlokaItem,
+  StaticTemple,
+  StaticFestival,
+  StaticDeity,
+  CMSVideoItem,
+  CMSSEOConfig,
 } from '@/context/CMSContext';
 import {
   LayoutDashboard,
@@ -75,6 +80,9 @@ import {
   AlignRight,
   BookOpen,
   Music,
+  MapPin,
+  Film,
+  Play,
 } from 'lucide-react';
 
 export default function WordPressAdminPanel() {
@@ -101,6 +109,24 @@ export default function WordPressAdminPanel() {
     addShloka,
     updateShloka,
     deleteShloka,
+    temples,
+    addTemple,
+    updateTemple,
+    deleteTemple,
+    festivals,
+    addFestival,
+    updateFestival,
+    deleteFestival,
+    deities,
+    addDeity,
+    updateDeity,
+    deleteDeity,
+    videos,
+    addVideo,
+    updateVideo,
+    deleteVideo,
+    seoConfig,
+    updateSEOConfig,
     products,
     addProduct,
     updateProduct,
@@ -667,6 +693,296 @@ export default function WordPressAdminPanel() {
     setBookModalOpen(false);
   };
 
+  // Temples Admin State & Handlers
+  const [templeModalOpen, setTempleModalOpen] = useState(false);
+  const [editingTempleId, setEditingTempleId] = useState<string | null>(null);
+  const [templeForm, setTempleForm] = useState<Partial<StaticTemple>>({
+    nameHi: '',
+    nameEn: '',
+    nameSa: '',
+    slug: '',
+    deityName: 'Bhagavan Shiva',
+    city: '',
+    state: 'Uttar Pradesh',
+    country: 'Bharat (India)',
+    timings: '04:00 AM - 11:00 PM',
+    significance: '',
+    imageUrl: '/images/hero_diya.jpg',
+    historyHi: '',
+    historyEn: '',
+  });
+
+  const handleOpenTempleModal = (item?: StaticTemple) => {
+    if (item) {
+      setEditingTempleId(item.id);
+      setTempleForm({ ...item });
+    } else {
+      setEditingTempleId(null);
+      setTempleForm({
+        nameHi: '',
+        nameEn: '',
+        nameSa: '',
+        slug: '',
+        deityName: 'Bhagavan Shiva',
+        city: '',
+        state: 'Uttar Pradesh',
+        country: 'Bharat (India)',
+        timings: '04:00 AM - 11:00 PM',
+        significance: '',
+        imageUrl: '/images/hero_diya.jpg',
+        historyHi: '',
+        historyEn: '',
+      });
+    }
+    setTempleModalOpen(true);
+  };
+
+  const handleSaveTemple = () => {
+    if (!templeForm.nameHi?.trim()) {
+      alert('कृपया मंदिर का नाम (हिंदी) दर्ज करें।');
+      return;
+    }
+    const slug =
+      templeForm.slug?.trim() ||
+      (templeForm.nameEn || templeForm.nameHi)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    const payload: Partial<StaticTemple> = {
+      ...templeForm,
+      slug,
+      nameEn: templeForm.nameEn || templeForm.nameHi,
+      nameSa: templeForm.nameSa || templeForm.nameHi,
+      country: templeForm.country || 'Bharat (India)',
+    };
+
+    if (editingTempleId) {
+      updateTemple(editingTempleId, payload);
+      showNotice(`तीर्थ/मंदिर "${templeForm.nameHi}" अद्यतन (Updated) हो गया।`);
+    } else {
+      addTemple(payload as any);
+      showNotice(`नया तीर्थ/मंदिर "${templeForm.nameHi}" सफलतापूर्वक जोड़ा गया।`);
+    }
+    setTempleModalOpen(false);
+  };
+
+  // Festivals Admin State & Handlers
+  const [festivalModalOpen, setFestivalModalOpen] = useState(false);
+  const [editingFestivalId, setEditingFestivalId] = useState<string | null>(null);
+  const [festivalForm, setFestivalForm] = useState<Partial<StaticFestival>>({
+    nameHi: '',
+    nameEn: '',
+    nameSa: '',
+    slug: '',
+    lunarMonth: 'Kartika',
+    tithi: 'Amavasya',
+    associatedDeity: 'Bhagavan Shiva',
+    isMajor: true,
+    descriptionHi: '',
+    descriptionEn: '',
+    pujaVidhiHi: '',
+    pujaVidhiEn: '',
+  });
+
+  const handleOpenFestivalModal = (item?: StaticFestival) => {
+    if (item) {
+      setEditingFestivalId(item.id);
+      setFestivalForm({ ...item });
+    } else {
+      setEditingFestivalId(null);
+      setFestivalForm({
+        nameHi: '',
+        nameEn: '',
+        nameSa: '',
+        slug: '',
+        lunarMonth: 'Kartika',
+        tithi: 'Amavasya',
+        associatedDeity: 'Bhagavan Shiva',
+        isMajor: true,
+        descriptionHi: '',
+        descriptionEn: '',
+        pujaVidhiHi: '',
+        pujaVidhiEn: '',
+      });
+    }
+    setFestivalModalOpen(true);
+  };
+
+  const handleSaveFestival = () => {
+    if (!festivalForm.nameHi?.trim()) {
+      alert('कृपया पर्व/त्यौहार का नाम (हिंदी) दर्ज करें।');
+      return;
+    }
+    const slug =
+      festivalForm.slug?.trim() ||
+      (festivalForm.nameEn || festivalForm.nameHi)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    const payload: Partial<StaticFestival> = {
+      ...festivalForm,
+      slug,
+      nameEn: festivalForm.nameEn || festivalForm.nameHi,
+      nameSa: festivalForm.nameSa || festivalForm.nameHi,
+    };
+
+    if (editingFestivalId) {
+      updateFestival(editingFestivalId, payload);
+      showNotice(`पर्व "${festivalForm.nameHi}" अद्यतन (Updated) हो गया।`);
+    } else {
+      addFestival(payload as any);
+      showNotice(`नया पर्व "${festivalForm.nameHi}" सफलतापूर्वक जोड़ा गया।`);
+    }
+    setFestivalModalOpen(false);
+  };
+
+  // Deities Admin State & Handlers
+  const [deityModalOpen, setDeityModalOpen] = useState(false);
+  const [editingDeityId, setEditingDeityId] = useState<string | null>(null);
+  const [deityForm, setDeityForm] = useState<Partial<StaticDeity>>({
+    nameHi: '',
+    nameEn: '',
+    nameSa: '',
+    slug: '',
+    mantra: '',
+    iconography: '',
+    significanceHi: '',
+    significanceEn: '',
+    significanceSa: '',
+    storyHi: '',
+    storyEn: '',
+    imageUrl: '/images/hero_diya.jpg',
+    popularTemples: '[]',
+    festivals: '[]',
+    scripturalRefs: '[]',
+  });
+
+  const handleOpenDeityModal = (item?: StaticDeity) => {
+    if (item) {
+      setEditingDeityId(item.id);
+      setDeityForm({ ...item });
+    } else {
+      setEditingDeityId(null);
+      setDeityForm({
+        nameHi: '',
+        nameEn: '',
+        nameSa: '',
+        slug: '',
+        mantra: '',
+        iconography: '',
+        significanceHi: '',
+        significanceEn: '',
+        significanceSa: '',
+        storyHi: '',
+        storyEn: '',
+        imageUrl: '/images/hero_diya.jpg',
+        popularTemples: '[]',
+        festivals: '[]',
+        scripturalRefs: '[]',
+      });
+    }
+    setDeityModalOpen(true);
+  };
+
+  const handleSaveDeity = () => {
+    if (!deityForm.nameHi?.trim()) {
+      alert('कृपया देवता/देवी का नाम (हिंदी) दर्ज करें।');
+      return;
+    }
+    const slug =
+      deityForm.slug?.trim() ||
+      (deityForm.nameEn || deityForm.nameHi)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    const payload: Partial<StaticDeity> = {
+      ...deityForm,
+      slug,
+      nameEn: deityForm.nameEn || deityForm.nameHi,
+      nameSa: deityForm.nameSa || deityForm.nameHi,
+    };
+
+    if (editingDeityId) {
+      updateDeity(editingDeityId, payload);
+      showNotice(`देवी/देवता "${deityForm.nameHi}" अद्यतन (Updated) हो गए।`);
+    } else {
+      addDeity(payload as any);
+      showNotice(`नए देवी/देवता "${deityForm.nameHi}" सफलतापूर्वक जोड़े गए।`);
+    }
+    setDeityModalOpen(false);
+  };
+
+  // Devotional Videos Admin State & Handlers
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
+  const [videoPreviewId, setVideoPreviewId] = useState<string | null>(null);
+  const [videoForm, setVideoForm] = useState<Partial<CMSVideoItem>>({
+    title: '',
+    category: 'Mantras',
+    duration: '10:00',
+    views: '100k',
+    img: '/images/hero_shiva.jpg',
+    youtubeId: '',
+    description: '',
+  });
+
+  const handleOpenVideoModal = (item?: CMSVideoItem) => {
+    if (item) {
+      setEditingVideoId(item.id);
+      setVideoForm({ ...item });
+    } else {
+      setEditingVideoId(null);
+      setVideoForm({
+        title: '',
+        category: 'Mantras',
+        duration: '10:00',
+        views: '100k',
+        img: '/images/hero_shiva.jpg',
+        youtubeId: '',
+        description: '',
+      });
+    }
+    setVideoModalOpen(true);
+  };
+
+  const handleSaveVideo = () => {
+    if (!videoForm.title?.trim() || !videoForm.youtubeId?.trim()) {
+      alert('कृपया वीडियो शीर्षक और YouTube ID दर्ज करें।');
+      return;
+    }
+    if (editingVideoId) {
+      updateVideo(editingVideoId, videoForm);
+      showNotice(`वीडियो "${videoForm.title}" अद्यतन (Updated) हो गया।`);
+    } else {
+      addVideo({
+        title: videoForm.title,
+        category: videoForm.category || 'Mantras',
+        duration: videoForm.duration || '10:00',
+        views: videoForm.views || '10k',
+        img: videoForm.img || '/images/hero_shiva.jpg',
+        youtubeId: videoForm.youtubeId,
+        description: videoForm.description || '',
+      });
+      showNotice(`नया वीडियो "${videoForm.title}" सफलतापूर्वक जोड़ा गया।`);
+    }
+    setVideoModalOpen(false);
+  };
+
+  // SEO Form State & Handler
+  const [seoForm, setSeoForm] = useState<CMSSEOConfig>(seoConfig);
+  useEffect(() => {
+    if (seoConfig) setSeoForm(seoConfig);
+  }, [seoConfig]);
+
+  const handleSaveSEO = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateSEOConfig(seoForm);
+    showNotice('SEO एवं Google Search Console सेटिंग्स सफलतापूर्वक सुरक्षित हो गई।');
+  };
+
   // Categories & Tags State
   const [categoriesList, setCategoriesList] = useState([
     { id: 'c-1', name: 'Philosophy', slug: 'philosophy', description: 'Vedic Darshana, Advaita, and spiritual commentaries', count: 18 },
@@ -881,6 +1197,11 @@ export default function WordPressAdminPanel() {
         { id: 'kathas', label: 'Vrat Kathas' },
         { id: 'books', label: 'Spiritual Books' },
         { id: 'divine-vibrations', label: 'Divine Vibrations' },
+        { id: 'temples', label: 'Temples & Tirthas' },
+        { id: 'festivals', label: 'Festivals Calendar' },
+        { id: 'deities', label: 'Deities & Avatars' },
+        { id: 'videos', label: 'Devotional Videos' },
+        { id: 'seo', label: 'SEO & Search Console' },
       ],
     },
     {
@@ -1556,7 +1877,7 @@ export default function WordPressAdminPanel() {
                         </button>
                       </div>
                       <div className="p-4 space-y-3 text-xs">
-                        <div className="grid grid-cols-2 gap-2 text-stone-700">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-stone-700">
                           <div className="flex items-center space-x-2">
                             <Pin className="w-3.5 h-3.5 text-stone-400" />
                             <button onClick={() => setCurrentSection('posts')} className="text-[#2271b1] hover:underline font-semibold">
@@ -1572,7 +1893,7 @@ export default function WordPressAdminPanel() {
                           <div className="flex items-center space-x-2">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                             <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('shlokas'); }} className="text-[#2271b1] hover:underline font-semibold">
-                              {mantras.length} Slokas & Mantras
+                              {shlokas.length} Slokas & Mantras
                             </button>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -1594,15 +1915,40 @@ export default function WordPressAdminPanel() {
                             </button>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Package className="w-3.5 h-3.5 text-stone-400" />
-                            <button onClick={() => setCurrentSection('products')} className="text-[#2271b1] hover:underline font-semibold">
-                              {products.length} Products
+                            <MapPin className="w-3.5 h-3.5 text-orange-600" />
+                            <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('temples'); }} className="text-[#2271b1] hover:underline font-semibold">
+                              {temples.length} Sacred Temples
                             </button>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <ShoppingBag className="w-3.5 h-3.5 text-stone-400" />
-                            <button onClick={() => setCurrentSection('woocommerce')} className="text-[#2271b1] hover:underline font-semibold">
-                              {orders.length} Orders
+                            <Calendar className="w-3.5 h-3.5 text-red-600" />
+                            <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('festivals'); }} className="text-[#2271b1] hover:underline font-semibold">
+                              {festivals.length} Sacred Festivals
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Sparkles className="w-3.5 h-3.5 text-yellow-600" />
+                            <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('deities'); }} className="text-[#2271b1] hover:underline font-semibold">
+                              {deities.length} Sacred Deities
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Film className="w-3.5 h-3.5 text-indigo-600" />
+                            <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('videos'); }} className="text-[#2271b1] hover:underline font-semibold">
+                              {videos.length} Devotional Videos
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                            <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('seo'); }} className="text-[#2271b1] hover:underline font-semibold flex items-center space-x-1">
+                              <span>SEO: Google Verified</span>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Package className="w-3.5 h-3.5 text-stone-400" />
+                            <button onClick={() => setCurrentSection('products')} className="text-[#2271b1] hover:underline font-semibold">
+                              {products.length} Products
                             </button>
                           </div>
                         </div>
@@ -2988,10 +3334,73 @@ export default function WordPressAdminPanel() {
                     ? 'Spiritual Books Library'
                     : currentSubSection === 'divine-vibrations'
                     ? 'Divine Vibrations'
+                    : currentSubSection === 'temples'
+                    ? 'Sacred Temples & Jyotirlingas'
+                    : currentSubSection === 'festivals'
+                    ? 'Sacred Festivals Calendar'
+                    : currentSubSection === 'deities'
+                    ? 'Sacred Deities & Avatars'
+                    : currentSubSection === 'videos'
+                    ? 'Devotional Videos'
+                    : currentSubSection === 'seo'
+                    ? 'SEO & Google Search Console'
                     : 'Slokas & Mantras'}
                 </h1>
 
                 {/* Quick Add Buttons based on active subtab */}
+                {currentSubSection === 'temples' && (
+                  <button
+                    onClick={() => handleOpenTempleModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add New Temple</span>
+                  </button>
+                )}
+
+                {currentSubSection === 'festivals' && (
+                  <button
+                    onClick={() => handleOpenFestivalModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add New Festival</span>
+                  </button>
+                )}
+
+                {currentSubSection === 'deities' && (
+                  <button
+                    onClick={() => handleOpenDeityModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add New Deity</span>
+                  </button>
+                )}
+
+                {currentSubSection === 'videos' && (
+                  <button
+                    onClick={() => handleOpenVideoModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add Devotional Video</span>
+                  </button>
+                )}
+
+                {currentSubSection === 'seo' && (
+                  <div className="flex items-center space-x-2">
+                    <Link
+                      href="/sitemap.xml"
+                      target="_blank"
+                      className="bg-[#f6f7f7] hover:bg-[#f0f0f1] text-[#2271b1] border border-[#2271b1] px-2.5 py-1.5 rounded text-xs font-semibold flex items-center space-x-1"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>View Sitemap.xml</span>
+                    </Link>
+                  </div>
+                )}
+
                 {currentSubSection === 'aartis' && (
                   <button
                     onClick={() => handleOpenAartiModal()}
@@ -3103,6 +3512,57 @@ export default function WordPressAdminPanel() {
                   }`}
                 >
                   Divine Vibrations ({divineVibrations.tracks.length})
+                </button>
+                <button
+                  onClick={() => setCurrentSubSection('temples')}
+                  className={`px-4 py-2 border-b-2 font-medium whitespace-nowrap ${
+                    currentSubSection === 'temples'
+                      ? 'border-[#2271b1] text-[#2271b1] bg-white'
+                      : 'border-transparent text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  Temples & Tirthas ({temples.length})
+                </button>
+                <button
+                  onClick={() => setCurrentSubSection('festivals')}
+                  className={`px-4 py-2 border-b-2 font-medium whitespace-nowrap ${
+                    currentSubSection === 'festivals'
+                      ? 'border-[#2271b1] text-[#2271b1] bg-white'
+                      : 'border-transparent text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  Festivals ({festivals.length})
+                </button>
+                <button
+                  onClick={() => setCurrentSubSection('deities')}
+                  className={`px-4 py-2 border-b-2 font-medium whitespace-nowrap ${
+                    currentSubSection === 'deities'
+                      ? 'border-[#2271b1] text-[#2271b1] bg-white'
+                      : 'border-transparent text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  Deities ({deities.length})
+                </button>
+                <button
+                  onClick={() => setCurrentSubSection('videos')}
+                  className={`px-4 py-2 border-b-2 font-medium whitespace-nowrap ${
+                    currentSubSection === 'videos'
+                      ? 'border-[#2271b1] text-[#2271b1] bg-white'
+                      : 'border-transparent text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  Videos ({videos.length})
+                </button>
+                <button
+                  onClick={() => setCurrentSubSection('seo')}
+                  className={`px-4 py-2 border-b-2 font-medium whitespace-nowrap flex items-center space-x-1 ${
+                    currentSubSection === 'seo'
+                      ? 'border-[#2271b1] text-[#2271b1] bg-white'
+                      : 'border-transparent text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>SEO & Search Console</span>
                 </button>
               </div>
 
@@ -3670,6 +4130,599 @@ export default function WordPressAdminPanel() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* 7. TEMPLES & TIRTHAS TABLE */}
+              {currentSubSection === 'temples' && (
+                <div className="bg-white border border-[#c3c4c7] rounded overflow-x-auto shadow-sm space-y-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#dcdcde] pb-3">
+                    <div>
+                      <h3 className="font-bold text-[#1d2327] text-sm flex items-center space-x-2">
+                        <MapPin className="w-4 h-4 text-orange-600" />
+                        <span>Sacred Temples, Jyotirlingas & Pilgrimage Sites ({temples.length})</span>
+                      </h3>
+                      <p className="text-stone-500 text-xs mt-0.5">
+                        Manage temple histories, darshan timings, locations, and presiding deities across Bharat.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleOpenTempleModal()}
+                      className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition self-start sm:self-auto"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Add Temple</span>
+                    </button>
+                  </div>
+
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
+                        <th className="p-2.5 font-bold">Temple Name</th>
+                        <th className="p-2.5 font-bold">Presiding Deity</th>
+                        <th className="p-2.5 font-bold">Location</th>
+                        <th className="p-2.5 font-bold">Darshan Timings</th>
+                        <th className="p-2.5 font-bold">Significance</th>
+                        <th className="p-2.5 font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#dcdcde]">
+                      {temples.map((tm) => (
+                        <tr key={tm.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-stone-900 block font-serif text-sm">{tm.nameHi}</span>
+                            <span className="text-[11px] text-stone-500 block">{tm.nameEn}</span>
+                            <span className="text-[10px] text-stone-400 font-mono">/{tm.slug}</span>
+                          </td>
+                          <td className="p-2.5">
+                            <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-semibold text-[10px]">
+                              {tm.deityName}
+                            </span>
+                          </td>
+                          <td className="p-2.5 text-stone-700">
+                            <div className="flex items-center space-x-1">
+                              <MapPin className="w-3 h-3 text-red-500 flex-shrink-0" />
+                              <span>{tm.city}, {tm.state}</span>
+                            </div>
+                            <span className="text-[10px] text-stone-400 block">{tm.country}</span>
+                          </td>
+                          <td className="p-2.5 text-stone-600 font-mono text-[11px]">
+                            {tm.timings || '04:00 AM - 11:00 PM'}
+                          </td>
+                          <td className="p-2.5 text-stone-600 max-w-xs truncate">
+                            {tm.significance || tm.historyHi}
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenTempleModal(tm)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Temple"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/temples"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${tm.nameHi}"?`)) {
+                                    deleteTemple(tm.id);
+                                    showNotice(`Temple "${tm.nameHi}" removed.`);
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Temple"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* 8. FESTIVALS CALENDAR TABLE */}
+              {currentSubSection === 'festivals' && (
+                <div className="bg-white border border-[#c3c4c7] rounded overflow-x-auto shadow-sm space-y-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#dcdcde] pb-3">
+                    <div>
+                      <h3 className="font-bold text-[#1d2327] text-sm flex items-center space-x-2">
+                        <Calendar className="w-4 h-4 text-red-600" />
+                        <span>Sacred Hindu Festivals & Vrat Calendar ({festivals.length})</span>
+                      </h3>
+                      <p className="text-stone-500 text-xs mt-0.5">
+                        Manage annual festivals, lunar tithis, associated deities, and sacred puja vidhis.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleOpenFestivalModal()}
+                      className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition self-start sm:self-auto"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Add Festival</span>
+                    </button>
+                  </div>
+
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
+                        <th className="p-2.5 font-bold">Festival Name</th>
+                        <th className="p-2.5 font-bold">Lunar Month & Tithi</th>
+                        <th className="p-2.5 font-bold">Presiding Deity</th>
+                        <th className="p-2.5 font-bold">Type</th>
+                        <th className="p-2.5 font-bold">Puja Vidhi Preview</th>
+                        <th className="p-2.5 font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#dcdcde]">
+                      {festivals.map((f) => (
+                        <tr key={f.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-stone-900 block font-serif text-sm">{f.nameHi}</span>
+                            <span className="text-[11px] text-stone-500 block">{f.nameEn}</span>
+                            {f.nameSa && <span className="text-[10px] text-stone-400 block font-serif">{f.nameSa}</span>}
+                          </td>
+                          <td className="p-2.5">
+                            <span className="font-semibold text-stone-800 block">{f.lunarMonth}</span>
+                            <span className="text-[11px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 inline-block mt-0.5">
+                              {f.tithi}
+                            </span>
+                          </td>
+                          <td className="p-2.5">
+                            <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold text-[10px]">
+                              {f.associatedDeity || 'Sanatan Devi/Devta'}
+                            </span>
+                          </td>
+                          <td className="p-2.5">
+                            {f.isMajor ? (
+                              <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[10px]">
+                                ★ Major Festival
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded bg-stone-100 text-stone-700 font-medium text-[10px]">
+                                Regular Vrat
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-2.5 text-stone-600 max-w-xs truncate">
+                            {f.pujaVidhiHi || f.descriptionHi}
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenFestivalModal(f)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Festival"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/festivals"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${f.nameHi}"?`)) {
+                                    deleteFestival(f.id);
+                                    showNotice(`Festival "${f.nameHi}" removed.`);
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Festival"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* 9. DEITIES & AVATARS TABLE */}
+              {currentSubSection === 'deities' && (
+                <div className="bg-white border border-[#c3c4c7] rounded overflow-x-auto shadow-sm space-y-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#dcdcde] pb-3">
+                    <div>
+                      <h3 className="font-bold text-[#1d2327] text-sm flex items-center space-x-2">
+                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        <span>Sacred Deities & Divine Forms ({deities.length})</span>
+                      </h3>
+                      <p className="text-stone-500 text-xs mt-0.5">
+                        Manage deity mantras, iconography, spiritual significance, and major tirthas.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleOpenDeityModal()}
+                      className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition self-start sm:self-auto"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Add Deity</span>
+                    </button>
+                  </div>
+
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
+                        <th className="p-2.5 font-bold">Deity Name</th>
+                        <th className="p-2.5 font-bold">Primary Mantra</th>
+                        <th className="p-2.5 font-bold">Iconography</th>
+                        <th className="p-2.5 font-bold">Significance</th>
+                        <th className="p-2.5 font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#dcdcde]">
+                      {deities.map((d) => (
+                        <tr key={d.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-stone-900 block font-serif text-sm">{d.nameHi}</span>
+                            <span className="text-[11px] text-stone-500 block">{d.nameEn}</span>
+                            {d.nameSa && <span className="text-[10px] text-stone-400 block font-serif">{d.nameSa}</span>}
+                          </td>
+                          <td className="p-2.5">
+                            <span className="font-serif font-bold text-amber-950 bg-amber-50 px-2 py-1 rounded border border-amber-200 block max-w-xs text-xs">
+                              {d.mantra}
+                            </span>
+                          </td>
+                          <td className="p-2.5 text-stone-700 max-w-xs truncate">
+                            {d.iconography}
+                          </td>
+                          <td className="p-2.5 text-stone-600 max-w-xs truncate">
+                            {d.significanceHi || d.significanceEn}
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenDeityModal(d)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Deity"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/deities"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${d.nameHi}"?`)) {
+                                    deleteDeity(d.id);
+                                    showNotice(`Deity "${d.nameHi}" removed.`);
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Deity"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* 10. DEVOTIONAL VIDEOS TABLE */}
+              {currentSubSection === 'videos' && (
+                <div className="bg-white border border-[#c3c4c7] rounded overflow-x-auto shadow-sm space-y-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#dcdcde] pb-3">
+                    <div>
+                      <h3 className="font-bold text-[#1d2327] text-sm flex items-center space-x-2">
+                        <Film className="w-4 h-4 text-indigo-600" />
+                        <span>Devotional & Scriptural Videos ({videos.length})</span>
+                      </h3>
+                      <p className="text-stone-500 text-xs mt-0.5">
+                        Manage authentic human-voiced chanting, discourses, and verified embeddable YouTube videos.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleOpenVideoModal()}
+                      className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition self-start sm:self-auto"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Add Video</span>
+                    </button>
+                  </div>
+
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
+                        <th className="p-2.5 font-bold">Thumbnail</th>
+                        <th className="p-2.5 font-bold">Video Title & Description</th>
+                        <th className="p-2.5 font-bold">Category</th>
+                        <th className="p-2.5 font-bold">Duration</th>
+                        <th className="p-2.5 font-bold">Views</th>
+                        <th className="p-2.5 font-bold">YouTube ID</th>
+                        <th className="p-2.5 font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#dcdcde]">
+                      {videos.map((vid) => (
+                        <tr key={vid.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5 w-20">
+                            <div className="relative w-16 h-10 rounded overflow-hidden bg-stone-100 border border-stone-200">
+                              <Image
+                                src={vid.img || '/images/hero_shiva.jpg'}
+                                alt={vid.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          </td>
+                          <td className="p-2.5 max-w-sm">
+                            <span className="font-bold text-stone-900 block">{vid.title}</span>
+                            <span className="text-[11px] text-stone-500 line-clamp-1 mt-0.5">{vid.description}</span>
+                          </td>
+                          <td className="p-2.5">
+                            <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold text-[10px]">
+                              {vid.category}
+                            </span>
+                          </td>
+                          <td className="p-2.5 text-stone-600 font-mono text-[11px]">
+                            {vid.duration}
+                          </td>
+                          <td className="p-2.5 text-stone-600 font-semibold text-[11px]">
+                            {vid.views}
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="font-mono text-[11px] bg-stone-100 px-1.5 py-0.5 rounded border border-stone-300">
+                                {vid.youtubeId}
+                              </span>
+                              <button
+                                onClick={() => setVideoPreviewId(vid.youtubeId)}
+                                className="text-red-600 hover:text-red-700 p-1"
+                                title="Preview Video"
+                              >
+                                <Play className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenVideoModal(vid)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Video"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/videos"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete "${vid.title}"?`)) {
+                                    deleteVideo(vid.id);
+                                    showNotice(`Video "${vid.title}" removed.`);
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Video"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* 11. SEO & SEARCH CONSOLE COMMAND CENTER */}
+              {currentSubSection === 'seo' && (
+                <div className="bg-white border border-[#c3c4c7] rounded p-6 shadow-sm space-y-6 text-xs">
+                  <div className="flex items-center justify-between border-b border-stone-200 pb-4">
+                    <div>
+                      <h3 className="font-bold text-stone-900 text-sm flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-emerald-600" />
+                        <span>Google Search Console & Advanced SEO Command Center</span>
+                      </h3>
+                      <p className="text-stone-500 text-[11px] mt-0.5">
+                        Manage Google Site Verification, XML Sitemaps, robots.txt, canonical URLs, and SERP snippet metadata.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold flex items-center space-x-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>GSC Verified</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Status Banner */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-emerald-900 text-xs">Google Site Verification</span>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <p className="text-[11px] text-emerald-700 font-mono break-all">
+                        {seoForm.googleSiteVerification}
+                      </p>
+                      <span className="text-[10px] text-emerald-600 block mt-1">Status: Active in &lt;head&gt; meta tag</span>
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-blue-900 text-xs">XML Sitemap Index</span>
+                        <Link href="/sitemap.xml" target="_blank" className="text-blue-600 hover:underline">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                      <p className="text-[11px] text-blue-800 font-mono">
+                        {seoForm.sitemapUrl || 'https://sanatanroop.com/sitemap.xml'}
+                      </p>
+                      <span className="text-[10px] text-blue-600 block mt-1">Status: 85+ Pages Indexed with Priority 1.0</span>
+                    </div>
+
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-900 text-xs">Robots.txt Engine</span>
+                        <Link href="/robots.txt" target="_blank" className="text-amber-600 hover:underline">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                      <p className="text-[11px] text-amber-800">
+                        Configured for Googlebot, Bingbot & Search Indexers
+                      </p>
+                      <span className="text-[10px] text-amber-700 block mt-1">Admin path protected, sitemap declared</span>
+                    </div>
+                  </div>
+
+                  {/* Form */}
+                  <form onSubmit={handleSaveSEO} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="font-semibold text-stone-700 block mb-1">
+                          Google Search Console Verification Tag (Meta Content):
+                        </label>
+                        <input
+                          type="text"
+                          value={seoForm.googleSiteVerification}
+                          onChange={(e) => setSeoForm({ ...seoForm, googleSiteVerification: e.target.value })}
+                          placeholder="e.g. 913wqbYQWYyRQMdP2NipyBMPrcAqhJSFeSVdikk7Lt4"
+                          className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono text-xs focus:border-[#2271b1] focus:outline-none"
+                        />
+                        <span className="text-[10px] text-stone-500">
+                          Google Search Console HTML tag verification code (site-verification)
+                        </span>
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-stone-700 block mb-1">Canonical Base URL:</label>
+                        <input
+                          type="text"
+                          value={seoForm.canonicalBase}
+                          onChange={(e) => setSeoForm({ ...seoForm, canonicalBase: e.target.value })}
+                          placeholder="https://sanatanroop.com"
+                          className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono text-xs focus:border-[#2271b1] focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-stone-700 block mb-1">Default Meta Title (SERP):</label>
+                        <input
+                          type="text"
+                          value={seoForm.defaultTitle}
+                          onChange={(e) => setSeoForm({ ...seoForm, defaultTitle: e.target.value })}
+                          className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs focus:border-[#2271b1] focus:outline-none"
+                        />
+                        <span className="text-[10px] text-stone-500">Characters: {seoForm.defaultTitle?.length || 0} / 60 optimal</span>
+                      </div>
+
+                      <div>
+                        <label className="font-semibold text-stone-700 block mb-1">Twitter Handle:</label>
+                        <input
+                          type="text"
+                          value={seoForm.twitterHandle}
+                          onChange={(e) => setSeoForm({ ...seoForm, twitterHandle: e.target.value })}
+                          placeholder="@SanatanRoop"
+                          className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs focus:border-[#2271b1] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-stone-700 block mb-1">Default Meta Description:</label>
+                      <textarea
+                        rows={3}
+                        value={seoForm.defaultDescription}
+                        onChange={(e) => setSeoForm({ ...seoForm, defaultDescription: e.target.value })}
+                        className="w-full border border-[#8c8f94] rounded p-2 text-xs focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                      />
+                      <span className="text-[10px] text-stone-500">Characters: {seoForm.defaultDescription?.length || 0} / 160 optimal</span>
+                    </div>
+
+                    {/* Google SERP Live Snippet Preview */}
+                    <div className="border border-stone-200 rounded-lg p-4 bg-stone-50 space-y-2">
+                      <span className="font-bold text-stone-800 text-xs block">Google Search Result Preview (SERP Snippet):</span>
+                      <div className="bg-white p-3 rounded border border-stone-200 max-w-xl space-y-1">
+                        <div className="flex items-center space-x-2 text-[11px] text-stone-600">
+                          <span className="w-4 h-4 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-[9px]">ॐ</span>
+                          <span className="truncate">{seoForm.canonicalBase}</span>
+                        </div>
+                        <h4 className="text-[#1a0dab] font-medium text-sm hover:underline cursor-pointer">
+                          {seoForm.defaultTitle}
+                        </h4>
+                        <p className="text-[#4d5156] text-xs leading-relaxed">
+                          {seoForm.defaultDescription}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-stone-700 block mb-1">Robots.txt Directives:</label>
+                      <textarea
+                        rows={5}
+                        value={seoForm.robotsTxt}
+                        onChange={(e) => setSeoForm({ ...seoForm, robotsTxt: e.target.value })}
+                        className="w-full border border-[#8c8f94] rounded p-2 text-xs font-mono bg-stone-900 text-emerald-400 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href="https://search.google.com/search-console"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-[#f6f7f7] hover:bg-[#f0f0f1] text-[#2271b1] border border-[#2271b1] px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>Open Google Search Console</span>
+                        </a>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-2 rounded-md font-bold text-xs shadow-sm transition"
+                      >
+                        Save SEO & Webmaster Settings
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
             </div>
@@ -5589,6 +6642,616 @@ export default function WordPressAdminPanel() {
               >
                 <span>{editingBookId ? 'ग्रंथ सुरक्षित करें (Save Book)' : 'ग्रंथ प्रकाशित करें (Publish Book)'}</span>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          11. TEMPLE CREATION / EDIT MODAL
+      ========================================================================= */}
+      {templeModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingTempleId ? 'तीर्थ / देवालय संपादित करें (Edit Temple)' : 'नया तीर्थ / देवालय जोड़ें (Add New Temple)'}
+              </h3>
+              <button onClick={() => setTempleModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    मंदिर का नाम (Hindi Title) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={templeForm.nameHi || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, nameHi: e.target.value })}
+                    placeholder="उदा. श्री काशी विश्वनाथ ज्योतिर्लिंग"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Name</label>
+                  <input
+                    type="text"
+                    value={templeForm.nameEn || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, nameEn: e.target.value })}
+                    placeholder="e.g. Kashi Vishwanath Temple"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">संस्कृत नाम (Sanskrit)</label>
+                  <input
+                    type="text"
+                    value={templeForm.nameSa || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, nameSa: e.target.value })}
+                    placeholder="उदा. काशीविश्वनाथज्योतिर्लिङ्गम्"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Presiding Deity (आराध्य देव)</label>
+                  <input
+                    type="text"
+                    value={templeForm.deityName || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, deityName: e.target.value })}
+                    placeholder="उदा. भगवान शिव / महादेव"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">URL Slug</label>
+                  <input
+                    type="text"
+                    value={templeForm.slug || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, slug: e.target.value })}
+                    placeholder="kashi-vishwanath"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">नगर / City</label>
+                  <input
+                    type="text"
+                    value={templeForm.city || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, city: e.target.value })}
+                    placeholder="उदा. Varanasi"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">राज्य / State</label>
+                  <input
+                    type="text"
+                    value={templeForm.state || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, state: e.target.value })}
+                    placeholder="उदा. Uttar Pradesh"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">देश / Country</label>
+                  <input
+                    type="text"
+                    value={templeForm.country || 'Bharat (India)'}
+                    onChange={(e) => setTempleForm({ ...templeForm, country: e.target.value })}
+                    placeholder="Bharat (India)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">दर्शन समय (Darshan Timings)</label>
+                  <input
+                    type="text"
+                    value={templeForm.timings || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, timings: e.target.value })}
+                    placeholder="03:00 AM - 11:00 PM (Mangala to Shayan Aarti)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Image URL</label>
+                  <input
+                    type="text"
+                    value={templeForm.imageUrl || ''}
+                    onChange={(e) => setTempleForm({ ...templeForm, imageUrl: e.target.value })}
+                    placeholder="/images/hero_diya.jpg"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">धार्मिक महत्व (Significance)</label>
+                <input
+                  type="text"
+                  value={templeForm.significance || ''}
+                  onChange={(e) => setTempleForm({ ...templeForm, significance: e.target.value })}
+                  placeholder="द्वादश ज्योतिर्लिंगों में प्रधान, मोक्षदायिनी काशी की पावन पीठ..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">मंदिर का इतिहास व विवरण (Hindi History)</label>
+                <textarea
+                  rows={4}
+                  value={templeForm.historyHi || ''}
+                  onChange={(e) => setTempleForm({ ...templeForm, historyHi: e.target.value })}
+                  placeholder="द्वादश ज्योतिर्लिंगों में प्रमुख, मोक्षदायिनी काशी में पतितपावनी मां गंगा के पश्चिमी तट पर प्रतिष्ठित अनादि ज्योतिर्लिंग..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">English History & Details</label>
+                <textarea
+                  rows={3}
+                  value={templeForm.historyEn || ''}
+                  onChange={(e) => setTempleForm({ ...templeForm, historyEn: e.target.value })}
+                  placeholder="One of the twelve sacred Jyotirlingas, situated on the western bank of the holy Ganga..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setTempleModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveTemple}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingTempleId ? 'तीर्थ सुरक्षित करें (Save Temple)' : 'तीर्थ प्रकाशित करें (Publish Temple)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          12. FESTIVAL CREATION / EDIT MODAL
+      ========================================================================= */}
+      {festivalModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingFestivalId ? 'पर्व / व्रत संपादित करें (Edit Festival)' : 'नया पर्व / व्रत जोड़ें (Add New Festival)'}
+              </h3>
+              <button onClick={() => setFestivalModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    पर्व का नाम (Hindi Title) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={festivalForm.nameHi || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, nameHi: e.target.value })}
+                    placeholder="उदा. महाशिवरात्रि"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Title</label>
+                  <input
+                    type="text"
+                    value={festivalForm.nameEn || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, nameEn: e.target.value })}
+                    placeholder="e.g. Maha Shivaratri"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">संस्कृत नाम (Sanskrit)</label>
+                  <input
+                    type="text"
+                    value={festivalForm.nameSa || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, nameSa: e.target.value })}
+                    placeholder="महाशिवरात्रिव्रतम्"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">चंद्र मास (Lunar Month)</label>
+                  <input
+                    type="text"
+                    value={festivalForm.lunarMonth || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, lunarMonth: e.target.value })}
+                    placeholder="उदा. Phalguna / आश्विन"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">तिथि (Tithi)</label>
+                  <input
+                    type="text"
+                    value={festivalForm.tithi || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, tithi: e.target.value })}
+                    placeholder="उदा. Krishna Chaturdashi"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">आराध्य देव / देवी (Associated Deity)</label>
+                  <input
+                    type="text"
+                    value={festivalForm.associatedDeity || ''}
+                    onChange={(e) => setFestivalForm({ ...festivalForm, associatedDeity: e.target.value })}
+                    placeholder="उदा. भगवान शिव / माता पार्वती"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div className="flex items-center pt-6">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!!festivalForm.isMajor}
+                      onChange={(e) => setFestivalForm({ ...festivalForm, isMajor: e.target.checked })}
+                      className="rounded border-[#8c8f94] text-[#2271b1] w-4 h-4"
+                    />
+                    <span className="font-bold text-stone-800">प्रमुख सनातन महापर्व (Major Festival)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">पर्व का महत्व (Hindi Description)</label>
+                <textarea
+                  rows={3}
+                  value={festivalForm.descriptionHi || ''}
+                  onChange={(e) => setFestivalForm({ ...festivalForm, descriptionHi: e.target.value })}
+                  placeholder="भगवान शिव और माता पार्वती के दिव्य विवाह एवं सृष्टि के पावन प्राकट्य की महारात्रि..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">पूजा विधि व नियम (Hindi Puja Vidhi)</label>
+                <textarea
+                  rows={3}
+                  value={festivalForm.pujaVidhiHi || ''}
+                  onChange={(e) => setFestivalForm({ ...festivalForm, pujaVidhiHi: e.target.value })}
+                  placeholder="दिन-रात्रि उपवास रखें, चार प्रहर रुद्राभिषेक करें, बेलपत्र, गंगाजल, धतूरा और भस्म अर्पित करें..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setFestivalModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveFestival}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingFestivalId ? 'पर्व सुरक्षित करें (Save Festival)' : 'पर्व प्रकाशित करें (Publish Festival)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          13. DEITY CREATION / EDIT MODAL
+      ========================================================================= */}
+      {deityModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingDeityId ? 'देवी / देवता स्वरूप संपादित करें (Edit Deity)' : 'नए देवी / देवता जोड़ें (Add New Deity)'}
+              </h3>
+              <button onClick={() => setDeityModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    देवता / देवी का नाम (Hindi) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={deityForm.nameHi || ''}
+                    onChange={(e) => setDeityForm({ ...deityForm, nameHi: e.target.value })}
+                    placeholder="उदा. भगवान शिव (महादेव)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Name</label>
+                  <input
+                    type="text"
+                    value={deityForm.nameEn || ''}
+                    onChange={(e) => setDeityForm({ ...deityForm, nameEn: e.target.value })}
+                    placeholder="e.g. Bhagavan Shiva (Mahadeva)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">संस्कृत नाम (Sanskrit)</label>
+                  <input
+                    type="text"
+                    value={deityForm.nameSa || ''}
+                    onChange={(e) => setDeityForm({ ...deityForm, nameSa: e.target.value })}
+                    placeholder="भगवान् शिवः (महादेवः)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">URL Slug</label>
+                  <input
+                    type="text"
+                    value={deityForm.slug || ''}
+                    onChange={(e) => setDeityForm({ ...deityForm, slug: e.target.value })}
+                    placeholder="bhagavan-shiva"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Image URL</label>
+                  <input
+                    type="text"
+                    value={deityForm.imageUrl || ''}
+                    onChange={(e) => setDeityForm({ ...deityForm, imageUrl: e.target.value })}
+                    placeholder="/images/hero_diya.jpg"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">पावन ध्यान मन्त्र (Primary Mantra)</label>
+                <input
+                  type="text"
+                  value={deityForm.mantra || ''}
+                  onChange={(e) => setDeityForm({ ...deityForm, mantra: e.target.value })}
+                  placeholder="उदा. ॐ नमः शिवाय"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-serif text-amber-950 font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">स्वरूप एवं आयुध (Iconography & Symbols)</label>
+                <input
+                  type="text"
+                  value={deityForm.iconography || ''}
+                  onChange={(e) => setDeityForm({ ...deityForm, iconography: e.target.value })}
+                  placeholder="त्रिशूल, डमरू, मस्तक पर अर्धचंद्र, जटा में गंगा, गले में वासुकि नाग..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">धार्मिक महत्व व दर्शन (Hindi Significance)</label>
+                <textarea
+                  rows={3}
+                  value={deityForm.significanceHi || ''}
+                  onChange={(e) => setDeityForm({ ...deityForm, significanceHi: e.target.value })}
+                  placeholder="परम चेतना, अज्ञान व काम के संहारक, योगियों एवं ध्यानियों के परम आराध्य..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">पौराणिक कथा व प्राकट्य (Hindi Katha)</label>
+                <textarea
+                  rows={3}
+                  value={deityForm.storyHi || ''}
+                  onChange={(e) => setDeityForm({ ...deityForm, storyHi: e.target.value })}
+                  placeholder="भगवान शिव कल्याणकारी हैं। समुद्र मन्थन के समय सम्पूर्ण ब्रह्माण्ड की रक्षा हेतु उन्होंने कालकूट विष का पान किया..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setDeityModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveDeity}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingDeityId ? 'स्वरूप सुरक्षित करें (Save Deity)' : 'स्वरूप प्रकाशित करें (Publish Deity)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          14. DEVOTIONAL VIDEO CREATION / EDIT MODAL
+      ========================================================================= */}
+      {videoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingVideoId ? 'वीडियो विवरण संपादित करें (Edit Video)' : 'नया भक्ति वीडियो जोड़ें (Add Devotional Video)'}
+              </h3>
+              <button onClick={() => setVideoModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">
+                  वीडियो शीर्षक (Video Title) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={videoForm.title || ''}
+                  onChange={(e) => setVideoForm({ ...videoForm, title: e.target.value })}
+                  placeholder="उदा. Shiv Tandav Stotram with Sanskrit Subtitles"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    YouTube Video ID <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={videoForm.youtubeId || ''}
+                    onChange={(e) => setVideoForm({ ...videoForm, youtubeId: e.target.value })}
+                    placeholder="e.g. KRhcTPKdmrk"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                  <span className="text-[10px] text-stone-500">YouTube URL से 11 अक्षरों का ID दर्ज करें</span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">श्रेणी (Category)</label>
+                  <select
+                    value={videoForm.category || 'Mantras'}
+                    onChange={(e) => setVideoForm({ ...videoForm, category: e.target.value })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="Mantras">Mantras (मन्त्र जप)</option>
+                    <option value="Bhajans">Bhajans (भजन व संकीर्तन)</option>
+                    <option value="Discourses">Discourses (कथा व प्रवचन)</option>
+                    <option value="Stories">Stories (पौराणिक कथाएं)</option>
+                    <option value="Guided Meditation">Guided Meditation (ध्यान साधना)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">अवधि (Duration)</label>
+                  <input
+                    type="text"
+                    value={videoForm.duration || ''}
+                    onChange={(e) => setVideoForm({ ...videoForm, duration: e.target.value })}
+                    placeholder="e.g. 09:14"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">दृश्य संख्या (Views Count)</label>
+                  <input
+                    type="text"
+                    value={videoForm.views || ''}
+                    onChange={(e) => setVideoForm({ ...videoForm, views: e.target.value })}
+                    placeholder="e.g. 240M"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">Thumbnail Image URL</label>
+                <input
+                  type="text"
+                  value={videoForm.img || ''}
+                  onChange={(e) => setVideoForm({ ...videoForm, img: e.target.value })}
+                  placeholder="/images/hero_shiva.jpg"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">वीडियो विवरण (Description)</label>
+                <textarea
+                  rows={3}
+                  value={videoForm.description || ''}
+                  onChange={(e) => setVideoForm({ ...videoForm, description: e.target.value })}
+                  placeholder="Ravana's ecstatic Sanskrit hymn extolling the cosmic dance, matted locks, and supreme prowess of Lord Shiva..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setVideoModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveVideo}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingVideoId ? 'वीडियो सुरक्षित करें (Save Video)' : 'वीडियो प्रकाशित करें (Publish Video)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          15. VIDEO EMBED PREVIEW MODAL
+      ========================================================================= */}
+      {videoPreviewId && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-stone-900 rounded-xl overflow-hidden shadow-2xl border border-stone-700 w-full max-w-3xl flex flex-col">
+            <div className="px-4 py-3 bg-stone-850 flex items-center justify-between border-b border-stone-800 text-white text-xs">
+              <div className="flex items-center space-x-2">
+                <Play className="w-4 h-4 text-red-500" />
+                <span className="font-bold">YouTube Video Embed Preview ({videoPreviewId})</span>
+              </div>
+              <button onClick={() => setVideoPreviewId(null)} className="text-stone-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${videoPreviewId}?autoplay=1&rel=0`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
             </div>
           </div>
         </div>

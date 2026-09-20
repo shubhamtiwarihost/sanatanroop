@@ -12,9 +12,17 @@ import {
   DEFAULT_CMS_BOOKS,
   DEFAULT_CMS_SHLOKAS,
 } from '@/data/cmsDefaults';
+import {
+  StaticTemple,
+  StaticFestival,
+  StaticDeity,
+  DEFAULT_TEMPLES,
+  DEFAULT_FESTIVALS,
+  DEFAULT_DEITIES,
+} from '@/data/sanatanContent';
 
-export type { CMSAartiItem, CMSKathaChapter, CMSKathaItem, CMSBookItem, CMSShlokaItem };
-export { DEFAULT_CMS_AARTIS, DEFAULT_CMS_KATHAS, DEFAULT_CMS_BOOKS, DEFAULT_CMS_SHLOKAS };
+export type { CMSAartiItem, CMSKathaChapter, CMSKathaItem, CMSBookItem, CMSShlokaItem, StaticTemple, StaticFestival, StaticDeity };
+export { DEFAULT_CMS_AARTIS, DEFAULT_CMS_KATHAS, DEFAULT_CMS_BOOKS, DEFAULT_CMS_SHLOKAS, DEFAULT_TEMPLES, DEFAULT_FESTIVALS, DEFAULT_DEITIES };
 
 // ==========================================
 // 1. INTERFACES & TYPES
@@ -154,6 +162,31 @@ export interface DivineVibrationsConfig {
   lastUpdated?: string;
 }
 
+export interface CMSVideoItem {
+  id: string;
+  title: string;
+  category: string;
+  duration: string;
+  views: string;
+  img: string;
+  youtubeId: string;
+  description: string;
+}
+
+export interface CMSSEOConfig {
+  googleSiteVerification: string;
+  siteName: string;
+  siteUrl: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultKeywords: string[];
+  canonicalBase: string;
+  sitemapUrl: string;
+  robotsTxt: string;
+  ogImage: string;
+  twitterHandle: string;
+}
+
 export interface CMSContextType {
   // Page Builder Blocks
   blocks: PageBlock[];
@@ -256,6 +289,34 @@ export interface CMSContextType {
   addShloka: (shloka: Omit<CMSShlokaItem, 'id'>) => void;
   updateShloka: (id: string, shloka: Partial<CMSShlokaItem>) => void;
   deleteShloka: (id: string) => void;
+
+  // Temples
+  temples: StaticTemple[];
+  addTemple: (temple: Omit<StaticTemple, 'id'>) => void;
+  updateTemple: (id: string, temple: Partial<StaticTemple>) => void;
+  deleteTemple: (id: string) => void;
+
+  // Festivals
+  festivals: StaticFestival[];
+  addFestival: (festival: Omit<StaticFestival, 'id'>) => void;
+  updateFestival: (id: string, festival: Partial<StaticFestival>) => void;
+  deleteFestival: (id: string) => void;
+
+  // Deities
+  deities: StaticDeity[];
+  addDeity: (deity: Omit<StaticDeity, 'id'>) => void;
+  updateDeity: (id: string, deity: Partial<StaticDeity>) => void;
+  deleteDeity: (id: string) => void;
+
+  // Devotional Videos
+  videos: CMSVideoItem[];
+  addVideo: (video: Omit<CMSVideoItem, 'id'>) => void;
+  updateVideo: (id: string, video: Partial<CMSVideoItem>) => void;
+  deleteVideo: (id: string) => void;
+
+  // SEO & Webmaster Settings
+  seoConfig: CMSSEOConfig;
+  updateSEOConfig: (data: Partial<CMSSEOConfig>) => void;
 
   // Reset to default
   resetToDefaults: () => void;
@@ -707,6 +768,123 @@ const DEFAULT_DIVINE_VIBRATIONS: DivineVibrationsConfig = {
 // 3. CONTEXT & PROVIDER
 // ==========================================
 
+export const DEFAULT_VIDEOS: CMSVideoItem[] = [
+  {
+    id: 'v-featured',
+    title: 'Power of Om Mantra: Sacred Cosmic Sound (432Hz Meditation)',
+    category: 'Mantras',
+    duration: '15:20',
+    views: '1.2M',
+    img: '/images/hero_shiva.jpg',
+    youtubeId: 'LqN2pB92vjU',
+    description: 'Immerse in the primordial cosmic vibration of ॐ (AUM), tuned to 432Hz for deep nervous system calming and higher spiritual awareness.',
+  },
+  {
+    id: 'v-1',
+    title: 'Shri Hanuman Chalisa: Authentic Vedic Recitation by Hariharan',
+    category: 'Mantras',
+    duration: '09:48',
+    views: '3.4B',
+    img: '/images/article_gita_lessons.jpg',
+    youtubeId: 'AETFvQonfV8',
+    description: 'The world’s most listened-to rendition of Goswami Tulsidas’s 40 chaupais dedicated to Lord Hanuman.',
+  },
+  {
+    id: 'v-2',
+    title: 'Shiv Tandav Stotram with Sanskrit Subtitles: Shankar Mahadevan',
+    category: 'Mantras',
+    duration: '09:14',
+    views: '240M',
+    img: '/images/category_puja.jpg',
+    youtubeId: 'KRhcTPKdmrk',
+    description: 'Ravana’s ecstatic Sanskrit hymn extolling the cosmic dance, matted locks, and supreme prowess of Lord Shiva.',
+  },
+  {
+    id: 'v-3',
+    title: 'Aigiri Nandini • Mahishasura Mardini Stotram (Devi Stuti)',
+    category: 'Bhajans',
+    duration: '11:20',
+    views: '85M',
+    img: '/images/community_banner.jpg',
+    youtubeId: 'n-Wp25V5W6o',
+    description: 'Adi Shankaracharya’s rhythmic masterpiece celebrating the victory of the Divine Mother over inner ignorance and demonic forces.',
+  },
+  {
+    id: 'v-4',
+    title: 'Bhagavad Gita Wisdom: Overcoming Anxiety through Karma Yoga',
+    category: 'Discourses',
+    duration: '24:15',
+    views: '450k',
+    img: '/images/gita_krishna.jpg',
+    youtubeId: 'kYJ5o-5J4rU',
+    description: 'A profound philosophical discourse on how Lord Krishna’s teachings in Chapter 2 dissolve stress, anxiety, and fear of failure.',
+  },
+  {
+    id: 'v-5',
+    title: 'Maha Mrityunjaya Mantra 108 Times with Meaning',
+    category: 'Mantras',
+    duration: '32:10',
+    views: '920k',
+    img: '/images/article_meditation.jpg',
+    youtubeId: 'qK1O3NQHtvI',
+    description: 'Rigvedic life-giving healing mantra for health, longevity, and liberation from mortal fears.',
+  },
+  {
+    id: 'v-6',
+    title: 'Achyutam Keshavam Rama Narayanam • Divine Krishna Bhajan',
+    category: 'Bhajans',
+    duration: '06:40',
+    views: '15M',
+    img: '/images/category_idols.jpg',
+    youtubeId: 'kY3L8325Y_U',
+    description: 'A sweet devotional melody celebrating the thousand divine names and loving presence of Lord Krishna.',
+  },
+  {
+    id: 'v-7',
+    title: 'The Story of Raja Harishchandra: Unwavering Truth & Dharma',
+    category: 'Stories',
+    duration: '18:50',
+    views: '310k',
+    img: '/images/temple_river_sunrise_1789306575821.jpg',
+    youtubeId: 'JDC-AxrFJnc',
+    description: 'The inspiring Pauranik legend of King Harishchandra demonstrating that adherence to Satya (Truth) triumphs over all adversity.',
+  },
+  {
+    id: 'v-8',
+    title: 'Vedic Guided Meditation for Inner Peace & Mind Stillness',
+    category: 'Guided Meditation',
+    duration: '20:00',
+    views: '680k',
+    img: '/images/category_rudraksha.jpg',
+    youtubeId: 'Xh0Yp_e8vW8',
+    description: 'A gentle step-by-step Dhyana session guiding awareness from breath observation to the sacred stillness of the Supreme Self.',
+  },
+];
+
+export const DEFAULT_SEO_CONFIG: CMSSEOConfig = {
+  googleSiteVerification: '913wqbYQWYyRQMdP2NipyBMPrcAqhJSFeSVdikk7Lt4',
+  siteName: 'SanatanRoop (सनातन रूप)',
+  siteUrl: 'https://sanatanroop.com',
+  defaultTitle: 'SanatanRoop - Authentic Vedic Wisdom, Mantras, Aartis, Kathas & Scriptures',
+  defaultDescription: 'Explore the eternal wisdom of Sanatan Dharma: authentic Vedic shlokas, sacred aartis with audio, vrat kathas, 12 Jyotirlingas, and holy scriptures.',
+  defaultKeywords: [
+    'Sanatan Dharma',
+    'Vedic Scriptures',
+    'Aartis',
+    'Shlokas',
+    'Pauranik Kathas',
+    '12 Jyotirlingas',
+    'Bhagavad Gita',
+    'Hindu Festivals',
+    'Divine Vibrations',
+  ],
+  canonicalBase: 'https://sanatanroop.com',
+  sitemapUrl: 'https://sanatanroop.com/sitemap.xml',
+  robotsTxt: 'User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: https://sanatanroop.com/sitemap.xml',
+  ogImage: '/images/hero_shiva.jpg',
+  twitterHandle: '@SanatanRoop',
+};
+
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export function CMSProvider({ children }: { children: React.ReactNode }) {
@@ -729,6 +907,11 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const [kathas, setKathas] = useState<CMSKathaItem[]>(DEFAULT_CMS_KATHAS);
   const [books, setBooks] = useState<CMSBookItem[]>(DEFAULT_CMS_BOOKS);
   const [shlokas, setShlokas] = useState<CMSShlokaItem[]>(DEFAULT_CMS_SHLOKAS);
+  const [temples, setTemples] = useState<StaticTemple[]>(DEFAULT_TEMPLES);
+  const [festivals, setFestivals] = useState<StaticFestival[]>(DEFAULT_FESTIVALS);
+  const [deities, setDeities] = useState<StaticDeity[]>(DEFAULT_DEITIES);
+  const [videos, setVideos] = useState<CMSVideoItem[]>(DEFAULT_VIDEOS);
+  const [seoConfig, setSeoConfig] = useState<CMSSEOConfig>(DEFAULT_SEO_CONFIG);
   const [products, setProducts] = useState<CMSProductItem[]>(DEFAULT_PRODUCTS);
   const [articles, setArticles] = useState<CMSArticleItem[]>(DEFAULT_ARTICLES);
   const [orders, setOrders] = useState<CMSOrderItem[]>(DEFAULT_ORDERS);
@@ -835,6 +1018,21 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      const savedTemples = localStorage.getItem('sanatan_cms_temples');
+      if (savedTemples) setTemples(JSON.parse(savedTemples));
+
+      const savedFestivals = localStorage.getItem('sanatan_cms_festivals');
+      if (savedFestivals) setFestivals(JSON.parse(savedFestivals));
+
+      const savedDeities = localStorage.getItem('sanatan_cms_deities');
+      if (savedDeities) setDeities(JSON.parse(savedDeities));
+
+      const savedVideos = localStorage.getItem('sanatan_cms_videos');
+      if (savedVideos) setVideos(JSON.parse(savedVideos));
+
+      const savedSEO = localStorage.getItem('sanatan_cms_seo');
+      if (savedSEO) setSeoConfig(JSON.parse(savedSEO));
+
       const savedProducts = localStorage.getItem('hindu_dharma_cms_products');
       if (savedProducts) setProducts(JSON.parse(savedProducts));
 
@@ -871,6 +1069,11 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         if (e.key === 'sanatan_cms_kathas') setKathas(JSON.parse(e.newValue));
         if (e.key === 'sanatan_cms_books') setBooks(JSON.parse(e.newValue));
         if (e.key === 'sanatan_cms_shlokas') setShlokas(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_temples') setTemples(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_festivals') setFestivals(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_deities') setDeities(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_videos') setVideos(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_seo') setSeoConfig(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_products') setProducts(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_articles') setArticles(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_menu') setHeaderMenu(JSON.parse(e.newValue));
@@ -1226,10 +1429,130 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setKathas(DEFAULT_CMS_KATHAS);
     setBooks(DEFAULT_CMS_BOOKS);
     setShlokas(DEFAULT_CMS_SHLOKAS);
+    setTemples(DEFAULT_TEMPLES);
+    setFestivals(DEFAULT_FESTIVALS);
+    setDeities(DEFAULT_DEITIES);
+    setVideos(DEFAULT_VIDEOS);
+    setSeoConfig(DEFAULT_SEO_CONFIG);
     setProducts(DEFAULT_PRODUCTS);
     setArticles(DEFAULT_ARTICLES);
     setOrders(DEFAULT_ORDERS);
     setDivineVibrations(DEFAULT_DIVINE_VIBRATIONS);
+  };
+
+  // Temples Handlers
+  const saveTemples = (items: StaticTemple[]) => {
+    setTemples(items);
+    try {
+      localStorage.setItem('sanatan_cms_temples', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addTemple = (temple: Omit<StaticTemple, 'id'>) => {
+    const newTemple: StaticTemple = {
+      ...temple,
+      id: `t-${Date.now()}`,
+    };
+    saveTemples([newTemple, ...temples]);
+  };
+
+  const updateTemple = (id: string, partial: Partial<StaticTemple>) => {
+    const updated = temples.map((t) => (t.id === id ? { ...t, ...partial } : t));
+    saveTemples(updated);
+  };
+
+  const deleteTemple = (id: string) => {
+    const updated = temples.filter((t) => t.id !== id);
+    saveTemples(updated);
+  };
+
+  // Festivals Handlers
+  const saveFestivals = (items: StaticFestival[]) => {
+    setFestivals(items);
+    try {
+      localStorage.setItem('sanatan_cms_festivals', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addFestival = (festival: Omit<StaticFestival, 'id'>) => {
+    const newFestival: StaticFestival = {
+      ...festival,
+      id: `f-${Date.now()}`,
+    };
+    saveFestivals([newFestival, ...festivals]);
+  };
+
+  const updateFestival = (id: string, partial: Partial<StaticFestival>) => {
+    const updated = festivals.map((f) => (f.id === id ? { ...f, ...partial } : f));
+    saveFestivals(updated);
+  };
+
+  const deleteFestival = (id: string) => {
+    const updated = festivals.filter((f) => f.id !== id);
+    saveFestivals(updated);
+  };
+
+  // Deities Handlers
+  const saveDeities = (items: StaticDeity[]) => {
+    setDeities(items);
+    try {
+      localStorage.setItem('sanatan_cms_deities', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addDeity = (deity: Omit<StaticDeity, 'id'>) => {
+    const newDeity: StaticDeity = {
+      ...deity,
+      id: `d-${Date.now()}`,
+    };
+    saveDeities([newDeity, ...deities]);
+  };
+
+  const updateDeity = (id: string, partial: Partial<StaticDeity>) => {
+    const updated = deities.map((d) => (d.id === id ? { ...d, ...partial } : d));
+    saveDeities(updated);
+  };
+
+  const deleteDeity = (id: string) => {
+    const updated = deities.filter((d) => d.id !== id);
+    saveDeities(updated);
+  };
+
+  // Devotional Videos Handlers
+  const saveVideos = (items: CMSVideoItem[]) => {
+    setVideos(items);
+    try {
+      localStorage.setItem('sanatan_cms_videos', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addVideo = (video: Omit<CMSVideoItem, 'id'>) => {
+    const newVideo: CMSVideoItem = {
+      ...video,
+      id: `v-${Date.now()}`,
+    };
+    saveVideos([newVideo, ...videos]);
+  };
+
+  const updateVideo = (id: string, partial: Partial<CMSVideoItem>) => {
+    const updated = videos.map((v) => (v.id === id ? { ...v, ...partial } : v));
+    saveVideos(updated);
+  };
+
+  const deleteVideo = (id: string) => {
+    const updated = videos.filter((v) => v.id !== id);
+    saveVideos(updated);
+  };
+
+  // SEO & Webmaster Settings Handler
+  const updateSEOConfig = (data: Partial<CMSSEOConfig>) => {
+    setSeoConfig((prev) => {
+      const next = { ...prev, ...data };
+      try {
+        localStorage.setItem('sanatan_cms_seo', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
   };
 
   // Divine Vibrations Handlers
@@ -1314,6 +1637,24 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         addShloka,
         updateShloka,
         deleteShloka,
+        temples,
+        addTemple,
+        updateTemple,
+        deleteTemple,
+        festivals,
+        addFestival,
+        updateFestival,
+        deleteFestival,
+        deities,
+        addDeity,
+        updateDeity,
+        deleteDeity,
+        videos,
+        addVideo,
+        updateVideo,
+        deleteVideo,
+        seoConfig,
+        updateSEOConfig,
         products,
         addProduct,
         updateProduct,

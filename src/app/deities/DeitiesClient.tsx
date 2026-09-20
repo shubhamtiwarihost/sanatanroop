@@ -1,30 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useCMS } from '@/context/CMSContext';
 import { Sparkles, MapPin, Calendar, BookOpen, ChevronRight } from 'lucide-react';
 import { DEFAULT_DEITIES } from '@/data/sanatanContent';
 
 export default function DeitiesPage() {
   const { locale, t } = useLanguage();
-  const [deities, setDeities] = useState<any[]>(DEFAULT_DEITIES);
+  const { deities: cmsDeities } = useCMS();
+  const deities = cmsDeities && cmsDeities.length > 0 ? cmsDeities : DEFAULT_DEITIES;
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    async function loadDeities() {
-      try {
-        const res = await fetch('/api/v1/deities');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.deities && data.deities.length > 0) setDeities(data.deities);
-        }
-      } catch (e) {
-        // Fallback to DEFAULT_DEITIES
-      }
-    }
-    loadDeities();
-  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">

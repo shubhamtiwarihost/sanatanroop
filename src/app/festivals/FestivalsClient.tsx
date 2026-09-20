@@ -1,29 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useCMS } from '@/context/CMSContext';
 import { Calendar, Sparkles, Flame, CheckCircle2 } from 'lucide-react';
 import { DEFAULT_FESTIVALS } from '@/data/sanatanContent';
 
 export default function FestivalsPage() {
   const { locale, t } = useLanguage();
-  const [festivals, setFestivals] = useState<any[]>(DEFAULT_FESTIVALS);
+  const { festivals: cmsFestivals } = useCMS();
+  const festivals = cmsFestivals && cmsFestivals.length > 0 ? cmsFestivals : DEFAULT_FESTIVALS;
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    async function loadFestivals() {
-      try {
-        const res = await fetch('/api/v1/festivals');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.festivals && data.festivals.length > 0) setFestivals(data.festivals);
-        }
-      } catch (e) {
-        // Fallback to DEFAULT_FESTIVALS
-      }
-    }
-    loadFestivals();
-  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">

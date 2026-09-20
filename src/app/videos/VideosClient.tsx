@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useCMS } from '@/context/CMSContext';
 import { Play, X, Clock, Eye, Sparkles, Film, CheckCircle2 } from 'lucide-react';
 
 interface VideoItem {
@@ -109,17 +110,19 @@ const VIDEOS_DATA: VideoItem[] = [
 ];
 
 export default function VideosPage() {
+  const { videos: cmsVideos } = useCMS();
+  const videosList = cmsVideos && cmsVideos.length > 0 ? cmsVideos : VIDEOS_DATA;
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
   const categories = ['All', 'Mantras', 'Discourses', 'Bhajans', 'Stories', 'Guided Meditation'];
 
-  const filteredVideos = VIDEOS_DATA.filter((vid) => {
+  const filteredVideos = videosList.filter((vid) => {
     if (activeCategory === 'All') return true;
     return vid.category.toLowerCase() === activeCategory.toLowerCase();
   });
 
-  const featuredVideo = VIDEOS_DATA[0];
+  const featuredVideo = videosList[0] || VIDEOS_DATA[0];
 
   return (
     <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120d0a] text-stone-900 dark:text-stone-100 font-sans pb-24">

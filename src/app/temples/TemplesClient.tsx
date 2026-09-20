@@ -1,33 +1,21 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useCMS } from '@/context/CMSContext';
 import { MapPin, Clock, BookOpen, ChevronRight, Sparkles } from 'lucide-react';
 import { DEFAULT_TEMPLES } from '@/data/sanatanContent';
 
 export default function TemplesPage() {
   const { locale, t } = useLanguage();
-  const [temples, setTemples] = useState<any[]>(DEFAULT_TEMPLES);
+  const { temples: cmsTemples } = useCMS();
+  const temples = cmsTemples && cmsTemples.length > 0 ? cmsTemples : DEFAULT_TEMPLES;
   const [selectedState, setSelectedState] = useState('ALL');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function loadTemples() {
-      try {
-        const res = await fetch('/api/v1/temples');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.temples && data.temples.length > 0) setTemples(data.temples);
-        }
-      } catch (e) {
-        // Fallback to DEFAULT_TEMPLES
-      }
-    }
-    loadTemples();
-  }, []);
-
-  const states = ['ALL', 'Uttar Pradesh', 'Uttarakhand', 'Andhra Pradesh', 'Tamil Nadu', 'Odisha'];
+  const availableStates = ['ALL', ...Array.from(new Set(temples.map((tm) => tm.state).filter(Boolean)))];
+  const states = availableStates.length > 1 ? availableStates : ['ALL', 'Uttar Pradesh', 'Uttarakhand', 'Andhra Pradesh', 'Madhya Pradesh'];
 
   const filtered = selectedState === 'ALL'
     ? temples
