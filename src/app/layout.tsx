@@ -10,6 +10,7 @@ import IntroScreen from '@/components/IntroScreen';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import CookieConsent from '@/components/CookieConsent';
 
 const marcellus = Marcellus({
   weight: '400',
@@ -210,6 +211,7 @@ export default function RootLayout({
                   <main className="flex-1">{children}</main>
                   <Footer />
                   <MobileBottomNav />
+                  <CookieConsent />
                 </CMSProvider>
               </AudioProvider>
             </CartProvider>
