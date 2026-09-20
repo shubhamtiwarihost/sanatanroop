@@ -44,6 +44,12 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'SanatanRoop - Shubham Tiwari' }],
   metadataBase: new URL('https://sanatanroop.com'),
+  verification: {
+    google: '913wqbYQWYyRQMdP2NipyBMPrcAqhJSFeSVdikk7Lt4',
+  },
+  other: {
+    'google-site-verification': '913wqbYQWYyRQMdP2NipyBMPrcAqhJSFeSVdikk7Lt4',
+  },
   openGraph: {
     title: 'SanatanRoop | सम्पूर्ण सनातन धर्म, पंचांग, आरती एवं ग्रंथ',
     description:
