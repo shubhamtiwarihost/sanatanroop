@@ -1,89 +1,127 @@
-'use client';
+import type { Metadata } from 'next';
+import FestivalsClient from './FestivalsClient';
 
-import React, { useEffect, useState } from 'react';
-import { useLanguage } from '@/i18n/LanguageContext';
-import { Calendar, Sparkles, Flame, CheckCircle2 } from 'lucide-react';
-import { DEFAULT_FESTIVALS } from '@/data/sanatanContent';
+export const metadata: Metadata = {
+  title: 'हिन्दू व्रत, पर्व एवं त्यौहार (Hindu Festivals & Vrats Calendar)',
+  description:
+    'दीपावली, महाशिवरात्रि, नवरात्रि, श्री कृष्ण जन्माष्टमी, होली, एकादशी एवं प्रमुख हिन्दू पर्वों की तिथि, शुभ मुहूर्त, व्रत विधि एवं पौराणिक कथाएँ।',
+  keywords: [
+    'Hindu Festivals',
+    'हिन्दू त्यौहार',
+    'Vrat Calendar',
+    'Diwali 2026',
+    'Maha Shivratri',
+    'Navratri Vrat Vidhi',
+    'Krishna Janmashtami',
+    'Ekadashi Vrat Dates',
+    'SanatanRoop Festivals',
+  ],
+  alternates: {
+    canonical: 'https://sanatanroop.com/festivals',
+  },
+  openGraph: {
+    title: 'हिन्दू व्रत, पर्व एवं त्यौहार (Hindu Festivals & Vrats) | SanatanRoop',
+    description:
+      'दीपावली, महाशिवरात्रि, नवरात्रि, जन्माष्टमी, होली एवं एकादशी की पावन तिथियाँ, शुभ मुहूर्त एवं व्रत विधि।',
+    url: 'https://sanatanroop.com/festivals',
+    siteName: 'SanatanRoop',
+    images: [{ url: '/images/hero_shiva.jpg', width: 1200, height: 630, alt: 'Hindu Festivals Calendar' }],
+    locale: 'hi_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'हिन्दू व्रत, पर्व एवं त्यौहार | SanatanRoop',
+    description:
+      'प्रमुख हिन्दू पर्वों की तिथि, शुभ मुहूर्त, व्रत विधि एवं पौराणिक कथाएँ।',
+    images: ['/images/hero_shiva.jpg'],
+  },
+};
 
 export default function FestivalsPage() {
-  const { locale, t } = useLanguage();
-  const [festivals, setFestivals] = useState<any[]>(DEFAULT_FESTIVALS);
-  const [loading, setLoading] = useState(false);
+  const festivalsSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Major Hindu Festivals and Vrats',
+    description: 'Calendar of major Hindu festivals, vrata vidhis, and auspicious dates.',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        item: {
+          '@type': 'Event',
+          name: 'महाशिवरात्रि (Maha Shivratri)',
+          description: 'फाल्गुन कृष्ण चतुर्दशी को देवाधिदेव महादेव एवं माता पार्वती के विवाह का महापर्व।',
+          eventStatus: 'https://schema.org/EventScheduled',
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        },
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        item: {
+          '@type': 'Event',
+          name: 'श्री कृष्ण जन्माष्टमी (Krishna Janmashtami)',
+          description: 'भाद्रपद कृष्ण अष्टमी को भगवान श्रीकृष्ण का प्राकट्य उत्सव।',
+          eventStatus: 'https://schema.org/EventScheduled',
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        },
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        item: {
+          '@type': 'Event',
+          name: 'दीपावली (Diwali / Deepawali)',
+          description: 'कार्तिक अमावस्या को माँ महालक्ष्मी पूजन एवं भगवान श्री राम के अयोध्या आगमन का प्रकाश पर्व।',
+          eventStatus: 'https://schema.org/EventScheduled',
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        },
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        item: {
+          '@type': 'Event',
+          name: 'शारदीय नवरात्रि (Sharad Navratri)',
+          description: 'आश्विन शुक्ल प्रतिपदा से नवमी तक माँ आद्यशक्ति दुर्गा के नौ रूपों की उपासना का पावन पर्व।',
+          eventStatus: 'https://schema.org/EventScheduled',
+          eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        },
+      },
+    ],
+  };
 
-  useEffect(() => {
-    async function loadFestivals() {
-      try {
-        const res = await fetch('/api/v1/festivals');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.festivals && data.festivals.length > 0) setFestivals(data.festivals);
-        }
-      } catch (e) {
-        // Fallback to DEFAULT_FESTIVALS
-      }
-    }
-    loadFestivals();
-  }, []);
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'मुख्य पृष्ठ (Home)',
+        item: 'https://sanatanroop.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'पर्व एवं त्यौहार (Festivals)',
+        item: 'https://sanatanroop.com/festivals',
+      },
+    ],
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-      <div className="border-b border-amber-200 dark:border-amber-900/60 pb-6 text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center space-x-2 text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-2">
-          <Calendar className="w-4 h-4" />
-          <span>{t.nav.festivals}</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 dark:text-stone-50">
-          {t.home.festivalsCalendar}
-        </h1>
-        <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
-          Major Hindu festivals, vrata vidhis, puja procedures, and scriptural significance.
-        </p>
-      </div>
-
-      {loading ? (
-        <div className="text-center py-20 text-stone-500 font-serif">{t.common.loading}</div>
-      ) : (
-        <div className="space-y-6">
-          {festivals.map((f) => (
-            <div
-              key={f.id}
-              className="rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-amber-900/60 p-6 sm:p-8 shadow-sm hover:shadow-md transition space-y-4"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-100 dark:border-stone-800 pb-3 gap-2">
-                <div>
-                  <span className="text-xs uppercase tracking-wider font-bold text-amber-800 dark:text-amber-400">
-                    {f.lunarMonth} • {f.tithi}
-                  </span>
-                  <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">
-                    {locale === 'hi' ? f.nameHi : locale === 'sa' ? f.nameSa : f.nameEn}
-                  </h2>
-                </div>
-                {f.associatedDeity && (
-                  <span className="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
-                    Deity: {f.associatedDeity}
-                  </span>
-                )}
-              </div>
-
-              <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
-                {locale === 'hi' ? f.descriptionHi : f.descriptionEn}
-              </p>
-
-              {(f.pujaVidhiEn || f.pujaVidhiHi) && (
-                <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-stone-800/40 border border-amber-100 dark:border-stone-700 space-y-1">
-                  <span className="text-xs uppercase tracking-wider font-bold text-amber-900 dark:text-amber-200 flex items-center space-x-1">
-                    <Flame className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Puja Vidhi & Ritual Observance:</span>
-                  </span>
-                  <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
-                    {locale === 'hi' ? f.pujaVidhiHi : f.pujaVidhiEn}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(festivalsSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <FestivalsClient />
+    </>
   );
 }
