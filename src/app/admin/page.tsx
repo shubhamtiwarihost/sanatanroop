@@ -422,6 +422,7 @@ export default function WordPressAdminPanel() {
         english: item.english,
         category: item.category,
         scriptureSlug: item.scriptureSlug,
+        youtubeId: item.youtubeId || 'Vnz8rJX9w-E',
         status: item.status,
       });
     } else {
@@ -436,6 +437,7 @@ export default function WordPressAdminPanel() {
         english: '',
         category: 'Gita Shlokas',
         scriptureSlug: 'bhagavad-gita',
+        youtubeId: 'Vnz8rJX9w-E',
         status: 'Published',
       });
     }
@@ -461,6 +463,7 @@ export default function WordPressAdminPanel() {
         english: shlokaForm.english || '',
         category: shlokaForm.category || 'Gita Shlokas',
         scriptureSlug: shlokaForm.scriptureSlug || 'bhagavad-gita',
+        youtubeId: shlokaForm.youtubeId || 'Vnz8rJX9w-E',
         status: shlokaForm.status || 'Published',
       });
       showNotice(`नया श्लोक सफलतापूर्वक जोड़ा गया।`);
@@ -5140,6 +5143,16 @@ export default function WordPressAdminPanel() {
                     onChange={(e) => setShlokaForm({ ...shlokaForm, meter: e.target.value })}
                     placeholder="उदा. अनुष्टुप् छन्द (Anushtubh Meter)"
                     className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">YouTube Video / Song ID</label>
+                  <input
+                    type="text"
+                    value={shlokaForm.youtubeId || ''}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, youtubeId: e.target.value })}
+                    placeholder="e.g. Vnz8rJX9w-E"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-mono"
                   />
                 </div>
                 <div>

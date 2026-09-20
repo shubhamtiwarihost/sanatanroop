@@ -23,7 +23,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '15:20',
     views: '1.2M',
     img: '/images/hero_shiva.jpg',
-    youtubeId: '8g0hT44PhzA',
+    youtubeId: 'LqN2pB92vjU',
     description: 'Immerse in the primordial cosmic vibration of ॐ (AUM), tuned to 432Hz for deep nervous system calming and higher spiritual awareness.',
   },
   {
@@ -43,7 +43,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '09:14',
     views: '240M',
     img: '/images/category_puja.jpg',
-    youtubeId: 'hMBKmQ63GGU',
+    youtubeId: 'KRhcTPKdmrk',
     description: 'Ravana’s ecstatic Sanskrit hymn extolling the cosmic dance, matted locks, and supreme prowess of Lord Shiva.',
   },
   {
@@ -53,7 +53,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '11:20',
     views: '85M',
     img: '/images/community_banner.jpg',
-    youtubeId: 'W3q8Od5qJio',
+    youtubeId: 'n-Wp25V5W6o',
     description: 'Adi Shankaracharya’s rhythmic masterpiece celebrating the victory of the Divine Mother over inner ignorance and demonic forces.',
   },
   {
@@ -63,7 +63,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '24:15',
     views: '450k',
     img: '/images/gita_krishna.jpg',
-    youtubeId: 'E6uM3wKjSFE',
+    youtubeId: 'kYJ5o-5J4rU',
     description: 'A profound philosophical discourse on how Lord Krishna’s teachings in Chapter 2 dissolve stress, anxiety, and fear of failure.',
   },
   {
@@ -73,7 +73,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '32:10',
     views: '920k',
     img: '/images/article_meditation.jpg',
-    youtubeId: 'Ll5Ccg1qWdc',
+    youtubeId: 'qK1O3NQHtvI',
     description: 'Rigvedic life-giving healing mantra for health, longevity, and liberation from mortal fears.',
   },
   {
@@ -83,7 +83,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '06:40',
     views: '15M',
     img: '/images/category_idols.jpg',
-    youtubeId: 'k1t6rM1bJ6w',
+    youtubeId: 'kY3L8325Y_U',
     description: 'A sweet devotional melody celebrating the thousand divine names and loving presence of Lord Krishna.',
   },
   {
@@ -93,7 +93,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '18:50',
     views: '310k',
     img: '/images/temple_river_sunrise_1789306575821.jpg',
-    youtubeId: 'F0f5u-Jt8pU',
+    youtubeId: 'JDC-AxrFJnc',
     description: 'The inspiring Pauranik legend of King Harishchandra demonstrating that adherence to Satya (Truth) triumphs over all adversity.',
   },
   {
@@ -103,7 +103,7 @@ const VIDEOS_DATA: VideoItem[] = [
     duration: '20:00',
     views: '680k',
     img: '/images/category_rudraksha.jpg',
-    youtubeId: 'HfHkBEjofqk',
+    youtubeId: 'Xh0Yp_e8vW8',
     description: 'A gentle step-by-step Dhyana session guiding awareness from breath observation to the sacred stillness of the Supreme Self.',
   },
 ];

@@ -234,7 +234,7 @@ Pranavakshara Ke Madhye Ye Teeno Eka || Om Jai Shiv Omkara ||
 Trigun Shivji Ki Aarti Jo Koi Nar Gave |
 Kahat Shivananda Swami, Manvaanchhit Phal Paave || Om Jai Shiv Omkara ||`,
     meaning: 'Hail to Lord Shiva, the sacred Omkara! Brahma, Vishnu, and Sadashiva are undivided in You. Holding the trident, kamandalu, and damru, You bring peace and liberation. Within the sacred syllable AUM, the holy trinity is one.',
-    youtubeId: 'F0f5u-Jt8pU',
+    youtubeId: 'kYJq0689bYk',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '6:44',
     audioTrack: {
@@ -410,7 +410,7 @@ Tulsidas Prabhu Keerati Gaai ||
 Jo Hanuman Ji Ki Aarti Gaavai |
 Basi Baikunth Param Pad Paavai ||`,
     meaning: 'Perform the aarti of beloved Hanuman, who subdues the wicked and represents Lord Rama’s prowess. His strength makes mountains tremble, and no afflictions dare approach his devotee. He burnt Lanka, brought Sanjeevani to save Lakshmana, and killed Ahiravana in Patala.',
-    youtubeId: 'F3a1U9056g4',
+    youtubeId: 'HfHkBEjofqk',
     singer: 'हरिहरन (Hariharan)',
     duration: '5:02',
     audioTrack: {
@@ -474,7 +474,7 @@ Ratna Chaturdash Tum Bin, Koi Nahin Paata || Om Jai Laxmi Mata ||
 Mahalaxmi Ji Ki Aarti, Jo Koi Nar Gaave |
 Ur Aanand Samaave, Paap Utar Jaave || Om Jai Laxmi Mata ||`,
     meaning: 'Glory to Mother Lakshmi, who bestows wealth, righteous prosperity, and peace upon homes where devotion and dharma reside. She is the daughter of the cosmic ocean of milk (Ksheerasagara), and without Her grace, noble deeds, feasts, and sacred yajnas cannot flourish.',
-    youtubeId: 'Edk4kLdSnI4',
+    youtubeId: 'Ydd0cSY3I8s',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:30',
     audioTrack: {
@@ -499,7 +499,7 @@ Ur Aanand Samaave, Paap Utar Jaave || Om Jai Laxmi Mata ||`,
 मृगमद तिलक ललाट सुहावै, अलक कस्तूरी महकावै ॥
 आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
 
-बंशी मधुर बजावै, सबही के मन को लुभावै ।
+वंशी मधुर बजावै, सबही के मन को लुभावै ।
 मन्द-मन्द मुसुकावै, प्रेम रस बरसै अमृत बरसावै ॥
 आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
 
@@ -594,7 +594,7 @@ Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
 Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
 Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
-    youtubeId: 'asn_MEvq950',
+    youtubeId: 'Jb4p7X-t6-c',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:10',
     audioTrack: {

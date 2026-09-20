@@ -63,7 +63,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         });
       }
 
-      audioRef.current.muted = isMuted;
+      setIsMuted(false);
+      audioRef.current.muted = false;
+      localStorage.setItem('sanatan_audio_muted', 'false');
       await audioRef.current.play();
       setIsPlaying(true);
     } catch (err) {

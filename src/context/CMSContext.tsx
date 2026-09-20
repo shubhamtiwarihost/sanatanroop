@@ -772,7 +772,37 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedMantras) setMantras(JSON.parse(savedMantras));
 
       const savedAartis = localStorage.getItem('sanatan_cms_aartis');
-      if (savedAartis) setAartis(JSON.parse(savedAartis));
+      if (savedAartis) {
+        try {
+          const parsed = JSON.parse(savedAartis);
+          let changed = false;
+          const cleaned = parsed.map((item: any) => {
+            if (item.id === 'aarti-hanuman' && (item.youtubeId === 'F3a1U9056g4' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'HfHkBEjofqk' };
+            }
+            if (item.id === 'aarti-laxmi' && (item.youtubeId === 'Edk4kLdSnI4' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'Ydd0cSY3I8s' };
+            }
+            if (item.id === 'aarti-shiv' && (item.youtubeId === 'F0f5u-Jt8pU' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'kYJq0689bYk' };
+            }
+            if (item.id === 'aarti-ram' && (item.youtubeId === 'asn_MEvq950' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'Jb4p7X-t6-c' };
+            }
+            return item;
+          });
+          if (changed) {
+            localStorage.setItem('sanatan_cms_aartis', JSON.stringify(cleaned));
+          }
+          setAartis(cleaned);
+        } catch {
+          setAartis(JSON.parse(savedAartis));
+        }
+      }
 
       const savedKathas = localStorage.getItem('sanatan_cms_kathas');
       if (savedKathas) setKathas(JSON.parse(savedKathas));

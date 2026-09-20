@@ -14,6 +14,8 @@ import {
   Check,
   ChevronRight,
   ExternalLink,
+  Volume2,
+  X,
 } from 'lucide-react';
 
 interface ScriptureShloka {
@@ -27,6 +29,7 @@ interface ScriptureShloka {
   english: string;
   category: string;
   scriptureSlug: string;
+  youtubeId?: string;
 }
 
 const CANONICAL_SHLOKAS: ScriptureShloka[] = [
@@ -41,6 +44,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'You have a right only to work, never to its fruits; let not the fruits of action be your motive, nor let your attachment be to inaction.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: 'Vnz8rJX9w-E',
   },
   {
     id: 'gita-4-7',
@@ -53,6 +57,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'Whenever and wherever there is a decline in righteousness and a rise of unrighteousness, at that time I manifest Myself on Earth.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: 'Ua4d4RIPME8',
   },
   {
     id: 'gita-9-22',
@@ -65,6 +70,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'For those who always worship Me with exclusive devotion, meditating on My transcendental form, to them I carry what they lack and preserve what they have.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: '_jVVsBn2Fxc',
   },
   {
     id: 'isha-1',
@@ -77,6 +83,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'All this, whatsoever moves in this universe, is enveloped by the Lord. Enjoy through detachment; do not covet anyone’s wealth.',
     category: 'Upanishad Shlokas',
     scriptureSlug: 'isha-upanishad',
+    youtubeId: 'bD9sf88tM4g',
   },
   {
     id: 'shanti-mantra',
@@ -89,6 +96,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'Lead me from the unreal to the real, lead me from darkness to light, lead me from death to immortality. Om Peace, Peace, Peace.',
     category: 'Shanti Mantras',
     scriptureSlug: 'upanishads',
+    youtubeId: 'Vwyo62x9yC4',
   },
   {
     id: 'shiva-tandava-1',
@@ -101,6 +109,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'With His neck consecrated by the holy stream of the Ganga flowing from His matted forest hair, He who dances the fierce cosmic Tandava to the rhythmic sound of His damaru, may Lord Shiva bestow auspiciousness upon us.',
     category: 'Stotras',
     scriptureSlug: 'shiva-stotras',
+    youtubeId: 'vV1139l9g44',
   },
 ];
 
@@ -111,25 +120,73 @@ export default function ShlokasPage() {
   const { isPlaying, playAudio, pauseAudio } = useAudio();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [playingId, setPlayingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const allShlokas = useMemo(() => {
-    return (shlokas && shlokas.length > 0 ? shlokas : CANONICAL_SHLOKAS) as ScriptureShloka[];
+  // Active Shloka Devotional Song Player State
+  const [activeSongShloka, setActiveSongShloka] = useState<ScriptureShloka | null>(null);
+
+  // Vedic Swara Path (Speech Recitation) State
+  const [speakingShlokaId, setSpeakingShlokaId] = useState<string | null>(null);
+
+  const allShlokas = useMemo<ScriptureShloka[]>(() => {
+    if (!shlokas || shlokas.length === 0) return CANONICAL_SHLOKAS;
+    return shlokas.map((s) => {
+      const canonical = CANONICAL_SHLOKAS.find((c) => c.id === s.id);
+      return {
+        ...s,
+        youtubeId: s.youtubeId || canonical?.youtubeId || 'Vnz8rJX9w-E',
+      };
+    });
   }, [shlokas]);
 
-  const handleAudio = async (shloka: ScriptureShloka) => {
-    if (playingId === shloka.id && isPlaying) {
-      pauseAudio();
-      setPlayingId(null);
+  const stopVoiceRecitation = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setSpeakingShlokaId(null);
+  };
+
+  const handleVoiceRecite = (shloka: ScriptureShloka) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      handlePlaySong(shloka);
+      return;
+    }
+
+    if (speakingShlokaId === shloka.id) {
+      stopVoiceRecitation();
+      return;
+    }
+
+    stopVoiceRecitation();
+    setSpeakingShlokaId(shloka.id);
+
+    // Clean text for natural Sanskrit recitation
+    const textToSpeak = `${shloka.sanskrit.replace(/[॥।]/g, ', ')}. ${shloka.hindi}`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(
+      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
+    );
+    if (hindiVoice) {
+      utterance.voice = hindiVoice;
+    }
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+
+    utterance.onend = () => setSpeakingShlokaId(null);
+    utterance.onerror = () => setSpeakingShlokaId(null);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handlePlaySong = (shloka: ScriptureShloka) => {
+    stopVoiceRecitation();
+    if (activeSongShloka?.id === shloka.id) {
+      setActiveSongShloka(null);
     } else {
-      setPlayingId(shloka.id);
-      await playAudio({
-        id: shloka.id,
-        title: shloka.source,
-        subtitle: shloka.chapterVerse,
-        audioUrl: '/audio/om_namah_shivaya.wav',
-      });
+      setActiveSongShloka(shloka);
     }
   };
 
@@ -165,7 +222,7 @@ export default function ShlokasPage() {
             Sacred Sanskrit Shlokas & Stotras
           </h1>
           <p className="text-sm sm:text-base text-amber-200/90 font-serif max-w-2xl mx-auto">
-            Canonical verses from the Bhagavad Gita, Upanishads, and classical Vedic hymns with authentic meters and translations.
+            श्रीमद्भगवद्गीता, उपनिषदों एवं पावन स्तोत्रों के प्रामाणिक श्लोक, शुद्ध स्वर पाठ, गान एवं भावार्थ।
           </p>
 
           {/* Search */}
@@ -174,7 +231,7 @@ export default function ShlokasPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by verse, meaning, or scripture..."
+              placeholder="श्लोक, अर्थ या ग्रंथ द्वारा खोजें..."
               className="w-full bg-white/95 text-stone-900 placeholder-stone-400 text-sm rounded-full py-3 pl-5 pr-12 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-lg"
             />
             <Search className="w-5 h-5 text-stone-400 absolute right-4 top-1/2 -translate-y-1/2" />
@@ -219,7 +276,8 @@ export default function ShlokasPage() {
         {/* Shlokas List */}
         <div className="space-y-6">
           {filtered.map((shloka) => {
-            const isThisPlaying = playingId === shloka.id && isPlaying;
+            const isSongActive = activeSongShloka?.id === shloka.id;
+            const isSpeaking = speakingShlokaId === shloka.id;
 
             return (
               <article
@@ -229,20 +287,20 @@ export default function ShlokasPage() {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
                   <div>
-                    <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-amber-700 uppercase tracking-wider font-serif">
                       {shloka.source}
                     </span>
                     <h3 className="text-xs font-mono text-stone-500">{shloka.chapterVerse}</h3>
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-1 rounded-full bg-stone-100 text-[11px] font-medium text-stone-600">
+                    <span className="px-2.5 py-1 rounded-full bg-stone-100 text-[11px] font-medium text-stone-600 font-serif">
                       {shloka.meter}
                     </span>
                     <button
                       onClick={() => handleCopy(shloka)}
                       className="p-1.5 rounded-lg border border-stone-200 hover:border-amber-400 text-stone-500 hover:text-amber-700 transition"
-                      title="Copy Shloka"
+                      title="श्लोक कॉपी करें (Copy Shloka)"
                     >
                       {copiedId === shloka.id ? (
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
@@ -253,23 +311,50 @@ export default function ShlokasPage() {
                   </div>
                 </div>
 
-                {/* Sanskrit Devanagari */}
-                <div className="p-5 rounded-2xl bg-[#fdfcf9] border border-amber-200/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* Sanskrit Devanagari & Action Buttons */}
+                <div className="p-5 rounded-2xl bg-[#fdfcf9] border border-amber-200/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <pre className="font-serif text-lg sm:text-xl md:text-2xl font-bold text-[#241711] leading-relaxed whitespace-pre-wrap">
                     {shloka.sanskrit}
                   </pre>
 
-                  <button
-                    onClick={() => handleAudio(shloka)}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-md transition transform hover:scale-105 ${
-                      isThisPlaying
-                        ? 'bg-[#ea580c] text-white shadow-orange-500/40 animate-pulse'
-                        : 'bg-gradient-to-tr from-[#ea580c] to-[#f97316] text-white'
-                    }`}
-                    title={isThisPlaying ? 'Pause Chanting' : 'Listen to Recitation'}
-                  >
-                    {isThisPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-                  </button>
+                  <div className="flex items-center space-x-2 shrink-0 self-end md:self-center">
+                    {/* Voice Recitation (स्वर पाठ) Button */}
+                    <button
+                      onClick={() => handleVoiceRecite(shloka)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-serif font-bold flex items-center space-x-1.5 transition ${
+                        isSpeaking
+                          ? 'bg-amber-600 text-white shadow-md animate-pulse'
+                          : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
+                      }`}
+                      title="श्लोक स्वर पाठ सुनें (Listen to Sanskrit Recitation)"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>{isSpeaking ? 'स्वर पाठ रोकें' : 'स्वर पाठ'}</span>
+                    </button>
+
+                    {/* Real Shloka Song / Video Play Button */}
+                    <button
+                      onClick={() => handlePlaySong(shloka)}
+                      className={`px-4 py-2 rounded-xl text-xs font-serif font-bold flex items-center space-x-1.5 shadow-md transition transform hover:scale-105 ${
+                        isSongActive
+                          ? 'bg-[#ea580c] text-white shadow-orange-500/40 ring-2 ring-orange-400'
+                          : 'bg-gradient-to-r from-[#ea580c] to-[#f97316] hover:from-[#c2410c] hover:to-[#ea580c] text-white'
+                      }`}
+                      title="श्लोक गान व वीडियो सुनें (Play Authentic Song & Chant)"
+                    >
+                      {isSongActive ? (
+                        <>
+                          <Pause className="w-4 h-4" />
+                          <span>गान चल रहा है</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 ml-0.5 fill-current" />
+                          <span>श्लोक गान सुनें</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Transliteration */}
@@ -280,7 +365,7 @@ export default function ShlokasPage() {
                 {/* Translations Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 text-xs">
                   <div className="p-4 rounded-xl bg-stone-50/80 border border-stone-200/60 space-y-1">
-                    <span className="font-bold text-amber-800 text-[11px] uppercase tracking-wide">
+                    <span className="font-bold text-amber-800 text-[11px] uppercase tracking-wide font-serif">
                       हिन्दी अनुवाद (Hindi Meaning)
                     </span>
                     <p className="text-stone-800 font-serif leading-relaxed text-sm">
@@ -289,7 +374,7 @@ export default function ShlokasPage() {
                   </div>
 
                   <div className="p-4 rounded-xl bg-stone-50/80 border border-stone-200/60 space-y-1">
-                    <span className="font-bold text-stone-700 text-[11px] uppercase tracking-wide">
+                    <span className="font-bold text-stone-700 text-[11px] uppercase tracking-wide font-serif">
                       English Translation
                     </span>
                     <p className="text-stone-800 font-serif leading-relaxed text-sm">
@@ -302,7 +387,7 @@ export default function ShlokasPage() {
                 <div className="pt-2 flex justify-end">
                   <Link
                     href={`/scriptures/${shloka.scriptureSlug}`}
-                    className="inline-flex items-center space-x-1 text-xs text-amber-700 hover:text-amber-800 font-semibold hover:underline"
+                    className="inline-flex items-center space-x-1 text-xs text-amber-700 hover:text-amber-800 font-semibold hover:underline font-serif"
                   >
                     <BookOpen className="w-3.5 h-3.5" />
                     <span>Read in Canonical Scripture Library</span>
@@ -314,6 +399,73 @@ export default function ShlokasPage() {
           })}
         </div>
       </main>
+
+      {/* Active Shloka Song Player Modal */}
+      {activeSongShloka && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#1a1411] text-white rounded-3xl border border-amber-500/40 shadow-2xl max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Player Header */}
+            <div className="px-6 py-4 border-b border-amber-950/60 bg-[#241711] flex items-center justify-between">
+              <div className="space-y-0.5">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400 font-serif">
+                    {activeSongShloka.source}
+                  </span>
+                </div>
+                <h3 className="text-lg font-serif font-bold text-white">
+                  {activeSongShloka.chapterVerse}
+                </h3>
+              </div>
+              <button
+                onClick={() => setActiveSongShloka(null)}
+                className="w-8 h-8 rounded-full bg-stone-800 text-stone-300 hover:text-white flex items-center justify-center transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Video / Audio Embed with Autoplay */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={`https://www.youtube.com/embed/${activeSongShloka.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                title={activeSongShloka.source}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            </div>
+
+            {/* Shloka Text & Meaning in Player */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-[#19100c]">
+              <div className="p-4 rounded-2xl bg-[#241711] border border-amber-500/20">
+                <span className="text-[11px] uppercase tracking-wider text-amber-400/80 font-serif block mb-1">
+                  मूल संस्कृत श्लोक (Sanskrit Shloka)
+                </span>
+                <pre className="font-serif text-lg sm:text-xl font-bold text-amber-100 whitespace-pre-wrap leading-relaxed">
+                  {activeSongShloka.sanskrit}
+                </pre>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-stone-900/60 border border-stone-800">
+                  <span className="text-amber-300 font-bold block mb-1 font-serif">हिन्दी भावार्थ:</span>
+                  <p className="text-stone-300 font-serif leading-relaxed">
+                    {activeSongShloka.hindi}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-stone-900/60 border border-stone-800">
+                  <span className="text-stone-300 font-bold block mb-1 font-serif">English Translation:</span>
+                  <p className="text-stone-400 font-serif leading-relaxed">
+                    {activeSongShloka.english}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

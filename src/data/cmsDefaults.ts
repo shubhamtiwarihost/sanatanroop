@@ -81,6 +81,7 @@ export interface CMSShlokaItem {
   english: string;
   category: string;
   scriptureSlug: string;
+  youtubeId?: string;
   status: 'Published' | 'Draft';
 }
 
@@ -455,7 +456,7 @@ Tulsidas Prabhu Keerati Gaai ||
 Jo Hanuman Ji Ki Aarti Gaavai |
 Basi Baikunth Param Pad Paavai ||`,
     meaning: 'Perform the aarti of beloved Hanuman, who subdues the wicked and represents Lord Rama’s prowess. His strength makes mountains tremble, and no afflictions dare approach his devotee. He burnt Lanka, brought Sanjeevani to save Lakshmana, and killed Ahiravana in Patala.',
-    youtubeId: 'F3a1U9056g4',
+    youtubeId: 'HfHkBEjofqk',
     singer: 'हरिहरन (Hariharan)',
     duration: '5:02',
     audioTrack: {
@@ -520,7 +521,7 @@ Ratna Chaturdash Tum Bin, Koi Nahin Paata || Om Jai Laxmi Mata ||
 Mahalaxmi Ji Ki Aarti, Jo Koi Nar Gaave |
 Ur Aanand Samaave, Paap Utar Jaave || Om Jai Laxmi Mata ||`,
     meaning: 'Glory to Mother Lakshmi, who bestows wealth, righteous prosperity, and peace upon homes where devotion and dharma reside. She is the daughter of the cosmic ocean of milk (Ksheerasagara), and without Her grace, noble deeds, feasts, and sacred yajnas cannot flourish.',
-    youtubeId: 'Edk4kLdSnI4',
+    youtubeId: 'Ydd0cSY3I8s',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:30',
     audioTrack: {
@@ -642,7 +643,7 @@ Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
 Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
 Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
-    youtubeId: 'asn_MEvq950',
+    youtubeId: 'Jb4p7X-t6-c',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:10',
     audioTrack: {
@@ -1045,6 +1046,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'You have a right only to work, never to its fruits; let not the fruits of action be your motive, nor let your attachment be to inaction.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: 'Vnz8rJX9w-E',
     status: 'Published',
   },
   {
@@ -1058,6 +1060,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'Whenever and wherever there is a decline in righteousness and a rise of unrighteousness, at that time I manifest Myself on Earth.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: 'Ua4d4RIPME8',
     status: 'Published',
   },
   {
@@ -1071,6 +1074,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'For those who always worship Me with exclusive devotion, meditating on My transcendental form, to them I carry what they lack and preserve what they have.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
+    youtubeId: '_jVVsBn2Fxc',
     status: 'Published',
   },
   {
@@ -1084,6 +1088,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'All this, whatsoever moves in this universe, is enveloped by the Lord. Enjoy through detachment; do not covet anyone’s wealth.',
     category: 'Upanishad Shlokas',
     scriptureSlug: 'isha-upanishad',
+    youtubeId: 'bD9sf88tM4g',
     status: 'Published',
   },
   {
@@ -1097,6 +1102,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'Lead me from the unreal to the real, lead me from darkness to light, lead me from death to immortality. Om Peace, Peace, Peace.',
     category: 'Shanti Mantras',
     scriptureSlug: 'upanishads',
+    youtubeId: 'Vwyo62x9yC4',
     status: 'Published',
   },
   {
@@ -1110,6 +1116,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'With His neck consecrated by the holy stream of the Ganga flowing from His matted forest hair, He who dances the fierce cosmic Tandava to the rhythmic sound of His damaru, may Lord Shiva bestow auspiciousness upon us.',
     category: 'Stotras',
     scriptureSlug: 'shiva-stotras',
+    youtubeId: 'vV1139l9g44',
     status: 'Published',
   },
 ];
