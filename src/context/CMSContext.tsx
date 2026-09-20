@@ -811,7 +811,29 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedBooks) setBooks(JSON.parse(savedBooks));
 
       const savedShlokas = localStorage.getItem('sanatan_cms_shlokas');
-      if (savedShlokas) setShlokas(JSON.parse(savedShlokas));
+      if (savedShlokas) {
+        try {
+          const parsed = JSON.parse(savedShlokas);
+          let changed = false;
+          const cleaned = parsed.map((item: any) => {
+            if (item.id === 'gita-9-22' && (item.youtubeId === '_jVVsBn2Fxc' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'KOCublNlE-U' };
+            }
+            if (item.id === 'shiva-tandava-1' && (item.youtubeId === 'vV1139l9g44' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'KRhcTPKdmrk' };
+            }
+            return item;
+          });
+          if (changed) {
+            localStorage.setItem('sanatan_cms_shlokas', JSON.stringify(cleaned));
+          }
+          setShlokas(cleaned);
+        } catch {
+          setShlokas(JSON.parse(savedShlokas));
+        }
+      }
 
       const savedProducts = localStorage.getItem('hindu_dharma_cms_products');
       if (savedProducts) setProducts(JSON.parse(savedProducts));

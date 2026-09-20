@@ -1074,7 +1074,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'For those who always worship Me with exclusive devotion, meditating on My transcendental form, to them I carry what they lack and preserve what they have.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
-    youtubeId: '_jVVsBn2Fxc',
+    youtubeId: 'KOCublNlE-U',
     status: 'Published',
   },
   {
@@ -1116,7 +1116,7 @@ export const DEFAULT_CMS_SHLOKAS: CMSShlokaItem[] = [
     english: 'With His neck consecrated by the holy stream of the Ganga flowing from His matted forest hair, He who dances the fierce cosmic Tandava to the rhythmic sound of His damaru, may Lord Shiva bestow auspiciousness upon us.',
     category: 'Stotras',
     scriptureSlug: 'shiva-stotras',
-    youtubeId: 'vV1139l9g44',
+    youtubeId: 'KRhcTPKdmrk',
     status: 'Published',
   },
 ];

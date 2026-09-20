@@ -70,7 +70,7 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     english: 'For those who always worship Me with exclusive devotion, meditating on My transcendental form, to them I carry what they lack and preserve what they have.',
     category: 'Gita Shlokas',
     scriptureSlug: 'bhagavad-gita',
-    youtubeId: '_jVVsBn2Fxc',
+    youtubeId: 'KOCublNlE-U',
   },
   {
     id: 'isha-1',
@@ -103,13 +103,13 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
     source: 'शिवताण्डवस्तोत्रम् (Shiva Tandava Stotram)',
     chapterVerse: 'श्लोक १ (Verse 1)',
     sanskrit: 'जटाटवीगलज्जलप्रवाहपावितस्थले\nगलेऽवलम्ब्य लम्बितां भुजङ्गतुङ्गमालिकाम् ।\nडमड्डमड्डमड्डमन्निनादवड्डमर्वयं\nचकार चण्डताण्डवं तनोतु नः शिवः शिवम् ॥',
-    transliteration: 'jaṭā-ṭavī-galaj-jala-pravāha-pāvita-sthale\ngale \'valambya lambitāṁ bhujaṅga-tuṅga-mālikām |\nḍamad-ḍamad-ḍamad-ḍaman-ninādavad-ḍamarvayaṁ\ncakāra caṇḍa-tāṇḍavaṁ tanotu naḥ śivaḥ śivam ||',
+    transliteration: 'jaṭā-ṭavī-galaj-jala-pravāha-pāvita-sthale\ngale \'valambya lambitāṁ bhujaङ्ga-tuṅga-mālikām |\nḍamad-ḍamad-ḍamad-ḍaman-ninādavad-ḍamarvayaṁ\ncakāra caṇḍa-tāṇḍavaṁ tanotu naḥ śivaḥ śivam ||',
     meter: 'पञ्चचामर छन्द (Panchachamara Meter)',
     hindi: 'जिनके जटा रूपी वन से बहने वाली गंगा की तरंगों से पवित्र गले में सर्पों की विशाल माला सुशोभित है, जो डमरू की डम-डम ध्वनि के साथ प्रचण्ड ताण्डव करते हैं, वे भगवान शिव हमारा कल्याण करें।',
     english: 'With His neck consecrated by the holy stream of the Ganga flowing from His matted forest hair, He who dances the fierce cosmic Tandava to the rhythmic sound of His damaru, may Lord Shiva bestow auspiciousness upon us.',
     category: 'Stotras',
     scriptureSlug: 'shiva-stotras',
-    youtubeId: 'vV1139l9g44',
+    youtubeId: 'KRhcTPKdmrk',
   },
 ];
 
@@ -417,12 +417,24 @@ export default function ShlokasPage() {
                   {activeSongShloka.chapterVerse}
                 </h3>
               </div>
-              <button
-                onClick={() => setActiveSongShloka(null)}
-                className="w-8 h-8 rounded-full bg-stone-800 text-stone-300 hover:text-white flex items-center justify-center transition"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <a
+                  href={`https://www.youtube.com/watch?v=${activeSongShloka.youtubeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-serif font-bold transition shadow-sm"
+                  title="Watch directly on YouTube"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>यूट्यूब पर देखें</span>
+                </a>
+                <button
+                  onClick={() => setActiveSongShloka(null)}
+                  className="w-8 h-8 rounded-full bg-stone-800 text-stone-300 hover:text-white flex items-center justify-center transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Video / Audio Embed with Autoplay */}
