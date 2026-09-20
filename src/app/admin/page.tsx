@@ -330,6 +330,18 @@ export default function WordPressAdminPanel() {
     ],
   });
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sanatan_live_festival');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setLiveFestivalConfig((prev) => ({ ...prev, ...parsed }));
+        } catch (e) {}
+      }
+    }
+  }, []);
+
   // Aartis Admin State & Handlers
   const [aartiModalOpen, setAartiModalOpen] = useState(false);
   const [editingAartiId, setEditingAartiId] = useState<string | null>(null);
@@ -605,6 +617,8 @@ export default function WordPressAdminPanel() {
   // Spiritual Books Admin State & Handlers
   const [bookModalOpen, setBookModalOpen] = useState(false);
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
+  const [pdfUploadLoading, setPdfUploadLoading] = useState(false);
+  const [pdfUploadError, setPdfUploadError] = useState<string | null>(null);
   const [bookForm, setBookForm] = useState<Partial<CMSBookItem>>({
     titleHi: '',
     titleEn: '',
@@ -619,10 +633,15 @@ export default function WordPressAdminPanel() {
     sampleVerseHindi: '',
     sampleVerseEnglish: '',
     readOnlineUrl: '',
+    pdfUrl: '',
+    pdfFileName: '',
+    pdfFileSize: '',
     status: 'Published',
   });
 
   const handleOpenBookModal = (item?: CMSBookItem) => {
+    setPdfUploadError(null);
+    setPdfUploadLoading(false);
     if (item) {
       setEditingBookId(item.id);
       setBookForm({
@@ -639,6 +658,9 @@ export default function WordPressAdminPanel() {
         sampleVerseHindi: item.sampleVerseHindi,
         sampleVerseEnglish: item.sampleVerseEnglish,
         readOnlineUrl: item.readOnlineUrl,
+        pdfUrl: item.pdfUrl || '',
+        pdfFileName: item.pdfFileName || '',
+        pdfFileSize: item.pdfFileSize || '',
         status: item.status,
       });
     } else {
@@ -657,10 +679,59 @@ export default function WordPressAdminPanel() {
         sampleVerseHindi: '',
         sampleVerseEnglish: '',
         readOnlineUrl: '',
+        pdfUrl: '',
+        pdfFileName: '',
+        pdfFileSize: '',
         status: 'Published',
       });
     }
     setBookModalOpen(true);
+  };
+
+  const handlePdfFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      alert('कृपया केवल PDF (.pdf) प्रारूप की फाइल चुनें।');
+      return;
+    }
+
+    setPdfUploadLoading(true);
+    setPdfUploadError(null);
+
+    const fileSizeStr =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+    if (file.size > 12 * 1024 * 1024) {
+      const proceed = confirm(
+        `यह PDF फाइल काफी बड़ी है (${fileSizeStr})। ब्राउज़र स्थानीय संग्रहण (Local Storage) की सीमा से बचने के लिए, आप सीधे Google Drive या सर्वर का PDF लिंक दर्ज करना पसंद कर सकते हैं। क्या आप फिर भी इसे अपलोड करना चाहते हैं?`
+      );
+      if (!proceed) {
+        setPdfUploadLoading(false);
+        return;
+      }
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setBookForm((prev) => ({
+        ...prev,
+        pdfUrl: dataUrl,
+        pdfFileName: file.name,
+        pdfFileSize: fileSizeStr,
+      }));
+      setPdfUploadLoading(false);
+      showNotice(`PDF फाइल "${file.name}" (${fileSizeStr}) सफलतापूर्वक लोड हो गई।`);
+    };
+    reader.onerror = () => {
+      setPdfUploadError('PDF लोड करने में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+      setPdfUploadLoading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveBook = () => {
@@ -686,6 +757,9 @@ export default function WordPressAdminPanel() {
         sampleVerseHindi: bookForm.sampleVerseHindi || '',
         sampleVerseEnglish: bookForm.sampleVerseEnglish || '',
         readOnlineUrl: bookForm.readOnlineUrl || '/books',
+        pdfUrl: bookForm.pdfUrl || '',
+        pdfFileName: bookForm.pdfFileName || '',
+        pdfFileSize: bookForm.pdfFileSize || '',
         status: bookForm.status || 'Published',
       });
       showNotice(`नया ग्रंथ "${bookForm.titleHi}" सफलतापूर्वक जोड़ा गया।`);
@@ -3796,7 +3870,15 @@ export default function WordPressAdminPanel() {
 
                     <button
                       type="button"
-                      onClick={() => showNotice('Live Festival settings updated successfully.')}
+                      onClick={() => {
+                        try {
+                          localStorage.setItem('sanatan_live_festival', JSON.stringify(liveFestivalConfig));
+                          window.dispatchEvent(new Event('sanatan_live_festival_updated'));
+                          showNotice('Live Festival settings updated & synchronized successfully.');
+                        } catch (e) {
+                          showNotice('Failed to save Live Festival settings.');
+                        }
+                      }}
                       className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-2 rounded-md font-bold text-xs shadow-sm transition"
                     >
                       Save Live Festival Settings
@@ -4033,6 +4115,7 @@ export default function WordPressAdminPanel() {
                         <th className="p-2.5 font-bold">Cover Color</th>
                         <th className="p-2.5 font-bold">Author / Sage</th>
                         <th className="p-2.5 font-bold">Verses / Chapters</th>
+                        <th className="p-2.5 font-bold">PDF E-Book</th>
                         <th className="p-2.5 font-bold">Status</th>
                         <th className="p-2.5 font-bold">Actions</th>
                       </tr>
@@ -4057,6 +4140,29 @@ export default function WordPressAdminPanel() {
                           </td>
                           <td className="p-2.5 text-stone-800 font-semibold">{book.author}</td>
                           <td className="p-2.5 font-serif text-stone-600">{book.versesCount}</td>
+                          <td className="p-2.5">
+                            {book.pdfUrl ? (
+                              <a
+                                href={book.pdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-red-700 bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded border border-red-200 transition"
+                                title={book.pdfFileName || 'PDF देखें'}
+                              >
+                                <FileText className="w-3.5 h-3.5 text-red-600" />
+                                <span>PDF {book.pdfFileSize ? `(${book.pdfFileSize})` : 'उपलब्ध'}</span>
+                              </a>
+                            ) : (
+                              <button
+                                onClick={() => handleOpenBookModal(book)}
+                                className="inline-flex items-center gap-1 text-[10px] font-semibold text-stone-500 hover:text-[#2271b1] hover:underline"
+                                title="PDF अपलोड करें"
+                              >
+                                <Upload className="w-3 h-3" />
+                                <span>+ Upload PDF</span>
+                              </button>
+                            )}
+                          </td>
                           <td className="p-2.5">
                             <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                               {book.status}
@@ -6616,13 +6722,132 @@ export default function WordPressAdminPanel() {
                 </div>
               </div>
 
+              {/* PDF UPLOAD & DIGITAL E-BOOK SECTION */}
+              <div className="border border-amber-200 bg-amber-50/40 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-stone-800 text-xs sm:text-sm flex items-center space-x-2">
+                    <FileText className="w-4 h-4 text-amber-700" />
+                    <span>धर्मग्रंथ PDF अपलोड एवं ई-बुक (Upload PDF / E-Book)</span>
+                  </label>
+                  {bookForm.pdfUrl && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                      <Check className="w-3 h-3" /> PDF संलग्न है
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-[11px] text-stone-600 leading-relaxed">
+                  भक्तों एवं शोधार्थियों के लिए सम्पूर्ण धर्मग्रंथ की PDF फाइल अपलोड करें अथवा सीधा PDF लिंक प्रदान करें।
+                </p>
+
+                {/* Upload or Current PDF status */}
+                {bookForm.pdfUrl ? (
+                  <div className="bg-white border border-amber-300 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0 font-bold text-xs border border-red-200">
+                        PDF
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-stone-900 truncate text-xs">
+                          {bookForm.pdfFileName || 'संलग्न PDF दस्तावेज'}
+                        </p>
+                        <p className="text-[10px] text-stone-500 flex items-center gap-2">
+                          {bookForm.pdfFileSize && <span>आकार: {bookForm.pdfFileSize}</span>}
+                          {bookForm.pdfUrl.startsWith('data:') ? (
+                            <span className="text-amber-700 font-medium">स्थानिक फाइल (Base64)</span>
+                          ) : (
+                            <span className="text-blue-700 font-medium">वेब लिंक</span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 shrink-0">
+                      <a
+                        href={bookForm.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded font-semibold text-[11px] flex items-center space-x-1 transition"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>PDF देखें (Preview)</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBookForm((prev) => ({
+                            ...prev,
+                            pdfUrl: '',
+                            pdfFileName: '',
+                            pdfFileSize: '',
+                          }))
+                        }
+                        className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded font-semibold text-[11px] flex items-center space-x-1 border border-red-200 transition"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>हटाएं (Remove)</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* File Upload Box */}
+                    <div className="border-2 border-dashed border-[#8c8f94]/60 hover:border-[#2271b1] bg-white rounded-lg p-4 text-center cursor-pointer transition flex flex-col items-center justify-center relative">
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handlePdfFileUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                        disabled={pdfUploadLoading}
+                      />
+                      <Upload className="w-6 h-6 text-[#2271b1] mb-1.5" />
+                      <span className="font-bold text-stone-800 text-xs">
+                        {pdfUploadLoading ? 'PDF अपलोड हो रही है...' : 'PDF फाइल चुनें या यहाँ ड्रैग करें'}
+                      </span>
+                      <span className="text-[10px] text-stone-500 mt-0.5">
+                        केवल .pdf फाइलें स्वीकार्य हैं
+                      </span>
+                    </div>
+
+                    {/* Direct URL Input */}
+                    <div className="bg-white border border-[#8c8f94]/60 rounded-lg p-3 flex flex-col justify-center">
+                      <label className="block font-semibold text-stone-700 text-[11px] mb-1">
+                        अथवा सीधा PDF URL दर्ज करें (Direct PDF Link)
+                      </label>
+                      <input
+                        type="url"
+                        value={bookForm.pdfUrl || ''}
+                        onChange={(e) => {
+                          const url = e.target.value;
+                          const fileName = url ? url.split('/').pop()?.split('?')[0] || 'book.pdf' : '';
+                          setBookForm((prev) => ({
+                            ...prev,
+                            pdfUrl: url,
+                            pdfFileName: prev.pdfFileName || fileName,
+                          }));
+                        }}
+                        placeholder="https://example.com/books/gita.pdf"
+                        className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs focus:border-[#2271b1] focus:outline-none"
+                      />
+                      <span className="text-[10px] text-stone-400 mt-1">
+                        उदा. Google Drive / Archive.org / CDN लिंक
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {pdfUploadError && (
+                  <p className="text-xs text-red-600 font-medium">{pdfUploadError}</p>
+                )}
+              </div>
+
               <div>
-                <label className="block font-bold text-stone-800 mb-1">Online Reading URL / PDF Link (वैकल्पिक)</label>
+                <label className="block font-bold text-stone-800 mb-1">Online Reading URL (वैकल्पिक)</label>
                 <input
                   type="text"
                   value={bookForm.readOnlineUrl || ''}
                   onChange={(e) => setBookForm({ ...bookForm, readOnlineUrl: e.target.value })}
-                  placeholder="https://sanatanroop.com/books/gita"
+                  placeholder="https://sanatanroop.com/scriptures/bhagavad-gita"
                   className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
                 />
               </div>

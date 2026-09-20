@@ -67,6 +67,9 @@ export interface CMSBookItem {
   sampleVerseHindi?: string;
   sampleVerseEnglish?: string;
   readOnlineUrl?: string;
+  pdfUrl?: string;
+  pdfFileName?: string;
+  pdfFileSize?: string;
   status: 'Published' | 'Draft';
 }
 

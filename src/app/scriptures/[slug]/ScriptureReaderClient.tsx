@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { useCMS } from '@/context/CMSContext';
 import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   BookOpen,
@@ -24,6 +25,7 @@ import {
   X,
   Sliders,
   ShieldCheck,
+  FileText,
 } from 'lucide-react';
 
 import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
@@ -33,6 +35,9 @@ export default function ScriptureReaderClient() {
   const searchParams = useSearchParams();
   const slug = (params?.slug as string) || 'bhagavad-gita';
   const { locale, setLocale, t } = useLanguage();
+  const { books } = useCMS();
+  const currentBook = books?.find((b) => b.id === slug || (b.readOnlineUrl && b.readOnlineUrl.includes(slug)));
+  const bookPdfUrl = currentBook?.pdfUrl;
 
   const [scripture, setScripture] = useState<any>(
     () => SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita']
@@ -302,6 +307,21 @@ export default function ScriptureReaderClient() {
             >
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
+          )}
+
+          {/* PDF Download Button if available */}
+          {bookPdfUrl && (
+            <a
+              href={bookPdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={currentBook?.pdfFileName || `${scripture?.titleEn || slug}.pdf`}
+              className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs font-serif font-bold hover:bg-red-100 dark:hover:bg-red-900/60 transition flex items-center space-x-1"
+              title="सम्पूर्ण PDF डाउनलोड करें / पढ़ें"
+            >
+              <FileText className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+              <span className="hidden sm:inline">PDF</span>
+            </a>
           )}
 
           {/* Share Button */}

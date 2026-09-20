@@ -2,115 +2,201 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useAudio } from '@/context/AudioContext';
+import { useLanguage } from '@/i18n/LanguageContext';
 import {
   Flame,
   Sparkles,
-  Volume2,
-  VolumeX,
   Play,
   Pause,
   Clock,
-  Sun,
-  Moon,
-  Heart,
   Share2,
   ChevronRight,
   BookOpen,
   Music,
-  ShoppingBag,
 } from 'lucide-react';
 
 interface FestivalData {
   id: string;
   nameHi: string;
   nameEn: string;
-  tagline: string;
-  tithi: string;
-  dateStr: string;
+  nameSa?: string;
+  taglineHi: string;
+  taglineEn: string;
+  taglineSa?: string;
+  tithiHi: string;
+  tithiEn: string;
+  tithiSa?: string;
   bannerImage: string;
-  deity: string;
-  deityRole: string;
+  deityHi: string;
+  deityEn: string;
+  deitySa?: string;
+  deityRoleHi: string;
+  deityRoleEn: string;
+  deityRoleSa?: string;
   shubhMuhurat: {
-    title: string;
-    time: string;
-    note: string;
+    titleHi: string;
+    titleEn: string;
+    titleSa?: string;
+    timeHi: string;
+    timeEn: string;
+    timeSa?: string;
+    noteHi: string;
+    noteEn: string;
+    noteSa?: string;
   }[];
   primaryMantra: {
     sanskrit: string;
     transliteration: string;
-    meaning: string;
+    meaningHi: string;
+    meaningEn: string;
+    meaningSa?: string;
   };
-  significance: string;
   todaysColor: {
-    name: string;
+    nameHi: string;
+    nameEn: string;
+    nameSa?: string;
     hex: string;
   };
-  todaysPrasad: string;
+  todaysPrasadHi: string;
+  todaysPrasadEn: string;
+  todaysPrasadSa?: string;
   audioTrack: {
     id: string;
-    title: string;
+    titleHi: string;
+    titleEn: string;
     audioUrl: string;
-    subtitle: string;
+    subtitleHi: string;
+    subtitleEn: string;
   };
 }
 
 const DEFAULT_FESTIVAL: FestivalData = {
   id: 'navratri-live',
   nameHi: 'शारदीय नवरात्रि महापर्व',
-  nameEn: 'Maha Navratri Celebration',
-  tagline: 'माँ जगदम्बा की असीम कृपा, शक्ति और भक्ति का पावन उत्सव',
-  tithi: 'आश्विन शुक्ल प्रतिपदा • प्रथम नवरात्र',
-  dateStr: 'Live Today',
+  nameEn: 'Shardiya Navratri Mahotsav',
+  nameSa: 'शारदीयनवरात्रमहापर्व',
+  taglineHi: 'माँ जगदम्बा की असीम कृपा, शक्ति और भक्ति का पावन उत्सव',
+  taglineEn: 'Sacred celebration of divine grace, supreme strength, and devotion of Maa Jagadamba',
+  taglineSa: 'जगदम्बायाः असीमकृपायाः शक्तेः भक्तेश्च पावनोत्सवः',
+  tithiHi: 'आश्विन शुक्ल प्रतिपदा • प्रथम नवरात्र',
+  tithiEn: 'Ashwin Shukla Pratipada • Day 1 of Navratri',
+  tithiSa: 'आश्विनशुक्लप्रतिपदा • प्रथमं नवरात्रम्',
   bannerImage: '/images/hero_shiva.jpg',
-  deity: 'माँ शैलपुत्री (Maa Shailaputri)',
-  deityRole: 'हिमालय पुत्री, नवदुर्गा का प्रथम स्वरूप • शक्ति एवं स्थिरता की अधिष्ठात्री',
+  deityHi: 'माँ शैलपुत्री (Maa Shailaputri)',
+  deityEn: 'Maa Shailaputri',
+  deitySa: 'माता शैलपुत्री',
+  deityRoleHi: 'हिमालय पुत्री, नवदुर्गा का प्रथम स्वरूप • शक्ति एवं स्थिरता की अधिष्ठात्री',
+  deityRoleEn: 'Daughter of the Himalayas, first form of Navadurga • Presiding deity of strength & stability',
+  deityRoleSa: 'हिमालयपुत्री, नवदुर्गायाः प्रथमं स्वरूपम् • शक्तिस्थैर्ययोरधिष्ठात्री',
   shubhMuhurat: [
-    { title: 'घटस्थापना शुभ मुहूर्त', time: 'प्रातः 06:15 AM - 10:18 AM', note: 'अभिजीत मुहूर्त: 11:48 AM - 12:36 PM' },
-    { title: 'मध्याह्न पूजा काल', time: 'दोपहर 12:05 PM - 02:45 PM', note: 'सर्वार्थ सिद्धि योग सहित' },
-    { title: 'महा संध्या आरती', time: 'सायं 06:45 PM - 07:30 PM', note: 'दीपदान एवं पुष्पवृष्टि काल' },
+    {
+      titleHi: 'घटस्थापना शुभ मुहूर्त',
+      titleEn: 'Ghatasthapana Auspicious Time',
+      titleSa: 'घटस्थापनाशुभमुहूर्तः',
+      timeHi: 'प्रातः 06:15 AM - 10:18 AM',
+      timeEn: 'Morning 06:15 AM - 10:18 AM',
+      timeSa: 'प्रातः 06:15 AM - 10:18 AM',
+      noteHi: 'अभिजीत मुहूर्त: 11:48 AM - 12:36 PM',
+      noteEn: 'Abhijit Muhurat: 11:48 AM - 12:36 PM',
+      noteSa: 'अभिजित् मुहूर्तः: 11:48 AM - 12:36 PM',
+    },
+    {
+      titleHi: 'मध्याह्न पूजा काल',
+      titleEn: 'Midday Puja Time',
+      titleSa: 'मध्याह्नपूजाकालः',
+      timeHi: 'दोपहर 12:05 PM - 02:45 PM',
+      timeEn: 'Afternoon 12:05 PM - 02:45 PM',
+      timeSa: 'मध्याह्ने 12:05 PM - 02:45 PM',
+      noteHi: 'सर्वार्थ सिद्धि योग सहित',
+      noteEn: 'With Sarvartha Siddhi Yoga',
+      noteSa: 'सर्वार्थसिद्धियोगसहितम्',
+    },
+    {
+      titleHi: 'महा संध्या आरती',
+      titleEn: 'Maha Sandhya Aarti',
+      titleSa: 'महासन्ध्यारार्तिकम्',
+      timeHi: 'सायं 06:45 PM - 07:30 PM',
+      timeEn: 'Evening 06:45 PM - 07:30 PM',
+      timeSa: 'सायं 06:45 PM - 07:30 PM',
+      noteHi: 'दीपदान एवं पुष्पवृष्टि काल',
+      noteEn: 'Diya & Flower Offering Period',
+      noteSa: 'दीपदानं पुष्पवृष्टिकालश्च',
+    },
   ],
   primaryMantra: {
     sanskrit: 'वन्दे वाञ्छितलाभाय चन्द्रार्धकृतशेखराम् ।\nवृषारूढां शूलधरां शैलपुत्रीं यशस्विनीम् ॥',
     transliteration: 'vande vāñchitalābhāya candrārdhakṛtaśekharām |\nvṛṣārūḍhāṁ śūladharāṁ śailaputrīṁ yaśasvinīm ||',
-    meaning: 'मनोवांछित फल की प्राप्ति के लिए, मस्तक पर अर्धचंद्र धारण करने वाली, वृषभ पर सवार और त्रिशूल धारण करने वाली परम तेजस्वी माँ शैलपुत्री की हम वंदना करते हैं।',
+    meaningHi: 'मनोवांछित फल की प्राप्ति के लिए, मस्तक पर अर्धचंद्र धारण करने वाली, वृषभ पर सवार और त्रिशूल धारण करने वाली परम तेजस्वी माँ शैलपुत्री की हम वंदना करते हैं।',
+    meaningEn: 'To attain all righteous desires, we worship the illustrious Goddess Shailaputri, who rides a sacred bull, holds a trident, and is adorned with the crescent moon on Her forehead.',
+    meaningSa: 'मनोवाञ्छितफलप्राप्तये, भालदेशे चन्द्रार्धधारिणीं, वृषभारूढां त्रिशूलहस्तां यशस्विनीं भगवतीं शैलपुत्रीं वन्दे।',
   },
-  significance: 'नवरात्रि का प्रथम दिन माँ शैलपुत्री की उपासना के लिए समर्पित है। माँ शैलपुत्री चेतना, तपस्या और आत्मबल का प्रतीक हैं। आज के दिन घटस्थापना (कलश स्थापना) के साथ अखंड ज्योति प्रज्वलित की जाती है।',
   todaysColor: {
-    name: 'पीला (Royal Yellow - ज्ञान व तेज)',
+    nameHi: 'पीला (Royal Yellow - ज्ञान व तेज)',
+    nameEn: 'Royal Yellow (Wisdom & Radiance)',
+    nameSa: 'पीतः (ज्ञानं तेजश्च)',
     hex: '#f59e0b',
   },
-  todaysPrasad: 'शुद्ध देशी गाय का घी, पंचामृत एवं श्वेत मिष्ठान',
+  todaysPrasadHi: 'शुद्ध देशी गाय का घी, पंचामृत एवं श्वेत मिष्ठान',
+  todaysPrasadEn: 'Pure Cow Desi Ghee, Panchamrit & White Sweets',
+  todaysPrasadSa: 'शुद्धगोघृतम्, पञ्चामृतं श्वेतमिष्टान्नं च',
   audioTrack: {
     id: 'aarti-durga',
-    title: 'श्री अम्बे जी की आरती (Jai Ambe Gauri)',
+    titleHi: 'श्री अम्बे जी की आरती (Jai Ambe Gauri)',
+    titleEn: 'Shri Ambe Ji Ki Aarti (Jai Ambe Gauri)',
     audioUrl: '/audio/om_namah_shivaya.wav',
-    subtitle: 'Navratri Special Devotional Chanting',
+    subtitleHi: 'नवरात्रि पावन संकीर्तन',
+    subtitleEn: 'Navratri Special Devotional Chanting',
   },
 };
 
 export default function LiveFestival() {
+  const { locale } = useLanguage();
   const { isPlaying, currentTrack, playAudio, pauseAudio } = useAudio();
   const [diyaCount, setDiyaCount] = useState(14850);
   const [isDiyaLit, setIsDiyaLit] = useState(false);
   const [flowerCount, setFlowerCount] = useState(8920);
   const [isFlowerOffered, setIsFlowerOffered] = useState(false);
   const [copiedMantra, setCopiedMantra] = useState(false);
+  const [adminConfig, setAdminConfig] = useState<any>(null);
 
-  // Initialize random count or restore from session
+  // Initialize from session and load admin festival overrides
   useEffect(() => {
-    const savedDiya = localStorage.getItem('sanatan_diya_lit');
-    if (savedDiya === 'true') {
-      setIsDiyaLit(true);
+    if (typeof window !== 'undefined') {
+      const savedDiya = localStorage.getItem('sanatan_diya_lit');
+      if (savedDiya === 'true') {
+        setIsDiyaLit(true);
+      }
+
+      const loadAdminConfig = () => {
+        const saved = localStorage.getItem('sanatan_live_festival');
+        if (saved) {
+          try {
+            setAdminConfig(JSON.parse(saved));
+          } catch (e) {}
+        }
+      };
+
+      loadAdminConfig();
+      window.addEventListener('sanatan_live_festival_updated', loadAdminConfig);
+      return () => {
+        window.removeEventListener('sanatan_live_festival_updated', loadAdminConfig);
+      };
     }
   }, []);
+
+  // If disabled by admin, don't render
+  if (adminConfig && adminConfig.enabled === false) {
+    return null;
+  }
 
   const handleLightDiya = () => {
     if (!isDiyaLit) {
       setIsDiyaLit(true);
       setDiyaCount((prev) => prev + 1);
-      localStorage.setItem('sanatan_diya_lit', 'true');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sanatan_diya_lit', 'true');
+      }
     }
   };
 
@@ -122,17 +208,82 @@ export default function LiveFestival() {
     }, 2500);
   };
 
+  const audioTrackPayload = {
+    id: DEFAULT_FESTIVAL.audioTrack.id,
+    title: locale === 'en' ? DEFAULT_FESTIVAL.audioTrack.titleEn : DEFAULT_FESTIVAL.audioTrack.titleHi,
+    audioUrl: DEFAULT_FESTIVAL.audioTrack.audioUrl,
+    subtitle: locale === 'en' ? DEFAULT_FESTIVAL.audioTrack.subtitleEn : DEFAULT_FESTIVAL.audioTrack.subtitleHi,
+  };
+
   const handleToggleAudio = () => {
     if (isPlaying && currentTrack?.id === DEFAULT_FESTIVAL.audioTrack.id) {
       pauseAudio();
     } else {
-      playAudio(DEFAULT_FESTIVAL.audioTrack);
+      playAudio(audioTrackPayload);
     }
+  };
+
+  // Localized getters
+  const getFestivalName = () => {
+    if (adminConfig?.nameHi && locale === 'hi') return adminConfig.nameHi;
+    if (adminConfig?.nameEn && locale === 'en') return adminConfig.nameEn;
+    if (locale === 'en') return DEFAULT_FESTIVAL.nameEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.nameSa || DEFAULT_FESTIVAL.nameHi;
+    return DEFAULT_FESTIVAL.nameHi;
+  };
+
+  const getTagline = () => {
+    if (adminConfig?.tagline && locale === 'hi') return adminConfig.tagline;
+    if (locale === 'en') return DEFAULT_FESTIVAL.taglineEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.taglineSa || DEFAULT_FESTIVAL.taglineHi;
+    return DEFAULT_FESTIVAL.taglineHi;
+  };
+
+  const getTithi = () => {
+    if (adminConfig?.tithi && locale === 'hi') return adminConfig.tithi;
+    if (locale === 'en') return DEFAULT_FESTIVAL.tithiEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.tithiSa || DEFAULT_FESTIVAL.tithiHi;
+    return DEFAULT_FESTIVAL.tithiHi;
+  };
+
+  const getDeity = () => {
+    if (adminConfig?.deity && locale === 'hi') return adminConfig.deity;
+    if (locale === 'en') return DEFAULT_FESTIVAL.deityEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.deitySa || DEFAULT_FESTIVAL.deityHi;
+    return DEFAULT_FESTIVAL.deityHi;
+  };
+
+  const getDeityRole = () => {
+    if (adminConfig?.deityRole && locale === 'hi') return adminConfig.deityRole;
+    if (locale === 'en') return DEFAULT_FESTIVAL.deityRoleEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.deityRoleSa || DEFAULT_FESTIVAL.deityRoleHi;
+    return DEFAULT_FESTIVAL.deityRoleHi;
+  };
+
+  const getMantraMeaning = () => {
+    if (adminConfig?.primaryMantraMeaning && locale === 'hi') return adminConfig.primaryMantraMeaning;
+    if (locale === 'en') return DEFAULT_FESTIVAL.primaryMantra.meaningEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.primaryMantra.meaningSa || DEFAULT_FESTIVAL.primaryMantra.meaningHi;
+    return DEFAULT_FESTIVAL.primaryMantra.meaningHi;
+  };
+
+  const getColorName = () => {
+    if (adminConfig?.todaysColor && locale === 'hi') return adminConfig.todaysColor;
+    if (locale === 'en') return DEFAULT_FESTIVAL.todaysColor.nameEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.todaysColor.nameSa || DEFAULT_FESTIVAL.todaysColor.nameHi;
+    return DEFAULT_FESTIVAL.todaysColor.nameHi;
+  };
+
+  const getPrasadName = () => {
+    if (adminConfig?.todaysPrasad && locale === 'hi') return adminConfig.todaysPrasad;
+    if (locale === 'en') return DEFAULT_FESTIVAL.todaysPrasadEn;
+    if (locale === 'sa') return DEFAULT_FESTIVAL.todaysPrasadSa || DEFAULT_FESTIVAL.todaysPrasadHi;
+    return DEFAULT_FESTIVAL.todaysPrasadHi;
   };
 
   const copyMantra = () => {
     navigator.clipboard.writeText(
-      `${DEFAULT_FESTIVAL.primaryMantra.sanskrit}\n\n${DEFAULT_FESTIVAL.primaryMantra.meaning}`
+      `${DEFAULT_FESTIVAL.primaryMantra.sanskrit}\n\n${getMantraMeaning()}`
     );
     setCopiedMantra(true);
     setTimeout(() => setCopiedMantra(false), 3000);
@@ -140,13 +291,121 @@ export default function LiveFestival() {
 
   const isCurrentAudioPlaying = isPlaying && currentTrack?.id === DEFAULT_FESTIVAL.audioTrack.id;
 
+  // Localized UI strings
+  const L = {
+    topLiveBanner:
+      locale === 'en'
+        ? 'LIVE SACRED FESTIVAL • TODAY\'S CELEBRATION'
+        : locale === 'sa'
+        ? 'प्रत्यक्षं पावनमहापर्व • अद्यतनमहोत्सवः'
+        : 'लाइव पावन महापर्व • आज का विशेष उत्सव',
+    mantraTitle:
+      locale === 'en'
+        ? '॥ Today\'s Sacred Dhyana Mantra ॥'
+        : locale === 'sa'
+        ? '॥ अद्यतनं विशेषध्यानमन्त्रम् ॥'
+        : '॥ आज का विशेष ध्यान मंत्र ॥',
+    shareCopy:
+      locale === 'en' ? 'Share / Copy' : locale === 'sa' ? 'प्रतिलिपिः' : 'शेयर / कॉपी',
+    copied:
+      locale === 'en' ? 'Copied ✓' : locale === 'sa' ? 'प्रतिलिपितम् ✓' : 'कॉपी हो गया ✓',
+    meaningLabel:
+      locale === 'en' ? 'Meaning: ' : locale === 'sa' ? 'भावार्थः ' : 'भावार्थ: ',
+    colorLabel:
+      locale === 'en'
+        ? 'Auspicious Color Today'
+        : locale === 'sa'
+        ? 'अद्यतनपावनवर्णः'
+        : 'आज का पावन रंग',
+    prasadLabel:
+      locale === 'en'
+        ? 'Sacred Prasad / Offering'
+        : locale === 'sa'
+        ? 'अद्यतनपावनभोगः'
+        : 'आज का पावन भोग/प्रसाद',
+    btnAartis:
+      locale === 'en'
+        ? 'Aarti Sangrah'
+        : locale === 'sa'
+        ? 'आरतीसङ्ग्रहः (Aartis)'
+        : 'आरती संग्रह (Aartis)',
+    btnKathas:
+      locale === 'en'
+        ? 'Read Festival Kathas'
+        : locale === 'sa'
+        ? 'पर्वकथा पठ्यताम् (Kathas)'
+        : 'पर्व कथा पढ़ें (Kathas)',
+    btnBooks:
+      locale === 'en'
+        ? 'Spiritual Books'
+        : locale === 'sa'
+        ? 'धर्मग्रन्थपुस्तकालयः (Books)'
+        : 'धर्मग्रंथ पुस्तकालय (Books)',
+    virtualDiyaHeader:
+      locale === 'en'
+        ? 'Virtual Diya & Flower Offering'
+        : locale === 'sa'
+        ? 'डिजिटल दीपदानं पुष्पाञ्जलिश्च'
+        : 'डिजिटल दीपदान एवं पुष्पांजलि',
+    diyaPrompt:
+      locale === 'en'
+        ? '👆 Tap to light today\'s sacred diya'
+        : locale === 'sa'
+        ? '👆 स्पृष्ट्वा अद्यतनपावनदीपं प्रज्वालयतु'
+        : '👆 स्पर्श करके आज का पावन दीप प्रज्वलित करें',
+    diyaLitText:
+      locale === 'en'
+        ? '✨ Your sacred diya is lit!'
+        : locale === 'sa'
+        ? '✨ भवतः पावनदीपः प्रज्वलितः!'
+        : '✨ आपका पावन दीप प्रज्वलित है!',
+    devoteesCountPrefix:
+      locale === 'en'
+        ? ''
+        : locale === 'sa'
+        ? 'अद्य आहत्य '
+        : 'आज कुल ',
+    devoteesCountSuffix:
+      locale === 'en'
+        ? ' devotees lit a diya today'
+        : locale === 'sa'
+        ? ' भक्तैः दीपः प्रज्वलितः'
+        : ' श्रद्धालुओं ने दीप जलाया',
+    diyaBtnLit:
+      locale === 'en' ? 'Diya Lit ✓' : locale === 'sa' ? 'दीपः प्रज्वलितः ✓' : 'दीप जल चुका ✓',
+    diyaBtnUnlit:
+      locale === 'en' ? 'Light Diya' : locale === 'sa' ? 'दीपं प्रज्वालयतु' : 'दीप जलाएं',
+    flowersBtn:
+      locale === 'en' ? 'Offer Flowers' : locale === 'sa' ? 'पुष्पं समर्पयतु' : 'पुष्प अर्पित करें',
+    shubhMuhuratHeader:
+      locale === 'en'
+        ? 'Auspicious Timings Today (Shubh Muhurat)'
+        : locale === 'sa'
+        ? 'अद्यतनपावनशुभमुहूर्ताः (Shubh Muhurat)'
+        : 'आज के पावन शुभ मुहूर्त (Shubh Muhurat)',
+  };
+
+  const muhurats = DEFAULT_FESTIVAL.shubhMuhurat.map((m, idx) => {
+    if (adminConfig?.shubhMuhurats?.[idx]) {
+      const adminM = adminConfig.shubhMuhurats[idx];
+      return {
+        title: adminM.title,
+        time: adminM.time,
+        note: adminM.note,
+      };
+    }
+    return {
+      title: locale === 'en' ? m.titleEn : locale === 'sa' ? m.titleSa || m.titleHi : m.titleHi,
+      time: locale === 'en' ? m.timeEn : locale === 'sa' ? m.timeSa || m.timeHi : m.timeHi,
+      note: locale === 'en' ? m.noteEn : locale === 'sa' ? m.noteSa || m.noteHi : m.noteHi,
+    };
+  });
+
   return (
     <section className="relative overflow-hidden my-8 sm:my-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Main Card Container */}
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2a1308] via-[#1c0c05] to-[#120703] border-2 border-amber-600/40 shadow-2xl">
-          
           {/* Subtle Golden Glow / Shimmer Background Aura */}
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
@@ -159,15 +418,15 @@ export default function LiveFestival() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
               </span>
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-300 font-serif flex items-center space-x-1.5">
-                <span>🔴 लाइव पावन महापर्व • LIVE FESTIVAL TODAY</span>
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-300 font-serif">
+                {L.topLiveBanner}
               </span>
             </div>
 
             <div className="flex items-center space-x-4 text-xs font-serif text-amber-200/90">
               <span className="flex items-center space-x-1 bg-black/40 px-3 py-1 rounded-full border border-amber-500/20">
                 <Clock className="w-3.5 h-3.5 text-amber-400 mr-1" />
-                <span>{DEFAULT_FESTIVAL.tithi}</span>
+                <span>{getTithi()}</span>
               </span>
             </div>
           </div>
@@ -175,24 +434,22 @@ export default function LiveFestival() {
           {/* Body Content Grid */}
           <div className="p-6 sm:p-8 lg:p-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              
               {/* Left Column: Festival Info & Mantra (7 Cols) */}
               <div className="lg:col-span-7 space-y-6">
-                
                 <div>
                   <div className="inline-flex items-center space-x-2 bg-amber-500/15 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold border border-amber-500/30 mb-3">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{DEFAULT_FESTIVAL.deity}</span>
+                    <span>{getDeity()}</span>
                   </div>
-                  
+
                   <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-wide leading-tight">
-                    {DEFAULT_FESTIVAL.nameHi}
+                    {getFestivalName()}
                   </h2>
                   <p className="text-amber-200/90 font-serif text-base sm:text-lg mt-1 font-medium">
-                    {DEFAULT_FESTIVAL.tagline}
+                    {getTagline()}
                   </p>
                   <p className="text-stone-300 text-xs sm:text-sm mt-2 leading-relaxed">
-                    {DEFAULT_FESTIVAL.deityRole}
+                    {getDeityRole()}
                   </p>
                 </div>
 
@@ -200,20 +457,20 @@ export default function LiveFestival() {
                 <div className="bg-black/50 border border-amber-500/40 rounded-2xl p-5 sm:p-6 backdrop-blur-sm relative group">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-serif">
-                      ॥ आज का विशेष ध्यान मंत्र ॥
+                      {L.mantraTitle}
                     </span>
                     <button
                       onClick={copyMantra}
                       className="text-stone-400 hover:text-amber-300 transition text-xs flex items-center space-x-1 bg-stone-800/80 hover:bg-stone-700/80 px-2.5 py-1 rounded-md"
-                      title="मंत्र कॉपी करें"
+                      title={L.shareCopy}
                     >
                       <Share2 className="w-3 h-3" />
-                      <span>{copiedMantra ? 'कॉपी हो गया ✓' : 'शेयर / कॉपी'}</span>
+                      <span>{copiedMantra ? L.copied : L.shareCopy}</span>
                     </button>
                   </div>
 
                   <blockquote className="text-lg sm:text-xl font-serif font-bold text-amber-100 leading-relaxed whitespace-pre-line drop-shadow">
-                    {DEFAULT_FESTIVAL.primaryMantra.sanskrit}
+                    {adminConfig?.primaryMantraSanskrit || DEFAULT_FESTIVAL.primaryMantra.sanskrit}
                   </blockquote>
 
                   <p className="text-xs text-amber-200/80 italic font-serif mt-2">
@@ -221,8 +478,8 @@ export default function LiveFestival() {
                   </p>
 
                   <div className="mt-3 pt-3 border-t border-amber-900/50 text-xs text-stone-300 font-serif">
-                    <strong className="text-amber-300">भावार्थ: </strong>
-                    {DEFAULT_FESTIVAL.primaryMantra.meaning}
+                    <strong className="text-amber-300">{L.meaningLabel}</strong>
+                    {getMantraMeaning()}
                   </div>
                 </div>
 
@@ -233,8 +490,8 @@ export default function LiveFestival() {
                       <span className="text-base">🎨</span>
                     </div>
                     <div>
-                      <span className="block text-stone-400 text-[10px] font-medium">आज का पावन रंग</span>
-                      <span className="font-bold text-amber-200">{DEFAULT_FESTIVAL.todaysColor.name}</span>
+                      <span className="block text-stone-400 text-[10px] font-medium">{L.colorLabel}</span>
+                      <span className="font-bold text-amber-200">{getColorName()}</span>
                     </div>
                   </div>
 
@@ -243,8 +500,8 @@ export default function LiveFestival() {
                       <span className="text-base">🍯</span>
                     </div>
                     <div>
-                      <span className="block text-stone-400 text-[10px] font-medium">आज का पावन भोग/प्रसाद</span>
-                      <span className="font-bold text-amber-200 truncate block">{DEFAULT_FESTIVAL.todaysPrasad}</span>
+                      <span className="block text-stone-400 text-[10px] font-medium">{L.prasadLabel}</span>
+                      <span className="font-bold text-amber-200 truncate block">{getPrasadName()}</span>
                     </div>
                   </div>
                 </div>
@@ -256,7 +513,7 @@ export default function LiveFestival() {
                     className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-lg shadow-amber-600/20 transition transform hover:-translate-y-0.5"
                   >
                     <Music className="w-4 h-4" />
-                    <span>आरती संग्रह (Aartis)</span>
+                    <span>{L.btnAartis}</span>
                   </Link>
 
                   <Link
@@ -264,14 +521,14 @@ export default function LiveFestival() {
                     className="inline-flex items-center space-x-2 bg-stone-900/90 hover:bg-stone-800 text-amber-200 border border-amber-500/40 font-semibold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition transform hover:-translate-y-0.5"
                   >
                     <BookOpen className="w-4 h-4" />
-                    <span>पर्व कथा पढ़ें (Kathas)</span>
+                    <span>{L.btnKathas}</span>
                   </Link>
 
                   <Link
                     href="/books"
                     className="inline-flex items-center space-x-2 bg-stone-900/90 hover:bg-stone-800 text-stone-200 border border-stone-700 font-semibold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition hover:text-amber-300"
                   >
-                    <span>Spiritual Books</span>
+                    <span>{L.btnBooks}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -279,13 +536,11 @@ export default function LiveFestival() {
 
               {/* Right Column: Live Interactive Devotion & Muhurat (5 Cols) */}
               <div className="lg:col-span-5 space-y-5">
-                
                 {/* Interactive Virtual Puja & Diya Lighting Card */}
                 <div className="bg-gradient-to-b from-[#351a0d] to-[#200f07] border-2 border-amber-500/50 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden text-center">
-                  
                   <div className="inline-flex items-center space-x-1.5 text-xs text-amber-300 font-serif font-bold uppercase tracking-wider mb-2">
                     <Flame className="w-4 h-4 text-orange-400 animate-pulse" />
-                    <span>डिजिटल दीपदान एवं पुष्पांजलि</span>
+                    <span>{L.virtualDiyaHeader}</span>
                   </div>
 
                   {/* Animated Diya Display */}
@@ -299,7 +554,7 @@ export default function LiveFestival() {
                       }`}
                     >
                       <span className="text-4xl select-none filter drop-shadow">
-                        {isDiyaLit ? '🪔' : '🪔'}
+                        🪔
                       </span>
                       {isDiyaLit && (
                         <div className="absolute -top-3 animate-bounce">
@@ -309,10 +564,12 @@ export default function LiveFestival() {
                     </div>
 
                     <p className="text-xs text-amber-200 font-serif mt-3 font-semibold">
-                      {isDiyaLit ? '✨ आपका पावन दीप प्रज्वलित है!' : '👆 स्पर्श करके आज का पावन दीप प्रज्वलित करें'}
+                      {isDiyaLit ? L.diyaLitText : L.diyaPrompt}
                     </p>
                     <span className="text-[11px] text-stone-400 mt-0.5">
-                      आज कुल <strong className="text-amber-300">{diyaCount.toLocaleString()}</strong> श्रद्धालुओं ने दीप जलाया
+                      {L.devoteesCountPrefix}
+                      <strong className="text-amber-300">{diyaCount.toLocaleString()}</strong>
+                      {L.devoteesCountSuffix}
                     </span>
                   </div>
 
@@ -328,7 +585,7 @@ export default function LiveFestival() {
                       }`}
                     >
                       <Flame className="w-3.5 h-3.5" />
-                      <span>{isDiyaLit ? 'दीप जल चुका ✓' : 'दीप जलाएं'}</span>
+                      <span>{isDiyaLit ? L.diyaBtnLit : L.diyaBtnUnlit}</span>
                     </button>
 
                     <button
@@ -336,7 +593,7 @@ export default function LiveFestival() {
                       className="py-2 px-3 rounded-xl font-serif text-xs font-bold bg-stone-800/90 hover:bg-stone-700/90 text-amber-200 border border-amber-500/30 transition flex items-center justify-center space-x-1.5 relative overflow-hidden"
                     >
                       <span className="text-sm">🌸</span>
-                      <span>पुष्प अर्पित करें ({flowerCount.toLocaleString()})</span>
+                      <span>{L.flowersBtn} ({flowerCount.toLocaleString()})</span>
                       {isFlowerOffered && (
                         <span className="absolute inset-0 bg-amber-400/20 flex items-center justify-center text-amber-200 text-xs animate-ping">
                           🌸
@@ -354,10 +611,14 @@ export default function LiveFestival() {
                     </div>
                     <div className="text-left">
                       <span className="block text-xs font-serif font-bold text-white">
-                        {DEFAULT_FESTIVAL.audioTrack.title}
+                        {locale === 'en'
+                          ? DEFAULT_FESTIVAL.audioTrack.titleEn
+                          : DEFAULT_FESTIVAL.audioTrack.titleHi}
                       </span>
                       <span className="block text-[10px] text-amber-300/80 font-serif">
-                        {DEFAULT_FESTIVAL.audioTrack.subtitle}
+                        {locale === 'en'
+                          ? DEFAULT_FESTIVAL.audioTrack.subtitleEn
+                          : DEFAULT_FESTIVAL.audioTrack.subtitleHi}
                       </span>
                     </div>
                   </div>
@@ -365,7 +626,7 @@ export default function LiveFestival() {
                   <button
                     onClick={handleToggleAudio}
                     className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-950 flex items-center justify-center shadow-lg transition transform hover:scale-105 active:scale-95 shrink-0"
-                    title={isCurrentAudioPlaying ? 'आरती रोकें' : 'आरती सुनें'}
+                    title={isCurrentAudioPlaying ? 'Pause Aarti' : 'Play Aarti'}
                   >
                     {isCurrentAudioPlaying ? (
                       <Pause className="w-4 h-4 fill-stone-950" />
@@ -379,11 +640,11 @@ export default function LiveFestival() {
                 <div className="bg-black/60 border border-amber-900/80 rounded-2xl p-4 sm:p-5 space-y-3">
                   <h3 className="text-xs font-serif font-bold text-amber-300 flex items-center space-x-1.5 uppercase tracking-wider">
                     <Clock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>आज के पावन शुभ मुहूर्त (Shubh Muhurat)</span>
+                    <span>{L.shubhMuhuratHeader}</span>
                   </h3>
 
                   <div className="space-y-2.5">
-                    {DEFAULT_FESTIVAL.shubhMuhurat.map((m, idx) => (
+                    {muhurats.map((m, idx) => (
                       <div
                         key={idx}
                         className="bg-[#211007] border border-amber-900/40 rounded-xl p-2.5 flex items-center justify-between text-xs"
@@ -399,14 +660,10 @@ export default function LiveFestival() {
                     ))}
                   </div>
                 </div>
-
               </div>
-
             </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );

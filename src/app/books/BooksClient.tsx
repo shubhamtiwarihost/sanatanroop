@@ -18,6 +18,8 @@ import {
   Bookmark,
   Layers,
   Volume2,
+  FileText,
+  Download,
 } from 'lucide-react';
 import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
 import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
@@ -46,6 +48,9 @@ interface BookItem {
   sampleVerseHindi: string;
   sampleVerseEnglish: string;
   readOnlineUrl?: string;
+  pdfUrl?: string;
+  pdfFileName?: string;
+  pdfFileSize?: string;
 }
 
 const BOOKS_DATA: BookItem[] = [
@@ -351,6 +356,14 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
           <div className="absolute bottom-0 left-0 right-0 h-2 bg-transparent border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[8px] border-b-black/30" />
         </div>
 
+        {/* PDF Badge if attached */}
+        {book.pdfUrl && (
+          <div className="absolute top-2.5 right-2.5 z-40 bg-red-600/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1 border border-red-400/50">
+            <FileText className="w-2.5 h-2.5" />
+            <span>PDF</span>
+          </div>
+        )}
+
         {/* Ornate Double-Line Border (Front Cover) */}
         <div className="relative z-10 m-2.5 ml-7 p-3 border-2 border-amber-100/90 rounded-r-lg h-[calc(100%-20px)] flex flex-col justify-between bg-black/10 backdrop-blur-[0.5px]">
           
@@ -440,6 +453,9 @@ export default function SpiritualBooksPage() {
         sampleVerseHindi: b.sampleVerseHindi || '',
         sampleVerseEnglish: b.sampleVerseEnglish || '',
         readOnlineUrl: b.readOnlineUrl || `/scriptures/${b.id}`,
+        pdfUrl: b.pdfUrl,
+        pdfFileName: b.pdfFileName,
+        pdfFileSize: b.pdfFileSize,
       };
     });
   }, [books]);
@@ -814,13 +830,40 @@ export default function SpiritualBooksPage() {
                         ? `सम्पूर्ण ${chaptersCount} अध्याय • ${totalVerses} पावन श्लोक`
                         : previewBook.versesCount}
                     </div>
-                    <Link
-                      href={previewBook.readOnlineUrl || `/scriptures/${previewBook.id}`}
-                      className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
-                    >
-                      <span>सम्पूर्ण ग्रंथ ऑनलाइन पढ़ें</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {previewBook.pdfUrl && (
+                        <a
+                          href={previewBook.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={previewBook.pdfFileName || `${previewBook.titleEn || 'scripture'}.pdf`}
+                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>
+                            {locale === 'en'
+                              ? 'Download PDF'
+                              : locale === 'sa'
+                              ? 'PDF डाउनलोडं कुर्वन्तु'
+                              : 'PDF डाउनलोड करें'}
+                            {previewBook.pdfFileSize ? ` (${previewBook.pdfFileSize})` : ''}
+                          </span>
+                        </a>
+                      )}
+                      <Link
+                        href={previewBook.readOnlineUrl || `/scriptures/${previewBook.id}`}
+                        className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
+                      >
+                        <span>
+                          {locale === 'en'
+                            ? 'Read Complete Book'
+                            : locale === 'sa'
+                            ? 'सम्पूर्णग्रन्थं पठ्यताम्'
+                            : 'सम्पूर्ण ग्रंथ ऑनलाइन पढ़ें'}
+                        </span>
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
                 </>
               );
