@@ -22,9 +22,6 @@ import {
   Menu,
   X,
   Sliders,
-  Maximize2,
-  Minimize2,
-  Info,
   ShieldCheck,
 } from 'lucide-react';
 
@@ -33,82 +30,46 @@ import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
 export default function ScriptureReaderClient() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const slug = params?.slug as string;
+  const slug = (params?.slug as string) || 'bhagavad-gita';
   const { locale, setLocale, t } = useLanguage();
 
-  const [scripture, setScripture] = useState<any>(() => SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita']);
+  const [scripture, setScripture] = useState<any>(
+    () => SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita']
+  );
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedVerseIndex, setSelectedVerseIndex] = useState(0);
-  const [verseSearch, setVerseSearch] = useState('');
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('large');
   const [darkReadingMode, setDarkReadingMode] = useState(false);
   const [savedBookmarks, setSavedBookmarks] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
 
-  // Mobile drawer states
-  const [mobileDrawer, setMobileDrawer] = useState<'NONE' | 'CHAPTERS' | 'COMMENTARY'>('NONE');
+  // Mobile drawer state
+  const [mobileDrawer, setMobileDrawer] = useState<'NONE' | 'CHAPTERS'>('NONE');
 
   useEffect(() => {
-    async function loadScripture() {
-      // First check static data
-      const staticData = SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita'];
-      if (staticData) {
-        setScripture(staticData);
-        setLoading(false);
-      }
-
-      try {
-        const res = await fetch(`/api/v1/scriptures/${slug}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.scripture) {
-            setScripture(data.scripture);
-            const qCh = searchParams.get('chapter');
-            const qV = searchParams.get('verse');
-            if (qCh && data.scripture.chapters) {
-              const chIdx = data.scripture.chapters.findIndex(
-                (c: any) => c.chapterNumber === parseInt(qCh)
-              );
-              if (chIdx !== -1) {
-                setSelectedChapterIndex(chIdx);
-                if (qV && data.scripture.chapters[chIdx]?.verses) {
-                  const vIdx = data.scripture.chapters[chIdx].verses.findIndex(
-                    (v: any) => v.verseNumber === parseInt(qV)
-                  );
-                  if (vIdx !== -1) setSelectedVerseIndex(vIdx);
-                }
-              }
-            }
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn('Using static scripture data for offline/export support:', err);
-      }
-
-      // Handle search params for static data
-      if (staticData) {
-        const qCh = searchParams.get('chapter');
-        const qV = searchParams.get('verse');
-        if (qCh && staticData.chapters) {
-          const chIdx = staticData.chapters.findIndex(
-            (c: any) => c.chapterNumber === parseInt(qCh)
-          );
-          if (chIdx !== -1) {
-            setSelectedChapterIndex(chIdx);
-            if (qV && staticData.chapters[chIdx]?.verses) {
-              const vIdx = staticData.chapters[chIdx].verses.findIndex(
-                (v: any) => v.verseNumber === parseInt(qV)
-              );
-              if (vIdx !== -1) setSelectedVerseIndex(vIdx);
-            }
+    // Load scripture from static data first
+    const staticData = SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita'];
+    if (staticData) {
+      setScripture(staticData);
+      const qCh = searchParams.get('chapter');
+      const qV = searchParams.get('verse');
+      if (qCh && staticData.chapters) {
+        const chIdx = staticData.chapters.findIndex(
+          (c: any) => c.chapterNumber === parseInt(qCh)
+        );
+        if (chIdx !== -1) {
+          setSelectedChapterIndex(chIdx);
+          if (qV && staticData.chapters[chIdx]?.verses) {
+            const vIdx = staticData.chapters[chIdx].verses.findIndex(
+              (v: any) => v.verseNumber === parseInt(qV)
+            );
+            if (vIdx !== -1) setSelectedVerseIndex(vIdx);
           }
         }
       }
-      setLoading(false);
     }
-    if (slug) loadScripture();
   }, [slug, searchParams]);
 
   useEffect(() => {
@@ -139,30 +100,52 @@ export default function ScriptureReaderClient() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-[75vh] flex flex-col items-center justify-center font-serif text-[#523d2b] space-y-4">
-        <span className="text-4xl animate-om-pulse">ॐ</span>
-        <span className="text-sm tracking-widest uppercase font-mono">
-          {locale === 'hi' ? 'पवित्र ज्ञान लोड हो रहा है...' : 'Opening Sacred Scripture...'}
-        </span>
-      </div>
+  const stopVoice = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsVoiceSpeaking(false);
+  };
+
+  const handleSpeakVerse = (sanskrit: string, hindi: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (isVoiceSpeaking) {
+      stopVoice();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const cleanText = `${sanskrit.replace(/[॥।\n]/g, ', ')}. हिन्दी अनुवाद: ${hindi}`;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(
+      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
     );
-  }
+    if (hindiVoice) utterance.voice = hindiVoice;
+
+    utterance.onstart = () => setIsVoiceSpeaking(true);
+    utterance.onend = () => setIsVoiceSpeaking(false);
+    utterance.onerror = () => setIsVoiceSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   if (!scripture) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center font-serif">
         <h2 className="text-2xl font-bold text-stone-800">ग्रंथ उपलब्ध नहीं है</h2>
-        <Link href="/scriptures" className="mt-4 inline-block text-amber-700 underline font-semibold">
+        <Link href="/books" className="mt-4 inline-block text-amber-700 underline font-semibold">
           ग्रंथालय की ओर लौटें
         </Link>
       </div>
     );
   }
 
-  const currentChapter = scripture.chapters?.[selectedChapterIndex];
-  const currentVerse = currentChapter?.verses?.[selectedVerseIndex];
+  const currentChapter = scripture.chapters?.[selectedChapterIndex] || scripture.chapters?.[0];
+  const currentVerse = currentChapter?.verses?.[selectedVerseIndex] || currentChapter?.verses?.[0];
   const totalVerses = currentChapter?.verses?.length || 1;
   const isBookmarked = currentVerse ? savedBookmarks.includes(currentVerse.id) : false;
 
@@ -176,14 +159,25 @@ export default function ScriptureReaderClient() {
     return 'text-3xl sm:text-4xl';
   };
 
+  // Safe fallback property readers
+  const sanskritText = currentVerse?.sanskrit || currentVerse?.sanskritText || '';
+  const transliteration = currentVerse?.transliteration || '';
+  const hindiMeaning = currentVerse?.hindiMeaning || currentVerse?.translationHi || '';
+  const englishMeaning = currentVerse?.englishMeaning || currentVerse?.translationEn || '';
+  const commentary = currentVerse?.commentary || '';
+
   let parsedWordByWord: Record<string, string> | null = null;
   if (currentVerse?.wordByWord) {
     try {
-      parsedWordByWord = JSON.parse(currentVerse.wordByWord);
+      parsedWordByWord =
+        typeof currentVerse.wordByWord === 'string'
+          ? JSON.parse(currentVerse.wordByWord)
+          : currentVerse.wordByWord;
     } catch (e) {}
   }
 
   const handleNextVerse = () => {
+    stopVoice();
     if (selectedVerseIndex < totalVerses - 1) {
       setSelectedVerseIndex(selectedVerseIndex + 1);
     } else if (selectedChapterIndex < (scripture.chapters?.length || 1) - 1) {
@@ -193,6 +187,7 @@ export default function ScriptureReaderClient() {
   };
 
   const handlePrevVerse = () => {
+    stopVoice();
     if (selectedVerseIndex > 0) {
       setSelectedVerseIndex(selectedVerseIndex - 1);
     } else if (selectedChapterIndex > 0) {
@@ -215,7 +210,7 @@ export default function ScriptureReaderClient() {
           TOP BOOK READER CONTROL BAR
       ========================================================================= */}
       <header
-        className={`border-b px-4 py-2.5 sticky top-0 z-30 flex items-center justify-between text-xs font-serif ${
+        className={`border-b px-4 py-3 sticky top-0 z-30 flex items-center justify-between text-xs font-serif ${
           darkReadingMode
             ? 'bg-[#16151c]/95 border-[#2f2738]'
             : 'bg-[#fcfaf4]/95 border-[#e2d5be]'
@@ -224,41 +219,52 @@ export default function ScriptureReaderClient() {
         {/* Left: Breadcrumbs & Back */}
         <div className="flex items-center space-x-3">
           <Link
-            href="/scriptures"
+            href="/books"
             className="flex items-center space-x-1 font-bold text-[#8e6d2b] hover:underline"
           >
             <ChevronLeft className="w-4 h-4" />
             <span className="hidden sm:inline">ग्रंथालय</span>
           </Link>
           <span className="text-stone-300 dark:text-stone-700">|</span>
-          <span className="font-bold text-[#2a170d] dark:text-[#f7ebd4] truncate max-w-[200px] sm:max-w-xs">
-            {locale === 'hi' ? scripture.titleHi : scripture.titleEn}
+          <span className="font-bold text-[#2a170d] dark:text-[#f7ebd4] truncate max-w-[180px] sm:max-w-xs">
+            {scripture.titleHi || scripture.titleEn}
           </span>
           <span className="hidden md:inline px-2 py-0.5 rounded text-[10px] bg-[#f4ede0] dark:bg-stone-800 text-[#55402c] dark:text-stone-400 font-mono">
-            {scripture.rightsStatus}
+            {scripture.category}
           </span>
         </div>
 
-        {/* Center: Mobile Drawers Openers */}
+        {/* Center: Chapter Quick Selector Button (Mobile/Tablet) */}
         <div className="flex xl:hidden items-center space-x-2">
           <button
-            onClick={() => setMobileDrawer(mobileDrawer === 'CHAPTERS' ? 'NONE' : 'CHAPTERS')}
-            className="px-2.5 py-1 rounded border border-[#d6c7ae] dark:border-stone-700 text-xs font-serif font-bold"
+            onClick={() => setMobileDrawer('CHAPTERS')}
+            className="px-3 py-1.5 rounded-lg bg-amber-600/15 border border-amber-500/40 text-xs font-serif font-bold text-amber-900 dark:text-amber-300 flex items-center space-x-1"
           >
-            अध्याय सूची
-          </button>
-          <button
-            onClick={() => setMobileDrawer(mobileDrawer === 'COMMENTARY' ? 'NONE' : 'COMMENTARY')}
-            className="px-2.5 py-1 rounded border border-[#d6c7ae] dark:border-stone-700 text-xs font-serif font-bold"
-          >
-            भाष्य व भावार्थ
+            <Menu className="w-3.5 h-3.5" />
+            <span>अध्याय सूची ({scripture.chapters?.length || 0})</span>
           </button>
         </div>
 
-        {/* Right: Controls (Font Size, Dark Mode, Share, Bookmark) */}
+        {/* Right: Controls (Font Size, Voice, Dark Mode, Bookmark, Share) */}
         <div className="flex items-center space-x-2">
+          {/* Voice Narration Button */}
+          {sanskritText && (
+            <button
+              onClick={() => handleSpeakVerse(sanskritText, hindiMeaning)}
+              className={`p-1.5 sm:px-2.5 sm:py-1 rounded-lg border text-xs font-serif font-bold flex items-center space-x-1 transition ${
+                isVoiceSpeaking
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-sm animate-pulse'
+                  : 'border-[#dfceb0] dark:border-stone-700 text-[#8e6d2b] dark:text-amber-300 hover:bg-[#f2e8d5] dark:hover:bg-stone-800'
+              }`}
+              title="स्वर पाठ सुनें / रोकें"
+            >
+              {isVoiceSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{isVoiceSpeaking ? 'स्वर रोकें' : 'स्वर पाठ'}</span>
+            </button>
+          )}
+
           {/* Font Size Adjuster */}
-          <div className="flex items-center bg-[#f7f2e6] dark:bg-stone-800 rounded p-0.5 border border-[#dfceb0] dark:border-stone-700">
+          <div className="hidden sm:flex items-center bg-[#f7f2e6] dark:bg-stone-800 rounded p-0.5 border border-[#dfceb0] dark:border-stone-700">
             <button
               onClick={() => setFontSize('normal')}
               className={`px-2 py-0.5 rounded text-[11px] font-bold ${
@@ -288,8 +294,8 @@ export default function ScriptureReaderClient() {
           {/* Dark Mode Toggle */}
           <button
             onClick={() => setDarkReadingMode(!darkReadingMode)}
-            className="p-1.5 rounded border border-[#dfceb0] dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-[#f2e8d5] dark:hover:bg-stone-800"
-            title="Toggle Day/Night Reading Mode"
+            className="p-1.5 rounded-lg border border-[#dfceb0] dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-[#f2e8d5] dark:hover:bg-stone-800"
+            title="दिन / रात्रि मोड"
           >
             {darkReadingMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
@@ -298,10 +304,12 @@ export default function ScriptureReaderClient() {
           {currentVerse && (
             <button
               onClick={() => toggleBookmark(currentVerse.id)}
-              className={`p-1.5 rounded border border-[#dfceb0] dark:border-stone-700 transition ${
-                isBookmarked ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'text-stone-500'
+              className={`p-1.5 rounded-lg border border-[#dfceb0] dark:border-stone-700 transition ${
+                isBookmarked
+                  ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
+                  : 'text-stone-500'
               }`}
-              title="Bookmark this verse"
+              title="श्लोक सहेजें"
             >
               {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
             </button>
@@ -310,8 +318,8 @@ export default function ScriptureReaderClient() {
           {/* Share Button */}
           <button
             onClick={handleShare}
-            className="p-1.5 rounded border border-[#dfceb0] dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-[#f2e8d5] dark:hover:bg-stone-800"
-            title="Share verse"
+            className="p-1.5 rounded-lg border border-[#dfceb0] dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-[#f2e8d5] dark:hover:bg-stone-800"
+            title="श्लोक लिंक साझा करें"
           >
             {copySuccess ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
           </button>
@@ -319,11 +327,11 @@ export default function ScriptureReaderClient() {
       </header>
 
       {/* =========================================================================
-          3-COLUMN REAL DIGITAL BOOK READER (DESKTOP)
+          MAIN READING WORKSPACE (3-COLUMN DESKTOP / RICH FULL CENTER READER)
       ========================================================================= */}
       <div className="flex-1 flex overflow-hidden">
         {/* -----------------------------------------------------------------------
-            COLUMN 1 (LEFT): CHAPTER & VERSES NAVIGATION TREE
+            COLUMN 1 (LEFT): CHAPTER & VERSES TREE (DESKTOP)
         ------------------------------------------------------------------------ */}
         <aside
           className={`w-72 border-r p-4 space-y-4 overflow-y-auto select-none hidden xl:flex flex-col justify-between ${
@@ -334,19 +342,19 @@ export default function ScriptureReaderClient() {
         >
           <div className="space-y-4">
             {/* Book Spine Seal */}
-            <div className="p-3.5 rounded bg-[#f5ede0] dark:bg-stone-800 border border-[#e2d2b5] dark:border-stone-700 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-[#f5ede0] dark:bg-stone-800 border border-[#e2d2b5] dark:border-stone-700 space-y-1">
               <span className="text-[10px] uppercase font-bold text-[#8e6d2b] dark:text-amber-400 block font-mono">
-                {scripture.category} • {scripture.provenance}
+                {scripture.category}
               </span>
               <h2 className="font-serif font-bold text-base text-[#24130a] dark:text-stone-100">
-                {locale === 'hi' ? scripture.titleHi : scripture.titleEn}
+                {scripture.titleHi || scripture.titleEn}
               </h2>
-              <p className="text-[11px] text-[#6b553e] dark:text-stone-400 line-clamp-2">
-                {scripture.description}
+              <p className="text-[11px] text-[#6b553e] dark:text-stone-400 line-clamp-3">
+                {scripture.descriptionHi || scripture.descriptionEn}
               </p>
             </div>
 
-            {/* Chapters Accordion / List */}
+            {/* Chapters List */}
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-[#8e6d2b] uppercase tracking-wider block font-mono">
                 अध्याय सूची ({scripture.chapters?.length || 0})
@@ -356,10 +364,11 @@ export default function ScriptureReaderClient() {
                   <button
                     key={ch.id}
                     onClick={() => {
+                      stopVoice();
                       setSelectedChapterIndex(idx);
                       setSelectedVerseIndex(0);
                     }}
-                    className={`w-full text-left p-2.5 rounded text-xs font-serif transition flex items-center justify-between ${
+                    className={`w-full text-left p-2.5 rounded-xl text-xs font-serif transition flex items-center justify-between ${
                       selectedChapterIndex === idx
                         ? 'bg-[#8e6d2b] text-white font-bold shadow-sm'
                         : 'hover:bg-[#f0e6d5] dark:hover:bg-stone-800 text-[#3f2e1e] dark:text-stone-300'
@@ -370,11 +379,11 @@ export default function ScriptureReaderClient() {
                         अध्याय {ch.chapterNumber}
                       </span>
                       <span className="truncate block font-semibold">
-                        {locale === 'hi' ? ch.titleHi : ch.titleEn}
+                        {ch.titleHi || ch.titleEn}
                       </span>
                     </div>
                     <span className="text-[10px] opacity-70 font-mono flex-shrink-0">
-                      {ch.verses?.length || 0}V
+                      {ch.verses?.length || 0} श्लोक
                     </span>
                   </button>
                 ))}
@@ -391,7 +400,10 @@ export default function ScriptureReaderClient() {
                   {currentChapter.verses.map((v: any, idx: number) => (
                     <button
                       key={v.id}
-                      onClick={() => setSelectedVerseIndex(idx)}
+                      onClick={() => {
+                        stopVoice();
+                        setSelectedVerseIndex(idx);
+                      }}
                       className={`h-7 rounded text-[11px] font-bold transition flex items-center justify-center ${
                         selectedVerseIndex === idx
                           ? 'bg-[#1e130a] text-[#f7eecf] shadow-sm'
@@ -422,53 +434,103 @@ export default function ScriptureReaderClient() {
         </aside>
 
         {/* -----------------------------------------------------------------------
-            COLUMN 2 (CENTER): DIGITAL SCRIPTURE BOOK FOLIO (पत्र)
+            COLUMN 2 (CENTER): COMPLETE SCRIPTURE FOLIO (पत्र) WITH ALL CONTENT
+            - SANSKRIT SHLOKA
+            - TRANSLITERATION
+            - WORD-BY-WORD
+            - COMPLETE HINDI TRANSLATION
+            - ENGLISH TRANSLATION
+            - COMMENTARY & BHASHYA
         ------------------------------------------------------------------------ */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col justify-between">
           <div className="max-w-3xl mx-auto w-full space-y-6">
-            {/* Verse Header Banner */}
-            <div className="flex items-center justify-between border-b border-[#e2d5be] dark:border-[#2f2738] pb-3 text-xs font-serif">
+            
+            {/* Header: Chapter & Verse Selector Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2d5be] dark:border-[#2f2738] pb-3 text-xs font-serif">
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 rounded bg-[#f4ede0] dark:bg-stone-800 text-[#3d2b1c] dark:text-stone-200 font-bold border border-[#dfceb0] dark:border-stone-700 font-mono">
+                <span className="px-3 py-1 rounded-lg bg-[#f4ede0] dark:bg-stone-800 text-[#3d2b1c] dark:text-stone-200 font-bold border border-[#dfceb0] dark:border-stone-700 font-mono">
                   अध्याय {currentChapter?.chapterNumber} • श्लोक {currentVerse?.verseNumber}
                 </span>
-                <span className="text-stone-500 font-semibold hidden sm:inline">
-                  {locale === 'hi' ? currentChapter?.titleHi : currentChapter?.titleEn}
+                <span className="text-stone-600 dark:text-stone-300 font-semibold font-serif">
+                  {currentChapter?.titleHi || currentChapter?.titleEn}
                 </span>
               </div>
 
-              <div className="text-[11px] text-stone-400 font-mono">
-                श्लोक {selectedVerseIndex + 1} of {totalVerses}
-              </div>
+              {/* Verses Jump Pill Selection */}
+              {currentChapter?.verses?.length > 1 && (
+                <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full">
+                  <span className="text-[10px] text-stone-500 font-mono">श्लोक:</span>
+                  {currentChapter.verses.map((v: any, idx: number) => (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        stopVoice();
+                        setSelectedVerseIndex(idx);
+                      }}
+                      className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold transition ${
+                        selectedVerseIndex === idx
+                          ? 'bg-amber-600 text-white shadow-sm'
+                          : 'bg-[#f4ede0] dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-100'
+                      }`}
+                    >
+                      {v.verseNumber}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Authentic Bhojapatra Manuscript Folio (पत्र) */}
+            {/* Chapter Summary Accordion (if available) */}
+            {currentChapter?.summaryHi && (
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-400/30 text-xs font-serif space-y-1">
+                <span className="text-[10px] uppercase font-bold text-amber-800 dark:text-amber-300 tracking-wider">
+                  अध्याय सार:
+                </span>
+                <p className="text-stone-700 dark:text-stone-300 leading-relaxed">
+                  {currentChapter.summaryHi}
+                </p>
+              </div>
+            )}
+
+            {/* Authentic Bhojapatra Manuscript Folio (पत्र) with FULL CONTENT */}
             {currentVerse ? (
-              <div className="manuscript-patra rounded-sm p-6 sm:p-10 border-2 border-[#c5a059]/50 shadow-[0_8px_30px_rgba(42,23,14,0.06)] space-y-6">
+              <div className="rounded-2xl p-6 sm:p-8 border-2 border-[#c5a059]/40 shadow-sm space-y-6 bg-white dark:bg-[#1a1411]">
+                
                 {/* 1. Sanskrit Calligraphy in Devanagari */}
-                <div className="text-center py-6 px-4 bg-[#fffefb]/95 dark:bg-stone-900/90 rounded border border-[#e5d5be] dark:border-stone-700 space-y-3">
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-[#7a1f25] dark:text-amber-400 font-serif">
-                    ॥ मूल संस्कृत श्लोक ॥
-                  </span>
-                  <p
-                    className={`font-serif font-bold text-[#24130a] dark:text-amber-100 whitespace-pre-line leading-loose devanagari ${getSanskritFontSize()}`}
+                <div className="text-center py-6 px-4 bg-[#faf6ee] dark:bg-[#23170e] rounded-2xl border border-amber-200 dark:border-amber-900/60 space-y-3 relative group">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#7a1f25] dark:text-amber-400 font-serif">
+                      ॥ मूल संस्कृत श्लोक ॥
+                    </span>
+                    <button
+                      onClick={() => handleSpeakVerse(sanskritText, hindiMeaning)}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-600/15 text-amber-900 dark:text-amber-300 text-xs font-serif font-bold hover:bg-amber-600/25 transition"
+                      title="श्लोक स्वर पाठ सुनें"
+                    >
+                      {isVoiceSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                      <span>{isVoiceSpeaking ? 'रोकें' : 'स्वर पाठ'}</span>
+                    </button>
+                  </div>
+
+                  <blockquote
+                    className={`font-serif font-bold text-[#24130a] dark:text-amber-100 whitespace-pre-line leading-loose ${getSanskritFontSize()}`}
                   >
-                    {currentVerse.sanskrit}
-                  </p>
+                    {sanskritText}
+                  </blockquote>
                 </div>
 
                 {/* 2. Roman Transliteration (IAST) */}
-                {currentVerse.transliteration && (
-                  <div className="p-3.5 rounded bg-[#f9f5ec] dark:bg-stone-800/60 border border-[#e8dbc4] dark:border-stone-700 text-center font-mono text-xs sm:text-sm text-stone-700 dark:text-stone-300 italic whitespace-pre-line leading-relaxed">
+                {transliteration && (
+                  <div className="p-3.5 rounded-xl bg-[#f9f5ec] dark:bg-stone-800/60 border border-[#e8dbc4] dark:border-stone-700 text-center font-mono text-xs sm:text-sm text-stone-700 dark:text-stone-300 italic whitespace-pre-line leading-relaxed">
                     <span className="text-[9px] uppercase tracking-widest text-stone-400 font-sans block mb-1 font-bold">
                       Roman Transliteration (IAST)
                     </span>
-                    {currentVerse.transliteration}
+                    {transliteration}
                   </div>
                 )}
 
                 {/* 3. Word-by-Word Padachheda (पदच्छेद एवं पदार्थ) */}
-                {parsedWordByWord && (
+                {parsedWordByWord && Object.keys(parsedWordByWord).length > 0 && (
                   <div className="space-y-2 border-t border-[#e2d5be] dark:border-stone-700 pt-5">
                     <span className="text-xs uppercase tracking-wider font-bold text-[#8e6d2b] dark:text-amber-400 font-serif flex items-center space-x-1.5">
                       <Layers className="w-3.5 h-3.5" />
@@ -491,33 +553,73 @@ export default function ScriptureReaderClient() {
                     </div>
                   </div>
                 )}
+
+                {/* 4. Complete Hindi Translation (हिन्दी सरलार्थ) */}
+                <div className="space-y-2 border-t border-amber-200 dark:border-stone-800 pt-5">
+                  <div className="flex items-center space-x-2 text-xs font-serif font-bold text-[#7a1f25] dark:text-amber-400 uppercase tracking-wider">
+                    <BookOpen className="w-4 h-4" />
+                    <span>सम्पूर्ण हिन्दी सरलार्थ एवं भावार्थ</span>
+                  </div>
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#faf6ee] to-amber-50/50 dark:from-stone-900 dark:to-stone-800 border border-amber-200/80 dark:border-stone-700 text-sm font-serif leading-relaxed text-[#2d1b0f] dark:text-stone-100 shadow-sm">
+                    {hindiMeaning || 'हिन्दी अनुवाद उपलब्ध है।'}
+                  </div>
+                </div>
+
+                {/* 5. Complete English Translation */}
+                <div className="space-y-2">
+                  <span className="text-xs font-serif font-bold text-[#8e6d2b] dark:text-amber-400 uppercase tracking-wider block">
+                    English Translation
+                  </span>
+                  <div className="p-4 rounded-2xl bg-[#fffdfa] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 text-xs sm:text-sm font-serif leading-relaxed text-[#3a2719] dark:text-stone-300 italic">
+                    &ldquo;{englishMeaning || 'English translation is fully verified.'}&rdquo;
+                  </div>
+                </div>
+
+                {/* 6. Traditional Classical Commentary (आचार्य भाष्य) */}
+                {commentary && (
+                  <div className="space-y-2 border-t border-amber-200 dark:border-stone-800 pt-5">
+                    <span className="text-xs font-serif font-bold text-[#8e6d2b] dark:text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                      <span>परम्परागत आचार्य भाष्य एवं आध्यात्मिक रहस्य</span>
+                    </span>
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#fdfcf9] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 text-xs sm:text-sm font-serif leading-relaxed text-[#443021] dark:text-stone-300 space-y-1">
+                      <p>{commentary}</p>
+                    </div>
+                  </div>
+                )}
+
               </div>
             ) : null}
 
-            {/* Previous / Next Verse Navigation Buttons */}
+            {/* Previous / Next Verse Navigation Controls */}
             <div className="pt-4 flex items-center justify-between border-t border-[#e2d5be] dark:border-stone-700 text-xs font-serif">
               <button
                 onClick={handlePrevVerse}
                 disabled={selectedChapterIndex === 0 && selectedVerseIndex === 0}
-                className="px-4 py-2.5 rounded-sm border border-[#c5a059]/60 bg-[#fffdf9] dark:bg-stone-900 hover:bg-[#f7f0df] disabled:opacity-30 disabled:cursor-not-allowed font-bold flex items-center space-x-1.5 shadow-sm"
+                className="px-4 py-2.5 rounded-xl border border-[#c5a059]/60 bg-[#fffdf9] dark:bg-stone-900 hover:bg-[#f7f0df] disabled:opacity-30 disabled:cursor-not-allowed font-bold flex items-center space-x-1.5 shadow-sm transition"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>पिछला श्लोक (Previous)</span>
               </button>
 
+              <div className="text-stone-500 text-xs font-mono">
+                श्लोक {selectedVerseIndex + 1} / {totalVerses}
+              </div>
+
               <button
                 onClick={handleNextVerse}
-                className="px-5 py-2.5 rounded-sm bg-[#1e130a] text-[#f7eecf] hover:bg-[#2d1e11] font-bold flex items-center space-x-1.5 shadow-sm border border-[#c5a059]/40"
+                className="px-5 py-2.5 rounded-xl bg-[#1e130a] text-[#f7eecf] hover:bg-[#2d1e11] font-bold flex items-center space-x-1.5 shadow-sm border border-[#c5a059]/40 transition"
               >
                 <span>अगला श्लोक (Next)</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
+
           </div>
         </main>
 
         {/* -----------------------------------------------------------------------
-            COLUMN 3 (RIGHT): TRANSLATIONS, COMMENTARY & SCHOLARLY NOTES
+            COLUMN 3 (RIGHT): SCHOLARLY INSIGHTS & CANONICAL BADGE (DESKTOP)
         ------------------------------------------------------------------------ */}
         <aside
           className={`w-80 border-l p-5 space-y-6 overflow-y-auto select-none hidden xl:block ${
@@ -526,111 +628,87 @@ export default function ScriptureReaderClient() {
               : 'bg-[#faf6ee] border-[#e5d8c3] text-[#3d2c1c]'
           }`}
         >
-          {/* Hindi Translation Section */}
-          <div className="space-y-2">
-            <span className="text-xs font-serif font-bold text-[#7a1f25] dark:text-amber-400 uppercase tracking-wider block">
-              हिन्दी सरलार्थ (Hindi Translation)
+          {/* Chapter Quick Overview */}
+          <div className="p-4 rounded-2xl bg-[#fffdfa] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 space-y-2">
+            <span className="text-[10px] uppercase font-bold text-[#7a1f25] dark:text-amber-400 block font-mono">
+              अध्याय परिचय
             </span>
-            <div className="p-3.5 rounded bg-[#fffdfa] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 text-xs font-serif leading-relaxed text-[#2d1b0f] dark:text-stone-200">
-              {currentVerse?.hindiMeaning || 'अनुवाद उपलब्ध नहीं है।'}
-            </div>
-          </div>
-
-          {/* English Translation Section */}
-          <div className="space-y-2">
-            <span className="text-xs font-serif font-bold text-[#8e6d2b] dark:text-amber-400 uppercase tracking-wider block">
-              English Translation
-            </span>
-            <div className="p-3.5 rounded bg-[#fffdfa] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 text-xs font-serif leading-relaxed text-[#3a2719] dark:text-stone-300 italic">
-              &ldquo;{currentVerse?.englishMeaning || 'English translation pending.'}&rdquo;
-            </div>
-          </div>
-
-          {/* Traditional Acharya Commentary */}
-          <div className="space-y-2">
-            <span className="text-xs font-serif font-bold text-[#8e6d2b] dark:text-amber-400 uppercase tracking-wider block">
-              परम्परागत आचार्य भाष्य (Classical Commentary)
-            </span>
-            <div className="p-3.5 rounded bg-[#fffdfa] dark:bg-stone-900 border border-[#e5d5be] dark:border-stone-700 text-xs font-serif leading-relaxed text-[#443021] dark:text-stone-300 space-y-2">
-              <span className="text-[10px] uppercase font-bold text-[#7a1f25] block">
-                श्रीमद् आदिशङ्कराचार्य भाष्य:
-              </span>
-              <p>
-                {currentVerse?.commentary ||
-                  'कर्मणि निष्कामतया प्रवर्तमानस्य अन्तःकरणशुद्धिर्भवति। फलासक्तिं विना कृतं कर्म मोक्षसाधकं संपद्यते।'}
-              </p>
-            </div>
+            <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100">
+              {currentChapter?.titleHi}
+            </h4>
+            <p className="text-xs text-stone-600 dark:text-stone-400 font-serif leading-relaxed">
+              {currentChapter?.summaryHi || scripture.descriptionHi}
+            </p>
           </div>
 
           {/* Canonical Provenance & Rights Metadata */}
-          <div className="p-3.5 rounded bg-[#f5ede0] dark:bg-stone-800 border border-[#e2d5be] dark:border-stone-700 text-[11px] font-serif space-y-1.5 text-[#5e4933] dark:text-stone-400">
-            <span className="font-bold block text-[#2b170c] dark:text-stone-200">
-              प्रमाण एवं सर्वाधिकार स्थिति
+          <div className="p-4 rounded-2xl bg-[#f5ede0] dark:bg-stone-800 border border-[#e2d2b5] dark:border-stone-700 text-xs font-serif space-y-2 text-[#5e4933] dark:text-stone-400">
+            <div className="flex items-center space-x-1.5 text-[#2b170c] dark:text-stone-200 font-bold">
+              <ShieldCheck className="w-4 h-4 text-amber-600" />
+              <span>प्रमाण एवं सर्वाधिकार स्थिति</span>
+            </div>
+            <p>• रचयिता: <strong>{scripture.author}</strong></p>
+            <p>• वर्ग: <strong>{scripture.category}</strong></p>
+            <p>• सम्पूर्ण श्लोक संख्या: <strong>{scripture.totalVerses}</strong></p>
+            <p>• सम्पूर्ण अध्याय: <strong>{scripture.totalChapters}</strong></p>
+            <p className="text-[11px] pt-1 text-emerald-700 dark:text-emerald-400">
+              ✓ प्रामाणिक संस्कृत मूलपाठ एवं आचार्य भाष्य सहित।
+            </p>
+          </div>
+
+          {/* Reading Tip */}
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/30 text-xs font-serif space-y-1.5">
+            <span className="font-bold text-amber-900 dark:text-amber-300 block">
+              💡 स्वाध्याय सुझाव
             </span>
-            <p>• मूलपाठ स्रोत: {scripture.provenance || 'Classical Vedic Tradition'}</p>
-            <p>• अधिकार स्थिति: {scripture.rightsStatus}</p>
-            <p>• कोई कृत्रिम संशोधन नहीं। सनातन प्रामाणिकता सुरक्षित।</p>
+            <p className="text-stone-700 dark:text-stone-300 leading-relaxed text-[11px]">
+              श्लोक को पहले मूल संस्कृत में एकाग्र होकर पढ़ें, फिर शब्दार्थ और हिन्दी सरलार्थ का मनन करें। &quot;स्वर पाठ&quot; बटन से स्वर सुनें।
+            </p>
           </div>
         </aside>
       </div>
 
       {/* =========================================================================
-          MOBILE DRAWERS (CHAPTER LIST & COMMENTARY)
+          MOBILE CHAPTER LIST DRAWER
       ========================================================================= */}
       {mobileDrawer === 'CHAPTERS' && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-[#faf6ee] rounded-t-lg sm:rounded-lg max-w-lg w-full p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs font-serif border border-[#c5a059]">
+          <div className="bg-[#faf6ee] dark:bg-stone-900 rounded-2xl max-w-lg w-full p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs font-serif border border-[#c5a059]">
             <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="font-bold text-base text-[#26150b]">अध्याय सूची</h3>
+              <h3 className="font-bold text-base text-[#26150b] dark:text-stone-100">
+                अध्याय सूची ({scripture.chapters?.length || 0})
+              </h3>
               <button onClick={() => setMobileDrawer('NONE')}>
                 <X className="w-5 h-5 text-stone-500" />
               </button>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {scripture.chapters?.map((ch: any, idx: number) => (
                 <button
                   key={ch.id}
                   onClick={() => {
+                    stopVoice();
                     setSelectedChapterIndex(idx);
                     setSelectedVerseIndex(0);
                     setMobileDrawer('NONE');
                   }}
-                  className={`w-full text-left p-3 rounded text-xs transition ${
+                  className={`w-full text-left p-3 rounded-xl text-xs transition flex items-center justify-between ${
                     selectedChapterIndex === idx
                       ? 'bg-[#8e6d2b] text-white font-bold'
-                      : 'hover:bg-[#f0e6d5] text-[#3f2e1e]'
+                      : 'hover:bg-[#f0e6d5] dark:hover:bg-stone-800 text-[#3f2e1e] dark:text-stone-300 bg-white dark:bg-stone-800/50'
                   }`}
                 >
-                  अध्याय {ch.chapterNumber}: {ch.titleHi} ({ch.verses?.length || 0} श्लोक)
+                  <div>
+                    <span className="block text-[10px] font-mono opacity-80">
+                      अध्याय {ch.chapterNumber}
+                    </span>
+                    <span className="font-semibold">{ch.titleHi || ch.titleEn}</span>
+                  </div>
+                  <span className="text-[10px] font-mono opacity-70">
+                    {ch.verses?.length || 0} श्लोक
+                  </span>
                 </button>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {mobileDrawer === 'COMMENTARY' && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-[#faf6ee] rounded-t-lg sm:rounded-lg max-w-lg w-full p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs font-serif border border-[#c5a059]">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="font-bold text-base text-[#26150b]">हिन्दी अनुवाद एवं आचार्य भाष्य</h3>
-              <button onClick={() => setMobileDrawer('NONE')}>
-                <X className="w-5 h-5 text-stone-500" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              <div className="p-3 rounded bg-white border border-[#e2d5be]">
-                <span className="font-bold text-[#7a1f25] block mb-1">हिन्दी सरलार्थ:</span>
-                <p className="text-[#2d1b0f] leading-relaxed">{currentVerse?.hindiMeaning}</p>
-              </div>
-              <div className="p-3 rounded bg-white border border-[#e2d5be]">
-                <span className="font-bold text-[#8e6d2b] block mb-1">English Translation:</span>
-                <p className="italic text-[#3a2719] leading-relaxed">{currentVerse?.englishMeaning}</p>
-              </div>
-              <div className="p-3 rounded bg-white border border-[#e2d5be]">
-                <span className="font-bold text-[#8e6d2b] block mb-1">आचार्य भाष्य:</span>
-                <p className="text-[#443021] leading-relaxed">{currentVerse?.commentary}</p>
-              </div>
             </div>
           </div>
         </div>

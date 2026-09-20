@@ -5,9 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/i18n/LanguageContext';
 import {
-  Phone,
-  Mail,
-  Clock,
   Send,
   CheckCircle2,
   AlertCircle,
@@ -52,12 +49,12 @@ export default function ContactPage() {
       a: 'Our Panchang engine uses high-precision astronomical algorithms based on Surya Siddhanta and Drik Ganitha, calibrated for over 100 cities globally with precise local sunrise and sunset timings.',
     },
     {
-      q: 'How do I place or track orders from the Sanatan Granth Store?',
-      a: 'You can browse authenticated scriptures, puja samagri, and brass idols in our Store. Once placed, track your package directly under My Account or write to store@sanatan.org with your Order ID.',
+      q: 'Can I read scriptures and books freely online?',
+      a: 'Yes! All holy scriptures including Shrimad Bhagavad Gita, Shri Ramcharitmanas, Upanishads, Rigveda Samhita, and Yoga Sutras are available to read freely online with authentic Sanskrit verses, transliteration, Hindi translation, and English commentary.',
     },
     {
       q: 'Can I request guidance on specific puja rituals or mantra japa?',
-      a: 'Certainly! Use the contact form with the subject "Scripture & Ritual Guidance" or submit your question in the Community tab to receive responses from verified Vedic acharyas.',
+      a: 'Certainly! Use the contact form with the subject "Scripture & Ritual Guidance" to receive authentic shastric guidance.',
     },
   ];
 
@@ -104,68 +101,39 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-amber-200/50 dark:border-stone-700">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">
-                      Spiritual Helpline & WhatsApp
-                    </h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
-                      +91 98765 43210 / +91 542 2345678
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-amber-200/50 dark:border-stone-700">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">
-                      Official Publisher Email
-                    </h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
-                      <a href="mailto:contact@sanatanroop.com" className="hover:text-amber-600 underline">contact@sanatanroop.com</a> / <a href="mailto:shubhamtiwarihost@gmail.com" className="hover:text-amber-600 underline">shubhamtiwarihost@gmail.com</a>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-amber-200/50 dark:border-stone-700">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">
-                      Service Timings
-                    </h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
-                      Daily: 6:00 AM – 8:30 PM IST (Temple & Seva Hours)
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Founder & Publisher Card for AdSense Compliance */}
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/30 space-y-2">
-                <div className="flex items-center space-x-2 text-amber-900 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
-                  <ShieldCheck className="w-4 h-4 text-amber-600" />
+              <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-400/30 space-y-3">
+                <div className="flex items-center space-x-2 text-amber-900 dark:text-amber-300 font-bold text-sm uppercase tracking-wider">
+                  <ShieldCheck className="w-5 h-5 text-amber-600" />
                   <span>Founder &amp; Publisher Identity</span>
                 </div>
-                <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
-                  <strong>Sanatan Roop</strong> is published and managed by <strong>Shubham Tiwari</strong>. For formal publisher notices, copyright inquiries, or advertising communications, please email directly to <a href="mailto:contact@sanatanroop.com" className="text-amber-700 dark:text-amber-400 underline font-semibold">contact@sanatanroop.com</a>.
+                <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+                  <strong>Sanatan Roop</strong> is founded, published, and managed by <strong>Shubham Tiwari</strong>. For formal publisher notices, copyright inquiries, editorial contributions, or partnership communications, please reach out directly:
                 </p>
+                <div className="pt-2 border-t border-amber-300/40 space-y-1">
+                  <p className="text-xs text-stone-800 dark:text-stone-200">
+                    <strong>Email:</strong>{' '}
+                    <a href="mailto:contact@sanatanroop.com" className="text-amber-700 dark:text-amber-400 underline font-semibold">
+                      contact@sanatanroop.com
+                    </a>
+                  </p>
+                  <p className="text-xs text-stone-600 dark:text-stone-400">
+                    <strong>Alternate:</strong>{' '}
+                    <a href="mailto:shubhamtiwarihost@gmail.com" className="text-amber-700 dark:text-amber-400 underline">
+                      shubhamtiwarihost@gmail.com
+                    </a>
+                  </p>
+                </div>
               </div>
 
               {/* Shloka Card on Seva */}
-              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-stone-800 border border-amber-200/60 dark:border-stone-700 text-center space-y-1">
-                <p className="font-serif text-xs font-bold text-amber-900 dark:text-amber-300">
-                  परोपकाराय वहन्ति नद्यः परोपकाराय दुहन्ति गावः।
+              <div className="p-5 rounded-2xl bg-amber-50 dark:bg-stone-800 border border-amber-200/60 dark:border-stone-700 text-center space-y-2">
+                <p className="font-serif text-sm font-bold text-amber-900 dark:text-amber-300">
+                  परोपकाराय वहन्ति नद्यः परोपकाराय दुहन्ति गावः।<br />
+                  परोपकाराय फलन्ति वृक्षाः परोपकारार्थमिदं शरीरम्॥
                 </p>
-                <p className="text-[11px] text-stone-500 italic">
-                  &quot;Rivers flow for the welfare of others, cows give milk for others, and this life is dedicated to noble service.&quot;
+                <p className="text-xs text-stone-500 italic">
+                  &quot;Rivers flow for the welfare of others, cows give milk for others, trees bear fruit for others, and this human life is dedicated to selfless service.&quot;
                 </p>
               </div>
             </div>
@@ -269,7 +237,7 @@ export default function ContactPage() {
                         <option value="General Inquiry">General Platform Inquiry</option>
                         <option value="Scripture & Ritual Guidance">Scripture & Shloka Guidance</option>
                         <option value="Panchang & Muhurat">Panchang & Astrological Calculation</option>
-                        <option value="Store Order Support">Store Order & Delivery</option>
+                        <option value="Book & Scripture Guidance">Book & Scripture Guidance</option>
                         <option value="Editorial Contribution">Volunteer or Editorial Contribution</option>
                       </select>
                     </div>

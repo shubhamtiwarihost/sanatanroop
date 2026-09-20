@@ -583,12 +583,19 @@ export default function SpiritualBooksPage() {
 
                 {/* Card Footer Actions */}
                 <div className="pt-4 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => setPreviewBook(book)}
+                  <Link
+                    href={book.readOnlineUrl || `/scriptures/${book.id}`}
                     className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-4 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
                   >
                     <BookOpen className="w-3.5 h-3.5" />
-                    <span>ग्रंथ पढ़ें (Read Online)</span>
+                    <span>सम्पूर्ण ग्रंथ पढ़ें</span>
+                  </Link>
+
+                  <button
+                    onClick={() => setPreviewBook(book)}
+                    className="inline-flex items-center space-x-1 text-xs font-serif text-stone-600 dark:text-stone-400 hover:text-amber-600 py-2 px-3 rounded-xl border border-stone-200 dark:border-stone-700 transition"
+                  >
+                    <span>झलक (Preview)</span>
                   </button>
                 </div>
 
