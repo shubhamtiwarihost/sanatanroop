@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAudio } from '@/context/AudioContext';
+import { useCMS } from '@/context/CMSContext';
 import {
   Search,
   Play,
@@ -106,11 +107,16 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
 const CATEGORIES = ['All', 'Gita Shlokas', 'Upanishad Shlokas', 'Shanti Mantras', 'Stotras'];
 
 export default function ShlokasPage() {
+  const { shlokas } = useCMS();
   const { isPlaying, playAudio, pauseAudio } = useAudio();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const allShlokas = useMemo(() => {
+    return (shlokas && shlokas.length > 0 ? shlokas : CANONICAL_SHLOKAS) as ScriptureShloka[];
+  }, [shlokas]);
 
   const handleAudio = async (shloka: ScriptureShloka) => {
     if (playingId === shloka.id && isPlaying) {
@@ -134,7 +140,7 @@ export default function ShlokasPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const filtered = CANONICAL_SHLOKAS.filter((s) => {
+  const filtered = allShlokas.filter((s) => {
     const matchCat = activeCategory === 'All' || s.category === activeCategory;
     const matchSearch =
       searchQuery === '' ||

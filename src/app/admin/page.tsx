@@ -13,6 +13,10 @@ import {
   CMSOrderItem,
   CMSCommentItem,
   DivineVibrationTrack,
+  CMSAartiItem,
+  CMSKathaItem,
+  CMSBookItem,
+  CMSShlokaItem,
 } from '@/context/CMSContext';
 import {
   LayoutDashboard,
@@ -81,6 +85,22 @@ export default function WordPressAdminPanel() {
     addMantra,
     updateMantra,
     deleteMantra,
+    aartis,
+    addAarti,
+    updateAarti,
+    deleteAarti,
+    kathas,
+    addKatha,
+    updateKatha,
+    deleteKatha,
+    books,
+    addBook,
+    updateBook,
+    deleteBook,
+    shlokas,
+    addShloka,
+    updateShloka,
+    deleteShloka,
     products,
     addProduct,
     updateProduct,
@@ -284,44 +304,365 @@ export default function WordPressAdminPanel() {
     ],
   });
 
-  // Aartis Admin State
-  const [aartisList, setAartisList] = useState([
-    { id: 'art-1', titleHi: 'श्री गणेश जी की आरती', deity: 'श्री गणेश', lyricsPreview: 'जय गणेश जय गणेश जय गणेश देवा...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-2', titleHi: 'श्री जगदीश जी की आरती', deity: 'श्री विष्णु', lyricsPreview: 'ॐ जय जगदीश हरे, स्वामी जय जगदीश हरे...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-3', titleHi: 'श्री शिव जी की आरती', deity: 'भगवान शिव', lyricsPreview: 'ॐ जय शिव ओंकारा, स्वामी जय शिव ओंकारा...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-4', titleHi: 'श्री अम्बे माता की आरती', deity: 'माँ दुर्गा', lyricsPreview: 'जय अम्बे गौरी मैया जय श्यामा गौरी...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-5', titleHi: 'श्री हनुमान जी की आरती', deity: 'श्री हनुमान', lyricsPreview: 'आरती कीजै हनुमान लला की, दुष्ट दलन...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-6', titleHi: 'श्री लक्ष्मी माता की आरती', deity: 'माँ लक्ष्मी', lyricsPreview: 'ॐ जय लक्ष्मी माता, मैया जय लक्ष्मी माता...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-7', titleHi: 'श्री कुंजबिहारी जी की आरती', deity: 'श्री कृष्ण', lyricsPreview: 'आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-    { id: 'art-8', titleHi: 'श्री रामचन्द्र कृपालु भजु मन', deity: 'श्री राम', lyricsPreview: 'श्रीरामचन्द्र कृपालु भजु मन हरण भवभय...', audio: 'om_namah_shivaya.wav', status: 'Published' },
-  ]);
+  // Aartis Admin State & Handlers
   const [aartiModalOpen, setAartiModalOpen] = useState(false);
-  const [aartiForm, setAartiForm] = useState({ titleHi: '', deity: 'श्री गणेश', lyricsPreview: '', audio: 'om_namah_shivaya.wav' });
+  const [editingAartiId, setEditingAartiId] = useState<string | null>(null);
+  const [aartiForm, setAartiForm] = useState<Partial<CMSAartiItem>>({
+    titleHi: '',
+    titleEn: '',
+    deity: 'श्री गणेश जी',
+    category: 'ganesha',
+    tagline: '',
+    youtubeId: '',
+    singer: 'अनुराधा पौडवाल',
+    duration: '5:00',
+    lyricsHi: '',
+    lyricsEn: '',
+    meaning: '',
+    status: 'Published',
+  });
 
-  // Kathas Admin State
-  const [kathasList, setKathasList] = useState([
-    { id: 'kth-1', titleHi: 'श्री सत्यनारायण व्रत कथा', deity: 'श्री विष्णु', dayOrTithi: 'पूर्णिमा / गुरुवार', chaptersCount: 5, status: 'Published' },
-    { id: 'kth-2', titleHi: 'महाशिवरात्रि व्रत कथा', deity: 'भगवान शिव', dayOrTithi: 'फाल्गुन कृष्ण चतुर्दशी', chaptersCount: 2, status: 'Published' },
-    { id: 'kth-3', titleHi: 'निर्जला एकादशी व्रत कथा', deity: 'श्री विष्णु', dayOrTithi: 'ज्येष्ठ शुक्ल एकादशी', chaptersCount: 2, status: 'Published' },
-    { id: 'kth-4', titleHi: 'करवा चौथ व्रत कथा', deity: 'माँ गौरी व शिव', dayOrTithi: 'कार्तिक कृष्ण चतुर्थी', chaptersCount: 2, status: 'Published' },
-    { id: 'kth-5', titleHi: 'सोमवार व्रत कथा', deity: 'भगवान शिव', dayOrTithi: 'प्रत्येक सोमवार', chaptersCount: 2, status: 'Published' },
-  ]);
+  const handleOpenAartiModal = (item?: CMSAartiItem) => {
+    if (item) {
+      setEditingAartiId(item.id);
+      setAartiForm({
+        titleHi: item.titleHi,
+        titleEn: item.titleEn,
+        deity: item.deity,
+        category: item.category,
+        tagline: item.tagline,
+        youtubeId: item.youtubeId,
+        singer: item.singer,
+        duration: item.duration,
+        lyricsHi: item.lyricsHi,
+        lyricsEn: item.lyricsEn,
+        meaning: item.meaning,
+        status: item.status,
+      });
+    } else {
+      setEditingAartiId(null);
+      setAartiForm({
+        titleHi: '',
+        titleEn: '',
+        deity: 'श्री गणेश जी',
+        category: 'ganesha',
+        tagline: '',
+        youtubeId: '',
+        singer: 'अनुराधा पौडवाल',
+        duration: '5:00',
+        lyricsHi: '',
+        lyricsEn: '',
+        meaning: '',
+        status: 'Published',
+      });
+    }
+    setAartiModalOpen(true);
+  };
+
+  const handleSaveAarti = () => {
+    if (!aartiForm.titleHi?.trim()) {
+      alert('कृपया आरती का शीर्षक (Title) दर्ज करें।');
+      return;
+    }
+    if (editingAartiId) {
+      updateAarti(editingAartiId, aartiForm);
+      showNotice(`आरती "${aartiForm.titleHi}" अद्यतन (Updated) हो गई।`);
+    } else {
+      addAarti({
+        titleHi: aartiForm.titleHi,
+        titleEn: aartiForm.titleEn || aartiForm.titleHi,
+        deity: aartiForm.deity || 'श्री गणेश जी',
+        category: aartiForm.category || 'ganesha',
+        tagline: aartiForm.tagline || '',
+        youtubeId: aartiForm.youtubeId || 'Ll5Ccg1qWdc',
+        singer: aartiForm.singer || 'अनुराधा पौडवाल',
+        duration: aartiForm.duration || '5:00',
+        lyricsHi: aartiForm.lyricsHi || '',
+        lyricsEn: aartiForm.lyricsEn || '',
+        meaning: aartiForm.meaning || '',
+        status: aartiForm.status || 'Published',
+        audioTrack: {
+          id: `audio-${Date.now()}`,
+          title: aartiForm.titleHi,
+          audioUrl: '/audio/om_namah_shivaya.wav',
+          subtitle: aartiForm.deity || 'Devotional Aarti',
+        },
+      });
+      showNotice(`नई आरती "${aartiForm.titleHi}" सफलतापूर्वक जोड़ी गई।`);
+    }
+    setAartiModalOpen(false);
+  };
+
+  // Shlokas Admin State & Handlers
+  const [shlokaModalOpen, setShlokaModalOpen] = useState(false);
+  const [editingShlokaId, setEditingShlokaId] = useState<string | null>(null);
+  const [shlokaForm, setShlokaForm] = useState<Partial<CMSShlokaItem>>({
+    source: '',
+    chapterVerse: '',
+    sanskrit: '',
+    transliteration: '',
+    meter: 'अनुष्टुप् छन्द (Anushtubh Meter)',
+    hindi: '',
+    english: '',
+    category: 'Gita Shlokas',
+    scriptureSlug: 'bhagavad-gita',
+    status: 'Published',
+  });
+
+  const handleOpenShlokaModal = (item?: CMSShlokaItem) => {
+    if (item) {
+      setEditingShlokaId(item.id);
+      setShlokaForm({
+        source: item.source,
+        chapterVerse: item.chapterVerse,
+        sanskrit: item.sanskrit,
+        transliteration: item.transliteration,
+        meter: item.meter,
+        hindi: item.hindi,
+        english: item.english,
+        category: item.category,
+        scriptureSlug: item.scriptureSlug,
+        status: item.status,
+      });
+    } else {
+      setEditingShlokaId(null);
+      setShlokaForm({
+        source: '',
+        chapterVerse: '',
+        sanskrit: '',
+        transliteration: '',
+        meter: 'अनुष्टुप् छन्द (Anushtubh Meter)',
+        hindi: '',
+        english: '',
+        category: 'Gita Shlokas',
+        scriptureSlug: 'bhagavad-gita',
+        status: 'Published',
+      });
+    }
+    setShlokaModalOpen(true);
+  };
+
+  const handleSaveShloka = () => {
+    if (!shlokaForm.source?.trim() || !shlokaForm.sanskrit?.trim()) {
+      alert('कृपया ग्रंथ का नाम (Source) और संस्कृत श्लोक (Sanskrit) दर्ज करें।');
+      return;
+    }
+    if (editingShlokaId) {
+      updateShloka(editingShlokaId, shlokaForm);
+      showNotice(`श्लोक "${shlokaForm.source}" अद्यतन (Updated) हो गया।`);
+    } else {
+      addShloka({
+        source: shlokaForm.source,
+        chapterVerse: shlokaForm.chapterVerse || '',
+        sanskrit: shlokaForm.sanskrit,
+        transliteration: shlokaForm.transliteration || '',
+        meter: shlokaForm.meter || 'अनुष्टुप् छन्द',
+        hindi: shlokaForm.hindi || '',
+        english: shlokaForm.english || '',
+        category: shlokaForm.category || 'Gita Shlokas',
+        scriptureSlug: shlokaForm.scriptureSlug || 'bhagavad-gita',
+        status: shlokaForm.status || 'Published',
+      });
+      showNotice(`नया श्लोक सफलतापूर्वक जोड़ा गया।`);
+    }
+    setShlokaModalOpen(false);
+  };
+
+  // Kathas Admin State & Handlers
   const [kathaModalOpen, setKathaModalOpen] = useState(false);
-  const [kathaForm, setKathaForm] = useState({ titleHi: '', deity: 'भगवान शिव', dayOrTithi: 'सोमवार', chaptersCount: 1 });
+  const [editingKathaId, setEditingKathaId] = useState<string | null>(null);
+  const [kathaForm, setKathaForm] = useState<{
+    titleHi: string;
+    titleEn: string;
+    category: string;
+    deity: string;
+    dayOrTithi: string;
+    shortDesc: string;
+    vidhiText: string;
+    storyText: string;
+    phalaShruti: string;
+    status: 'Published' | 'Draft';
+  }>({
+    titleHi: '',
+    titleEn: '',
+    category: 'vrat',
+    deity: 'भगवान शिव',
+    dayOrTithi: 'सोमवार',
+    shortDesc: '',
+    vidhiText: '',
+    storyText: '',
+    phalaShruti: '',
+    status: 'Published',
+  });
 
-  // Spiritual Books Admin State
-  const [booksList, setBooksList] = useState([
-    { id: 'bk-1', titleHi: 'श्रीमद्भगवद्गीता', category: 'श्रीमद्भगवद्गीता', author: 'महर्षि वेदव्यास / श्री कृष्ण', verses: '१८ अध्याय • ७०० श्लोक', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-2', titleHi: 'श्रीरामचरितमानस', category: 'इतिहास एवं काव्य', author: 'गोस्वामी तुलसीदास जी', verses: '७ काण्ड • चौपाई, दोहा', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-3', titleHi: 'ईशावास्योपनिषद्', category: 'उपनिषद', author: 'शुक्ल यजुर्वेद', verses: '१८ मंत्र', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-4', titleHi: 'कठोपनिषद्', category: 'उपनिषद', author: 'कृष्ण यजुर्वेद', verses: '२ अध्याय • ६ वल्लियाँ', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-5', titleHi: 'ऋग्वेद संहिता', category: 'वेद संहिता', author: 'अनादि / अपौरुषेय', verses: '१० मण्डल • १०२८ सूक्त', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-6', titleHi: 'श्रीमद्भागवत महापुराण', category: 'महापुराण', author: 'श्री शुकदेव जी / वेदव्यास', verses: '१२ स्कंध • १८,००० श्लोक', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-7', titleHi: 'पतंजलि योगसूत्र', category: 'दर्शन एवं योग', author: 'महर्षि पतंजलि', verses: '४ पाद • १९६ सूत्र', colorCode: '#FF9933', status: 'Published' },
-    { id: 'bk-8', titleHi: 'चाणक्य नीति', category: 'दर्शन एवं नीति', author: 'आचार्य चाणक्य', verses: '१७ अध्याय • ३५०+ श्लोक', colorCode: '#FF9933', status: 'Published' },
-  ]);
+  const handleOpenKathaModal = (item?: CMSKathaItem) => {
+    if (item) {
+      setEditingKathaId(item.id);
+      setKathaForm({
+        titleHi: item.titleHi,
+        titleEn: item.titleEn,
+        category: item.category,
+        deity: item.deity,
+        dayOrTithi: item.dayOrTithi,
+        shortDesc: item.shortDesc,
+        vidhiText: Array.isArray(item.vidhi) ? item.vidhi.join('\n') : '',
+        storyText: Array.isArray(item.chapters)
+          ? item.chapters.map((c) => `### ${c.title}\n${c.content}`).join('\n\n')
+          : '',
+        phalaShruti: item.phalaShruti || '',
+        status: item.status,
+      });
+    } else {
+      setEditingKathaId(null);
+      setKathaForm({
+        titleHi: '',
+        titleEn: '',
+        category: 'vrat',
+        deity: 'भगवान शिव',
+        dayOrTithi: 'सोमवार',
+        shortDesc: '',
+        vidhiText: '',
+        storyText: '',
+        phalaShruti: '',
+        status: 'Published',
+      });
+    }
+    setKathaModalOpen(true);
+  };
+
+  const handleSaveKatha = () => {
+    if (!kathaForm.titleHi?.trim()) {
+      alert('कृपया कथा का नाम दर्ज करें।');
+      return;
+    }
+    const vidhiArray = kathaForm.vidhiText
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+
+    const chapters = kathaForm.storyText
+      .split('###')
+      .filter((s) => s.trim().length > 0)
+      .map((part) => {
+        const lines = part.trim().split('\n');
+        const title = lines[0]?.trim() || 'कथा अध्याय';
+        const content = lines.slice(1).join('\n').trim();
+        return { title, content };
+      });
+
+    const payload: Partial<CMSKathaItem> = {
+      titleHi: kathaForm.titleHi,
+      titleEn: kathaForm.titleEn || kathaForm.titleHi,
+      category: kathaForm.category,
+      deity: kathaForm.deity,
+      dayOrTithi: kathaForm.dayOrTithi,
+      shortDesc: kathaForm.shortDesc,
+      vidhi: vidhiArray.length > 0 ? vidhiArray : ['स्नानादि कर शुद्ध भाव से कथा श्रवण करें।'],
+      chapters: chapters.length > 0 ? chapters : [{ title: 'सम्पूर्ण कथा', content: kathaForm.storyText }],
+      phalaShruti: kathaForm.phalaShruti,
+      status: kathaForm.status,
+    };
+
+    if (editingKathaId) {
+      updateKatha(editingKathaId, payload);
+      showNotice(`कथा "${kathaForm.titleHi}" अद्यतन (Updated) हो गई।`);
+    } else {
+      addKatha(payload as any);
+      showNotice(`नई कथा "${kathaForm.titleHi}" सफलतापूर्वक जोड़ी गई।`);
+    }
+    setKathaModalOpen(false);
+  };
+
+  // Spiritual Books Admin State & Handlers
   const [bookModalOpen, setBookModalOpen] = useState(false);
-  const [bookForm, setBookForm] = useState({ titleHi: '', category: 'श्रीमद्भगवद्गीता', author: '', verses: '', colorCode: '#FF9933' });
+  const [editingBookId, setEditingBookId] = useState<string | null>(null);
+  const [bookForm, setBookForm] = useState<Partial<CMSBookItem>>({
+    titleHi: '',
+    titleEn: '',
+    category: 'gita',
+    categoryLabel: 'श्रीमद्भगवद्गीता',
+    author: 'महर्षि वेदव्यास',
+    versesCount: '१८ अध्याय • ७०० श्लोक',
+    colorCode: '#FF9933',
+    shortSummary: '',
+    fullOverview: '',
+    sampleVerseSanskrit: '',
+    sampleVerseHindi: '',
+    sampleVerseEnglish: '',
+    readOnlineUrl: '',
+    status: 'Published',
+  });
+
+  const handleOpenBookModal = (item?: CMSBookItem) => {
+    if (item) {
+      setEditingBookId(item.id);
+      setBookForm({
+        titleHi: item.titleHi,
+        titleEn: item.titleEn,
+        category: item.category,
+        categoryLabel: item.categoryLabel,
+        author: item.author,
+        versesCount: item.versesCount,
+        colorCode: item.colorCode || '#FF9933',
+        shortSummary: item.shortSummary,
+        fullOverview: item.fullOverview,
+        sampleVerseSanskrit: item.sampleVerseSanskrit,
+        sampleVerseHindi: item.sampleVerseHindi,
+        sampleVerseEnglish: item.sampleVerseEnglish,
+        readOnlineUrl: item.readOnlineUrl,
+        status: item.status,
+      });
+    } else {
+      setEditingBookId(null);
+      setBookForm({
+        titleHi: '',
+        titleEn: '',
+        category: 'gita',
+        categoryLabel: 'श्रीमद्भगवद्गीता',
+        author: 'महर्षि वेदव्यास',
+        versesCount: '१८ अध्याय • ७०० श्लोक',
+        colorCode: '#FF9933',
+        shortSummary: '',
+        fullOverview: '',
+        sampleVerseSanskrit: '',
+        sampleVerseHindi: '',
+        sampleVerseEnglish: '',
+        readOnlineUrl: '',
+        status: 'Published',
+      });
+    }
+    setBookModalOpen(true);
+  };
+
+  const handleSaveBook = () => {
+    if (!bookForm.titleHi?.trim()) {
+      alert('कृपया ग्रंथ का नाम दर्ज करें।');
+      return;
+    }
+    if (editingBookId) {
+      updateBook(editingBookId, bookForm);
+      showNotice(`ग्रंथ "${bookForm.titleHi}" अद्यतन (Updated) हो गया।`);
+    } else {
+      addBook({
+        titleHi: bookForm.titleHi,
+        titleEn: bookForm.titleEn || bookForm.titleHi,
+        category: bookForm.category || 'gita',
+        categoryLabel: bookForm.categoryLabel || 'श्रीमद्भगवद्गीता',
+        author: bookForm.author || 'महर्षि वेदव्यास',
+        versesCount: bookForm.versesCount || '१०० श्लोक',
+        colorCode: bookForm.colorCode || '#FF9933',
+        shortSummary: bookForm.shortSummary || '',
+        fullOverview: bookForm.fullOverview || '',
+        sampleVerseSanskrit: bookForm.sampleVerseSanskrit || '',
+        sampleVerseHindi: bookForm.sampleVerseHindi || '',
+        sampleVerseEnglish: bookForm.sampleVerseEnglish || '',
+        readOnlineUrl: bookForm.readOnlineUrl || '/books',
+        status: bookForm.status || 'Published',
+      });
+      showNotice(`नया ग्रंथ "${bookForm.titleHi}" सफलतापूर्वक जोड़ा गया।`);
+    }
+    setBookModalOpen(false);
+  };
 
   // Categories & Tags State
   const [categoriesList, setCategoriesList] = useState([
@@ -1240,13 +1581,13 @@ export default function WordPressAdminPanel() {
                           <div className="flex items-center space-x-2">
                             <Music className="w-3.5 h-3.5 text-amber-600" />
                             <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('aartis'); }} className="text-[#2271b1] hover:underline font-semibold">
-                              {aartisList.length} Aartis
+                              {aartis.length} Aartis
                             </button>
                           </div>
                           <div className="flex items-center space-x-2">
                             <BookOpen className="w-3.5 h-3.5 text-amber-700" />
                             <button onClick={() => { setCurrentSection('sanatan'); setCurrentSubSection('books'); }} className="text-[#2271b1] hover:underline font-semibold">
-                              {booksList.length} Spiritual Books
+                              {books.length} Spiritual Books
                             </button>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -2650,75 +2991,50 @@ export default function WordPressAdminPanel() {
                 {/* Quick Add Buttons based on active subtab */}
                 {currentSubSection === 'aartis' && (
                   <button
-                    onClick={() => {
-                      const newAarti = {
-                        id: `art-${Date.now()}`,
-                        titleHi: 'नई आरती (New Aarti)',
-                        deity: 'श्री गणेश',
-                        lyricsPreview: 'आरती कीजै...',
-                        audio: 'om_namah_shivaya.wav',
-                        status: 'Published',
-                      };
-                      setAartisList([newAarti, ...aartisList]);
-                      showNotice('New Aarti added to Aarti Sangrah.');
-                    }}
-                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1"
+                    onClick={() => handleOpenAartiModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add New Aarti</span>
+                    <span>+ Add New Aarti</span>
                   </button>
                 )}
 
                 {currentSubSection === 'kathas' && (
                   <button
-                    onClick={() => {
-                      const newKatha = {
-                        id: `kth-${Date.now()}`,
-                        titleHi: 'नई व्रत कथा (New Vrat Katha)',
-                        deity: 'भगवान शिव',
-                        dayOrTithi: 'सोमवार',
-                        chaptersCount: 1,
-                        status: 'Published',
-                      };
-                      setKathasList([newKatha, ...kathasList]);
-                      showNotice('New Katha added to Vrat Kathas.');
-                    }}
-                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1"
+                    onClick={() => handleOpenKathaModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add New Katha</span>
+                    <span>+ Add New Katha</span>
                   </button>
                 )}
 
                 {currentSubSection === 'books' && (
                   <button
-                    onClick={() => {
-                      const newBook = {
-                        id: `bk-${Date.now()}`,
-                        titleHi: 'नया शास्त्र / ग्रंथ (New Scripture)',
-                        category: 'दर्शन एवं नीति',
-                        author: 'सनातन ऋषि',
-                        verses: '१०० श्लोक',
-                        colorCode: '#FF9933',
-                        status: 'Published',
-                      };
-                      setBooksList([newBook, ...booksList]);
-                      showNotice('New Spiritual Book added to Library (#FF9933 Saffron).');
-                    }}
-                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1"
+                    onClick={() => handleOpenBookModal()}
+                    className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add New Book</span>
+                    <span>+ Add New Book</span>
                   </button>
                 )}
 
                 {(currentSubSection === 'shlokas' || currentSubSection === 'mantras') && (
-                  <button
-                    onClick={() => setMantraModalOpen(true)}
-                    className="bg-[#f6f7f7] hover:bg-[#f0f0f1] text-[#2271b1] border border-[#2271b1] px-2.5 py-1 rounded text-xs font-semibold"
-                  >
-                    Add New Mantra
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleOpenShlokaModal()}
+                      className="bg-[#2271b1] hover:bg-[#135e96] text-white px-3 py-1.5 rounded text-xs font-semibold flex items-center space-x-1 transition"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Add New Shloka</span>
+                    </button>
+                    <button
+                      onClick={() => setMantraModalOpen(true)}
+                      className="bg-[#f6f7f7] hover:bg-[#f0f0f1] text-[#2271b1] border border-[#2271b1] px-2.5 py-1.5 rounded text-xs font-semibold"
+                    >
+                      + Add Mantra
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -2743,7 +3059,7 @@ export default function WordPressAdminPanel() {
                       : 'border-transparent text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  Slokas & Mantras ({mantras.length})
+                  Slokas & Mantras ({shlokas.length})
                 </button>
                 <button
                   onClick={() => setCurrentSubSection('aartis')}
@@ -2753,7 +3069,7 @@ export default function WordPressAdminPanel() {
                       : 'border-transparent text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  Aarti Sangrah ({aartisList.length})
+                  Aarti Sangrah ({aartis.length})
                 </button>
                 <button
                   onClick={() => setCurrentSubSection('kathas')}
@@ -2763,7 +3079,7 @@ export default function WordPressAdminPanel() {
                       : 'border-transparent text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  Vrat Kathas ({kathasList.length})
+                  Vrat Kathas ({kathas.length})
                 </button>
                 <button
                   onClick={() => setCurrentSubSection('books')}
@@ -2773,7 +3089,7 @@ export default function WordPressAdminPanel() {
                       : 'border-transparent text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  Spiritual Books ({booksList.length})
+                  Spiritual Books ({books.length})
                 </button>
                 <button
                   onClick={() => setCurrentSubSection('divine-vibrations')}
@@ -3032,40 +3348,64 @@ export default function WordPressAdminPanel() {
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
-                        <th className="p-2.5 font-bold">Mantra Name</th>
+                        <th className="p-2.5 font-bold">Source & Verse</th>
                         <th className="p-2.5 font-bold">Sanskrit Shloka</th>
-                        <th className="p-2.5 font-bold">Deity</th>
-                        <th className="p-2.5 font-bold">Chant Count</th>
-                        <th className="p-2.5 font-bold">Best Time</th>
+                        <th className="p-2.5 font-bold">Hindi Meaning</th>
+                        <th className="p-2.5 font-bold">Category</th>
                         <th className="p-2.5 font-bold">Status</th>
                         <th className="p-2.5 font-bold">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#dcdcde]">
-                      {mantras.map((mantra) => (
-                        <tr key={mantra.id} className="hover:bg-amber-50/40">
-                          <td className="p-2.5 font-bold text-[#2271b1] hover:underline cursor-pointer">
-                            {mantra.name}
-                          </td>
-                          <td className="p-2.5 font-serif text-stone-800 text-sm">{mantra.sanskrit}</td>
-                          <td className="p-2.5 text-stone-700">{mantra.deity}</td>
-                          <td className="p-2.5 font-bold text-amber-800">{mantra.chantCount} Reps</td>
-                          <td className="p-2.5 text-stone-600">{mantra.bestTime}</td>
+                      {shlokas.map((shloka) => (
+                        <tr key={shloka.id} className="hover:bg-amber-50/40 transition">
                           <td className="p-2.5">
-                            <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                              {mantra.status}
+                            <span className="font-bold text-[#2271b1] block">{shloka.source}</span>
+                            <span className="text-[11px] text-stone-500">{shloka.chapterVerse}</span>
+                          </td>
+                          <td className="p-2.5 font-serif text-stone-800 text-sm max-w-sm whitespace-pre-line">{shloka.sanskrit}</td>
+                          <td className="p-2.5 text-stone-700 max-w-xs truncate">{shloka.hindi}</td>
+                          <td className="p-2.5">
+                            <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold text-[10px]">
+                              {shloka.category}
                             </span>
                           </td>
                           <td className="p-2.5">
-                            <button
-                              onClick={() => {
-                                deleteMantra(mantra.id);
-                                showNotice(`Mantra "${mantra.name}" removed.`);
-                              }}
-                              className="text-red-600 hover:underline text-xs"
-                            >
-                              Delete
-                            </button>
+                            <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                              {shloka.status}
+                            </span>
+                          </td>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenShlokaModal(shloka)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Shloka"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/shlokas"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  deleteShloka(shloka.id);
+                                  showNotice(`Shloka "${shloka.source}" removed.`);
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Shloka"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -3082,39 +3422,65 @@ export default function WordPressAdminPanel() {
                       <tr className="bg-[#f6f7f7] border-b border-[#c3c4c7] text-[#1d2327]">
                         <th className="p-2.5 font-bold">Aarti Title</th>
                         <th className="p-2.5 font-bold">Deity (देवी/देवता)</th>
-                        <th className="p-2.5 font-bold">Opening Lines</th>
-                        <th className="p-2.5 font-bold">Audio File</th>
+                        <th className="p-2.5 font-bold">Singer & Duration</th>
+                        <th className="p-2.5 font-bold">YouTube ID</th>
                         <th className="p-2.5 font-bold">Status</th>
                         <th className="p-2.5 font-bold">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#dcdcde]">
-                      {aartisList.map((aarti) => (
-                        <tr key={aarti.id} className="hover:bg-amber-50/40">
-                          <td className="p-2.5 font-bold text-[#2271b1] hover:underline cursor-pointer font-serif text-sm">
-                            {aarti.titleHi}
+                      {aartis.map((aarti) => (
+                        <tr key={aarti.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-[#2271b1] font-serif text-sm block">{aarti.titleHi}</span>
+                            <span className="text-[11px] text-stone-500">{aarti.titleEn}</span>
                           </td>
                           <td className="p-2.5 font-semibold text-stone-800">{aarti.deity}</td>
-                          <td className="p-2.5 font-serif text-stone-600 max-w-xs truncate">{aarti.lyricsPreview}</td>
-                          <td className="p-2.5 text-stone-500 font-mono text-[11px]">{aarti.audio}</td>
+                          <td className="p-2.5 text-stone-700">
+                            <div>{aarti.singer}</div>
+                            <span className="text-[10px] text-stone-500 font-mono">⏱ {aarti.duration}</span>
+                          </td>
+                          <td className="p-2.5 font-mono text-[11px] text-amber-800">
+                            <span className="bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                              {aarti.youtubeId || '—'}
+                            </span>
+                          </td>
                           <td className="p-2.5">
                             <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                               {aarti.status}
                             </span>
                           </td>
-                          <td className="p-2.5 space-x-2">
-                            <Link href="/aartis" target="_blank" className="text-[#2271b1] hover:underline text-xs">
-                              View
-                            </Link>
-                            <button
-                              onClick={() => {
-                                setAartisList(aartisList.filter((x) => x.id !== aarti.id));
-                                showNotice(`Aarti "${aarti.titleHi}" removed.`);
-                              }}
-                              className="text-red-600 hover:underline text-xs"
-                            >
-                              Delete
-                            </button>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenAartiModal(aarti)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Aarti"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/aartis"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  deleteAarti(aarti.id);
+                                  showNotice(`Aarti "${aarti.titleHi}" removed.`);
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Aarti"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -3138,32 +3504,53 @@ export default function WordPressAdminPanel() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#dcdcde]">
-                      {kathasList.map((katha) => (
-                        <tr key={katha.id} className="hover:bg-amber-50/40">
-                          <td className="p-2.5 font-bold text-[#2271b1] hover:underline cursor-pointer font-serif text-sm">
-                            {katha.titleHi}
+                      {kathas.map((katha) => (
+                        <tr key={katha.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-[#2271b1] font-serif text-sm block">{katha.titleHi}</span>
+                            <span className="text-[11px] text-stone-500">{katha.titleEn}</span>
                           </td>
                           <td className="p-2.5 font-semibold text-stone-800">{katha.deity}</td>
                           <td className="p-2.5 text-stone-600">{katha.dayOrTithi}</td>
-                          <td className="p-2.5 font-bold text-amber-800">{katha.chaptersCount} Chapters</td>
+                          <td className="p-2.5 font-bold text-amber-800">
+                            {Array.isArray(katha.chapters) ? katha.chapters.length : 1} Chapters
+                          </td>
                           <td className="p-2.5">
                             <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                               {katha.status}
                             </span>
                           </td>
-                          <td className="p-2.5 space-x-2">
-                            <Link href="/kathas" target="_blank" className="text-[#2271b1] hover:underline text-xs">
-                              View
-                            </Link>
-                            <button
-                              onClick={() => {
-                                setKathasList(kathasList.filter((x) => x.id !== katha.id));
-                                showNotice(`Katha "${katha.titleHi}" removed.`);
-                              }}
-                              className="text-red-600 hover:underline text-xs"
-                            >
-                              Delete
-                            </button>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenKathaModal(katha)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Katha"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/kathas"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  deleteKatha(katha.id);
+                                  showNotice(`Katha "${katha.titleHi}" removed.`);
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Katha"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -3188,14 +3575,15 @@ export default function WordPressAdminPanel() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#dcdcde]">
-                      {booksList.map((book) => (
-                        <tr key={book.id} className="hover:bg-amber-50/40">
-                          <td className="p-2.5 font-bold text-[#2271b1] hover:underline cursor-pointer font-serif text-sm">
-                            {book.titleHi}
+                      {books.map((book) => (
+                        <tr key={book.id} className="hover:bg-amber-50/40 transition">
+                          <td className="p-2.5">
+                            <span className="font-bold text-[#2271b1] font-serif text-sm block">{book.titleHi}</span>
+                            <span className="text-[11px] text-stone-500">{book.titleEn}</span>
                           </td>
                           <td className="p-2.5 text-stone-700">
                             <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">
-                              {book.category}
+                              {book.categoryLabel || book.category}
                             </span>
                           </td>
                           <td className="p-2.5">
@@ -3205,25 +3593,43 @@ export default function WordPressAdminPanel() {
                             </span>
                           </td>
                           <td className="p-2.5 text-stone-800 font-semibold">{book.author}</td>
-                          <td className="p-2.5 font-serif text-stone-600">{book.verses}</td>
+                          <td className="p-2.5 font-serif text-stone-600">{book.versesCount}</td>
                           <td className="p-2.5">
                             <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                               {book.status}
                             </span>
                           </td>
-                          <td className="p-2.5 space-x-2">
-                            <Link href="/books" target="_blank" className="text-[#2271b1] hover:underline text-xs">
-                              View
-                            </Link>
-                            <button
-                              onClick={() => {
-                                setBooksList(booksList.filter((x) => x.id !== book.id));
-                                showNotice(`Book "${book.titleHi}" removed.`);
-                              }}
-                              className="text-red-600 hover:underline text-xs"
-                            >
-                              Delete
-                            </button>
+                          <td className="p-2.5">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleOpenBookModal(book)}
+                                className="text-[#2271b1] hover:text-[#135e96] font-semibold flex items-center space-x-1"
+                                title="Edit Book"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </button>
+                              <Link
+                                href="/books"
+                                target="_blank"
+                                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
+                                title="View on website"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>View</span>
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  deleteBook(book.id);
+                                  showNotice(`Book "${book.titleHi}" removed.`);
+                                }}
+                                className="text-red-600 hover:text-red-800 font-semibold flex items-center space-x-1"
+                                title="Delete Book"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -4478,6 +4884,697 @@ export default function WordPressAdminPanel() {
                 className="bg-[#2271b1] hover:bg-[#135e96] text-white px-4 py-1.5 rounded font-semibold"
               >
                 Save Product
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* =========================================================================
+          7. AARTI CREATION / EDIT MODAL (Full Sanatan Sync)
+      ========================================================================= */}
+      {aartiModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            {/* Modal Header */}
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingAartiId ? 'आरती संपादित करें (Edit Aarti)' : 'नई आरती जोड़ें (Add New Aarti)'}
+              </h3>
+              <button onClick={() => setAartiModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    आरती शीर्षक (Hindi Title) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={aartiForm.titleHi || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, titleHi: e.target.value })}
+                    placeholder="उदा. श्री गणेश जी की आरती"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Title</label>
+                  <input
+                    type="text"
+                    value={aartiForm.titleEn || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, titleEn: e.target.value })}
+                    placeholder="e.g. Shri Ganesh Aarti"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">आराध्य देव / देवी (Deity)</label>
+                  <input
+                    type="text"
+                    value={aartiForm.deity || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, deity: e.target.value })}
+                    placeholder="उदा. श्री गणेश जी"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Category (श्रेणी)</label>
+                  <select
+                    value={aartiForm.category || 'ganesha'}
+                    onChange={(e) => setAartiForm({ ...aartiForm, category: e.target.value })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="ganesha">गणेश जी (Ganesha)</option>
+                    <option value="jagdish">जगदीश / विष्णु जी (Jagdish)</option>
+                    <option value="shiv">शिव जी (Lord Shiva)</option>
+                    <option value="durga">माँ दुर्गा (Maa Durga)</option>
+                    <option value="hanuman">हनुमान जी (Hanuman Ji)</option>
+                    <option value="laxmi">माँ लक्ष्मी (Maa Laxmi)</option>
+                    <option value="krishna">श्री कृष्ण (Lord Krishna)</option>
+                    <option value="ram">श्री राम (Lord Ram)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Status (स्थिति)</label>
+                  <select
+                    value={aartiForm.status || 'Published'}
+                    onChange={(e) => setAartiForm({ ...aartiForm, status: e.target.value as any })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="Published">Published (प्रकाशित)</option>
+                    <option value="Draft">Draft (ड्राफ्ट)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">गायक / गायिका (Singer)</label>
+                  <input
+                    type="text"
+                    value={aartiForm.singer || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, singer: e.target.value })}
+                    placeholder="अनुराधा पौडवाल"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">अवधि (Duration)</label>
+                  <input
+                    type="text"
+                    value={aartiForm.duration || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, duration: e.target.value })}
+                    placeholder="5:12"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    YouTube Video ID <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={aartiForm.youtubeId || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, youtubeId: e.target.value })}
+                    placeholder="e.g. Ll5Ccg1qWdc"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-mono"
+                  />
+                  <span className="text-[10px] text-stone-500">यूट्यूब लिंक से 11 अक्षरों का ID दर्ज करें</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">उपशीर्षक / मुख्य पंक्ति (Tagline)</label>
+                <input
+                  type="text"
+                  value={aartiForm.tagline || ''}
+                  onChange={(e) => setAartiForm({ ...aartiForm, tagline: e.target.value })}
+                  placeholder="उदा. जय गणेश जय गणेश देवा, माता जाकी पार्वती पिता महादेवा..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">सम्पूर्ण आरती बोल (Hindi Lyrics)</label>
+                <textarea
+                  rows={6}
+                  value={aartiForm.lyricsHi || ''}
+                  onChange={(e) => setAartiForm({ ...aartiForm, lyricsHi: e.target.value })}
+                  placeholder="यहाँ सम्पूर्ण आरती के बोल लिखें..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif text-sm focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Lyrics / Transliteration</label>
+                  <textarea
+                    rows={4}
+                    value={aartiForm.lyricsEn || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, lyricsEn: e.target.value })}
+                    placeholder="Jai Ganesh Jai Ganesh Deva..."
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none font-mono text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">आध्यात्मिक भावार्थ (Spiritual Meaning)</label>
+                  <textarea
+                    rows={4}
+                    value={aartiForm.meaning || ''}
+                    onChange={(e) => setAartiForm({ ...aartiForm, meaning: e.target.value })}
+                    placeholder="इस आरती का पावन अर्थ और महत्व..."
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setAartiModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveAarti}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingAartiId ? 'आरती सुरक्षित करें (Save Aarti)' : 'आरती प्रकाशित करें (Publish Aarti)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          8. SHLOKA CREATION / EDIT MODAL (Full Sanatan Sync)
+      ========================================================================= */}
+      {shlokaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            {/* Modal Header */}
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingShlokaId ? 'श्लोक संपादित करें (Edit Shloka)' : 'नया श्लोक जोड़ें (Add New Shloka)'}
+              </h3>
+              <button onClick={() => setShlokaModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    ग्रंथ का नाम (Source) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={shlokaForm.source || ''}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, source: e.target.value })}
+                    placeholder="उदा. श्रीमद्भगवद्गीता"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">अध्याय व श्लोक संख्या</label>
+                  <input
+                    type="text"
+                    value={shlokaForm.chapterVerse || ''}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, chapterVerse: e.target.value })}
+                    placeholder="उदा. अध्याय २, श्लोक ४७"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">श्रेणी (Category)</label>
+                  <select
+                    value={shlokaForm.category || 'Gita Shlokas'}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, category: e.target.value })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="Gita Shlokas">गीता श्लोक (Gita Shlokas)</option>
+                    <option value="Upanishad">उपनिषद् (Upanishads)</option>
+                    <option value="Rigveda">ऋग्वेद (Rigveda)</option>
+                    <option value="Peace Mantra">शान्ति मन्त्र (Peace Mantra)</option>
+                    <option value="Subhashit">सुभाषित (Subhashit)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">छन्द (Meter)</label>
+                  <input
+                    type="text"
+                    value={shlokaForm.meter || ''}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, meter: e.target.value })}
+                    placeholder="उदा. अनुष्टुप् छन्द (Anushtubh Meter)"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">स्थिति (Status)</label>
+                  <select
+                    value={shlokaForm.status || 'Published'}
+                    onChange={(e) => setShlokaForm({ ...shlokaForm, status: e.target.value as any })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="Published">Published (प्रकाशित)</option>
+                    <option value="Draft">Draft (ड्राफ्ट)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">
+                  मूल संस्कृत श्लोक (Sanskrit Shloka) <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={shlokaForm.sanskrit || ''}
+                  onChange={(e) => setShlokaForm({ ...shlokaForm, sanskrit: e.target.value })}
+                  placeholder="कर्मण्येवाधिकारस्ते मा फलेषु कदाचन। मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif text-sm focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">Transliteration (IAST / English Phonetic)</label>
+                <textarea
+                  rows={2}
+                  value={shlokaForm.transliteration || ''}
+                  onChange={(e) => setShlokaForm({ ...shlokaForm, transliteration: e.target.value })}
+                  placeholder="karmaṇy-evādhikāras te mā phaleṣu kadācana..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono text-xs focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">हिन्दी सरल भावार्थ (Hindi Meaning)</label>
+                <textarea
+                  rows={3}
+                  value={shlokaForm.hindi || ''}
+                  onChange={(e) => setShlokaForm({ ...shlokaForm, hindi: e.target.value })}
+                  placeholder="तेरा कर्म करने में ही अधिकार है, उसके फलों में कभी नहीं..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">English Translation & Significance</label>
+                <textarea
+                  rows={3}
+                  value={shlokaForm.english || ''}
+                  onChange={(e) => setShlokaForm({ ...shlokaForm, english: e.target.value })}
+                  placeholder="You have a right to perform your prescribed duties, but are not entitled to the fruits of your actions..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setShlokaModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveShloka}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingShlokaId ? 'श्लोक सुरक्षित करें (Save Shloka)' : 'श्लोक प्रकाशित करें (Publish Shloka)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          9. KATHA CREATION / EDIT MODAL (Full Sanatan Sync)
+      ========================================================================= */}
+      {kathaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            {/* Modal Header */}
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingKathaId ? 'कथा संपादित करें (Edit Katha)' : 'नई पावन कथा जोड़ें (Add New Katha)'}
+              </h3>
+              <button onClick={() => setKathaModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    कथा शीर्षक (Hindi Title) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={kathaForm.titleHi}
+                    onChange={(e) => setKathaForm({ ...kathaForm, titleHi: e.target.value })}
+                    placeholder="उदा. सोमवार व्रत कथा"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Title</label>
+                  <input
+                    type="text"
+                    value={kathaForm.titleEn}
+                    onChange={(e) => setKathaForm({ ...kathaForm, titleEn: e.target.value })}
+                    placeholder="e.g. Somwar Vrat Katha"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">आराध्य देव / देवी (Deity)</label>
+                  <input
+                    type="text"
+                    value={kathaForm.deity}
+                    onChange={(e) => setKathaForm({ ...kathaForm, deity: e.target.value })}
+                    placeholder="उदा. भगवान शिव"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">दिन / तिथि (Day or Tithi)</label>
+                  <input
+                    type="text"
+                    value={kathaForm.dayOrTithi}
+                    onChange={(e) => setKathaForm({ ...kathaForm, dayOrTithi: e.target.value })}
+                    placeholder="उदा. सोमवार या एकादशी"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">कथा श्रेणी (Category)</label>
+                  <select
+                    value={kathaForm.category}
+                    onChange={(e) => setKathaForm({ ...kathaForm, category: e.target.value })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="vrat">साप्ताहिक व विशिष्ट व्रत (Vrat Katha)</option>
+                    <option value="ekadashi">एकादशी महात्म्य (Ekadashi)</option>
+                    <option value="tyohar">पर्व एवं त्यौहार (Festivals)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">संक्षिप्त परिचय (Short Description)</label>
+                <textarea
+                  rows={2}
+                  value={kathaForm.shortDesc}
+                  onChange={(e) => setKathaForm({ ...kathaForm, shortDesc: e.target.value })}
+                  placeholder="कथा का सार या संक्षिप्त परिचय..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">
+                  पूजा एवं व्रत विधि (Fasting Vidhi — प्रत्येक नियम नई पंक्ति में लिखें)
+                </label>
+                <textarea
+                  rows={4}
+                  value={kathaForm.vidhiText}
+                  onChange={(e) => setKathaForm({ ...kathaForm, vidhiText: e.target.value })}
+                  placeholder="प्रातःकाल स्नानादि कर श्वेत वस्त्र धारण करें।&#10;भगवान शिव एवं माता पार्वती का पंचामृत से अभिषेक करें।&#10;बेलपत्र, धतूरा, श्वेत चन्दन और अक्षत अर्पित करें।"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">
+                  सम्पूर्ण पावन कथा (Story / Chapters — अध्याय विभाजन हेतु `### अध्याय शीर्षक` का उपयोग करें)
+                </label>
+                <textarea
+                  rows={8}
+                  value={kathaForm.storyText}
+                  onChange={(e) => setKathaForm({ ...kathaForm, storyText: e.target.value })}
+                  placeholder="### प्रथम अध्याय: साहुकार की भक्ति&#10;एक नगर में एक धनी साहूकार रहता था। उसके घर में धन-धान्य की कोई कमी नहीं थी, किन्तु कोई संतान न होने से वह सदैव दुखी रहता था...&#10;&#10;### द्वितीय अध्याय: शिव जी की कृपा&#10;माता पार्वती के आग्रह पर भगवान शिव ने साहूकार को पुत्र प्राप्ति का वरदान दिया..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 font-serif text-sm focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">फल श्रुति (Phala Shruti / व्रत का फल)</label>
+                <textarea
+                  rows={2}
+                  value={kathaForm.phalaShruti}
+                  onChange={(e) => setKathaForm({ ...kathaForm, phalaShruti: e.target.value })}
+                  placeholder="जो भक्त श्रद्धापूर्वक यह पावन कथा सुनता अथवा पढ़ता है, उसके सभी मनोरथ पूर्ण होते हैं।"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">स्थिति (Status)</label>
+                <select
+                  value={kathaForm.status}
+                  onChange={(e) => setKathaForm({ ...kathaForm, status: e.target.value as any })}
+                  className="w-48 border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                >
+                  <option value="Published">Published (प्रकाशित)</option>
+                  <option value="Draft">Draft (ड्राफ्ट)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setKathaModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveKatha}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingKathaId ? 'कथा सुरक्षित करें (Save Katha)' : 'कथा प्रकाशित करें (Publish Katha)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          10. BOOK CREATION / EDIT MODAL (Full Sanatan Sync)
+      ========================================================================= */}
+      {bookModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up text-xs">
+            {/* Modal Header */}
+            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
+              <h3 className="font-bold text-[#1d2327] text-sm">
+                {editingBookId ? 'धर्मग्रंथ संपादित करें (Edit Scripture Book)' : 'नया धर्मग्रंथ जोड़ें (Add New Book)'}
+              </h3>
+              <button onClick={() => setBookModalOpen(false)} className="text-stone-400 hover:text-stone-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    ग्रंथ का नाम (Hindi Title) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={bookForm.titleHi || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, titleHi: e.target.value })}
+                    placeholder="उदा. श्रीमद्भगवद्गीता"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">English Title</label>
+                  <input
+                    type="text"
+                    value={bookForm.titleEn || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, titleEn: e.target.value })}
+                    placeholder="e.g. Shrimad Bhagavad Gita"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">श्रेणी (Category)</label>
+                  <select
+                    value={bookForm.category || 'gita'}
+                    onChange={(e) => setBookForm({ ...bookForm, category: e.target.value as any })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="gita">भगवद्गीता (Gita)</option>
+                    <option value="ramayan">रामायण / रामचरितमानस (Ramayan)</option>
+                    <option value="vedas">चार वेद (Vedas)</option>
+                    <option value="upanishad">१०८ उपनिषद् (Upanishads)</option>
+                    <option value="purana">१८ महापुराण (Puranas)</option>
+                    <option value="darshan">षड्दर्शन (Darshan)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Category Label</label>
+                  <input
+                    type="text"
+                    value={bookForm.categoryLabel || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, categoryLabel: e.target.value })}
+                    placeholder="उदा. श्रीमद्भगवद्गीता"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">रचयिता / महर्षि (Author)</label>
+                  <input
+                    type="text"
+                    value={bookForm.author || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })}
+                    placeholder="उदा. महर्षि वेदव्यास"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">अध्याय व श्लोक संख्या</label>
+                  <input
+                    type="text"
+                    value={bookForm.versesCount || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, versesCount: e.target.value })}
+                    placeholder="१८ अध्याय • ७०० श्लोक"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Cover Color Code</label>
+                  <input
+                    type="text"
+                    value={bookForm.colorCode || '#FF9933'}
+                    onChange={(e) => setBookForm({ ...bookForm, colorCode: e.target.value })}
+                    placeholder="#FF9933"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">स्थिति (Status)</label>
+                  <select
+                    value={bookForm.status || 'Published'}
+                    onChange={(e) => setBookForm({ ...bookForm, status: e.target.value as any })}
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
+                  >
+                    <option value="Published">Published (प्रकाशित)</option>
+                    <option value="Draft">Draft (ड्राफ्ट)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">संक्षिप्त परिचय (Short Summary)</label>
+                <textarea
+                  rows={2}
+                  value={bookForm.shortSummary || ''}
+                  onChange={(e) => setBookForm({ ...bookForm, shortSummary: e.target.value })}
+                  placeholder="कुरुक्षेत्र के रणक्षेत्र में भगवान श्रीकृष्ण द्वारा अर्जुन को दिया गया दिव्य कर्मयोग का उपदेश..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">सम्पूर्ण विस्तार एवं सार (Full Overview)</label>
+                <textarea
+                  rows={5}
+                  value={bookForm.fullOverview || ''}
+                  onChange={(e) => setBookForm({ ...bookForm, fullOverview: e.target.value })}
+                  placeholder="ग्रंथ का गहन परिचय, महत्व, प्रमुख अध्याय एवं शिक्षाएँ..."
+                  className="w-full border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none leading-relaxed"
+                />
+              </div>
+
+              <div className="space-y-2 border border-stone-200 p-3 rounded bg-[#fdfaf5]">
+                <h4 className="font-bold text-stone-800">प्रतिनिधि पावन श्लोक (Sample Verse)</h4>
+                <div>
+                  <label className="block font-medium text-stone-700 mb-0.5">संस्कृत श्लोक (Sanskrit)</label>
+                  <textarea
+                    rows={2}
+                    value={bookForm.sampleVerseSanskrit || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, sampleVerseSanskrit: e.target.value })}
+                    placeholder="यदा यदा हि धर्मस्य ग्लानिर्भवति भारत। अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1 font-serif text-sm focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-stone-700 mb-0.5">हिन्दी भावार्थ (Hindi Meaning)</label>
+                  <textarea
+                    rows={2}
+                    value={bookForm.sampleVerseHindi || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, sampleVerseHindi: e.target.value })}
+                    placeholder="हे भारत! जब-जब धर्म की हानि और अधर्म की वृद्धि होती है, तब-तब मैं स्वयं को प्रकट करता हूँ।"
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-stone-700 mb-0.5">English Translation</label>
+                  <textarea
+                    rows={2}
+                    value={bookForm.sampleVerseEnglish || ''}
+                    onChange={(e) => setBookForm({ ...bookForm, sampleVerseEnglish: e.target.value })}
+                    placeholder="Whenever there is a decline in righteousness and an increase in unrighteousness, O Arjuna, at that time I manifest Myself on earth."
+                    className="w-full border border-[#8c8f94] rounded px-3 py-1 focus:border-[#2271b1] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">Online Reading URL / PDF Link (वैकल्पिक)</label>
+                <input
+                  type="text"
+                  value={bookForm.readOnlineUrl || ''}
+                  onChange={(e) => setBookForm({ ...bookForm, readOnlineUrl: e.target.value })}
+                  placeholder="https://sanatanroop.com/books/gita"
+                  className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
+              <button
+                onClick={() => setBookModalOpen(false)}
+                className="px-3 py-1.5 border border-[#8c8f94] rounded text-stone-600 hover:bg-stone-100 font-semibold"
+              >
+                रद्द करें (Cancel)
+              </button>
+              <button
+                onClick={handleSaveBook}
+                className="bg-[#2271b1] hover:bg-[#135e96] text-white px-5 py-1.5 rounded font-semibold flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>{editingBookId ? 'ग्रंथ सुरक्षित करें (Save Book)' : 'ग्रंथ प्रकाशित करें (Publish Book)'}</span>
               </button>
             </div>
           </div>

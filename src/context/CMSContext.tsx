@@ -1,6 +1,20 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+  CMSAartiItem,
+  CMSKathaChapter,
+  CMSKathaItem,
+  CMSBookItem,
+  CMSShlokaItem,
+  DEFAULT_CMS_AARTIS,
+  DEFAULT_CMS_KATHAS,
+  DEFAULT_CMS_BOOKS,
+  DEFAULT_CMS_SHLOKAS,
+} from '@/data/cmsDefaults';
+
+export type { CMSAartiItem, CMSKathaChapter, CMSKathaItem, CMSBookItem, CMSShlokaItem };
+export { DEFAULT_CMS_AARTIS, DEFAULT_CMS_KATHAS, DEFAULT_CMS_BOOKS, DEFAULT_CMS_SHLOKAS };
 
 // ==========================================
 // 1. INTERFACES & TYPES
@@ -218,6 +232,30 @@ export interface CMSContextType {
   updateVibrationTrack: (id: string, track: Partial<DivineVibrationTrack>) => void;
   addVibrationTrack: (track: Omit<DivineVibrationTrack, 'id'>) => void;
   deleteVibrationTrack: (id: string) => void;
+
+  // Aartis
+  aartis: CMSAartiItem[];
+  addAarti: (aarti: Omit<CMSAartiItem, 'id'>) => void;
+  updateAarti: (id: string, aarti: Partial<CMSAartiItem>) => void;
+  deleteAarti: (id: string) => void;
+
+  // Kathas
+  kathas: CMSKathaItem[];
+  addKatha: (katha: Omit<CMSKathaItem, 'id'>) => void;
+  updateKatha: (id: string, katha: Partial<CMSKathaItem>) => void;
+  deleteKatha: (id: string) => void;
+
+  // Spiritual Books
+  books: CMSBookItem[];
+  addBook: (book: Omit<CMSBookItem, 'id'>) => void;
+  updateBook: (id: string, book: Partial<CMSBookItem>) => void;
+  deleteBook: (id: string) => void;
+
+  // Shlokas
+  shlokas: CMSShlokaItem[];
+  addShloka: (shloka: Omit<CMSShlokaItem, 'id'>) => void;
+  updateShloka: (id: string, shloka: Partial<CMSShlokaItem>) => void;
+  deleteShloka: (id: string) => void;
 
   // Reset to default
   resetToDefaults: () => void;
@@ -687,6 +725,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [mantras, setMantras] = useState<CMSMantraItem[]>(DEFAULT_MANTRAS);
+  const [aartis, setAartis] = useState<CMSAartiItem[]>(DEFAULT_CMS_AARTIS);
+  const [kathas, setKathas] = useState<CMSKathaItem[]>(DEFAULT_CMS_KATHAS);
+  const [books, setBooks] = useState<CMSBookItem[]>(DEFAULT_CMS_BOOKS);
+  const [shlokas, setShlokas] = useState<CMSShlokaItem[]>(DEFAULT_CMS_SHLOKAS);
   const [products, setProducts] = useState<CMSProductItem[]>(DEFAULT_PRODUCTS);
   const [articles, setArticles] = useState<CMSArticleItem[]>(DEFAULT_ARTICLES);
   const [orders, setOrders] = useState<CMSOrderItem[]>(DEFAULT_ORDERS);
@@ -729,6 +771,18 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       const savedMantras = localStorage.getItem('hindu_dharma_cms_mantras');
       if (savedMantras) setMantras(JSON.parse(savedMantras));
 
+      const savedAartis = localStorage.getItem('sanatan_cms_aartis');
+      if (savedAartis) setAartis(JSON.parse(savedAartis));
+
+      const savedKathas = localStorage.getItem('sanatan_cms_kathas');
+      if (savedKathas) setKathas(JSON.parse(savedKathas));
+
+      const savedBooks = localStorage.getItem('sanatan_cms_books');
+      if (savedBooks) setBooks(JSON.parse(savedBooks));
+
+      const savedShlokas = localStorage.getItem('sanatan_cms_shlokas');
+      if (savedShlokas) setShlokas(JSON.parse(savedShlokas));
+
       const savedProducts = localStorage.getItem('hindu_dharma_cms_products');
       if (savedProducts) setProducts(JSON.parse(savedProducts));
 
@@ -761,6 +815,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         if (e.key === 'hindu_dharma_cms_divine_vibrations') setDivineVibrations(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_identity') setSiteIdentity(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_mantras') setMantras(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_aartis') setAartis(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_kathas') setKathas(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_books') setBooks(JSON.parse(e.newValue));
+        if (e.key === 'sanatan_cms_shlokas') setShlokas(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_products') setProducts(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_articles') setArticles(JSON.parse(e.newValue));
         if (e.key === 'hindu_dharma_cms_menu') setHeaderMenu(JSON.parse(e.newValue));
@@ -887,6 +945,110 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     saveMantras(updated);
   };
 
+  // Aartis
+  const saveAartis = (items: CMSAartiItem[]) => {
+    setAartis(items);
+    try {
+      localStorage.setItem('sanatan_cms_aartis', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addAarti = (aarti: Omit<CMSAartiItem, 'id'>) => {
+    const newAarti: CMSAartiItem = {
+      ...aarti,
+      id: `aarti-${Date.now()}`,
+    };
+    saveAartis([newAarti, ...aartis]);
+  };
+
+  const updateAarti = (id: string, partial: Partial<CMSAartiItem>) => {
+    const updated = aartis.map((a) => (a.id === id ? { ...a, ...partial } : a));
+    saveAartis(updated);
+  };
+
+  const deleteAarti = (id: string) => {
+    const updated = aartis.filter((a) => a.id !== id);
+    saveAartis(updated);
+  };
+
+  // Kathas
+  const saveKathas = (items: CMSKathaItem[]) => {
+    setKathas(items);
+    try {
+      localStorage.setItem('sanatan_cms_kathas', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addKatha = (katha: Omit<CMSKathaItem, 'id'>) => {
+    const newKatha: CMSKathaItem = {
+      ...katha,
+      id: `katha-${Date.now()}`,
+    };
+    saveKathas([newKatha, ...kathas]);
+  };
+
+  const updateKatha = (id: string, partial: Partial<CMSKathaItem>) => {
+    const updated = kathas.map((k) => (k.id === id ? { ...k, ...partial } : k));
+    saveKathas(updated);
+  };
+
+  const deleteKatha = (id: string) => {
+    const updated = kathas.filter((k) => k.id !== id);
+    saveKathas(updated);
+  };
+
+  // Spiritual Books
+  const saveBooks = (items: CMSBookItem[]) => {
+    setBooks(items);
+    try {
+      localStorage.setItem('sanatan_cms_books', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addBook = (book: Omit<CMSBookItem, 'id'>) => {
+    const newBook: CMSBookItem = {
+      ...book,
+      id: `book-${Date.now()}`,
+    };
+    saveBooks([newBook, ...books]);
+  };
+
+  const updateBook = (id: string, partial: Partial<CMSBookItem>) => {
+    const updated = books.map((b) => (b.id === id ? { ...b, ...partial } : b));
+    saveBooks(updated);
+  };
+
+  const deleteBook = (id: string) => {
+    const updated = books.filter((b) => b.id !== id);
+    saveBooks(updated);
+  };
+
+  // Shlokas
+  const saveShlokas = (items: CMSShlokaItem[]) => {
+    setShlokas(items);
+    try {
+      localStorage.setItem('sanatan_cms_shlokas', JSON.stringify(items));
+    } catch (e) {}
+  };
+
+  const addShloka = (shloka: Omit<CMSShlokaItem, 'id'>) => {
+    const newShloka: CMSShlokaItem = {
+      ...shloka,
+      id: `shloka-${Date.now()}`,
+    };
+    saveShlokas([newShloka, ...shlokas]);
+  };
+
+  const updateShloka = (id: string, partial: Partial<CMSShlokaItem>) => {
+    const updated = shlokas.map((s) => (s.id === id ? { ...s, ...partial } : s));
+    saveShlokas(updated);
+  };
+
+  const deleteShloka = (id: string) => {
+    const updated = shlokas.filter((s) => s.id !== id);
+    saveShlokas(updated);
+  };
+
   // Products
   const saveProducts = (items: CMSProductItem[]) => {
     setProducts(items);
@@ -1008,6 +1170,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setBlocks(DEFAULT_BLOCKS);
     setHeaderMenu(DEFAULT_MENU_ITEMS);
     setMantras(DEFAULT_MANTRAS);
+    setAartis(DEFAULT_CMS_AARTIS);
+    setKathas(DEFAULT_CMS_KATHAS);
+    setBooks(DEFAULT_CMS_BOOKS);
+    setShlokas(DEFAULT_CMS_SHLOKAS);
     setProducts(DEFAULT_PRODUCTS);
     setArticles(DEFAULT_ARTICLES);
     setOrders(DEFAULT_ORDERS);
@@ -1080,6 +1246,22 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         addMantra,
         updateMantra,
         deleteMantra,
+        aartis,
+        addAarti,
+        updateAarti,
+        deleteAarti,
+        kathas,
+        addKatha,
+        updateKatha,
+        deleteKatha,
+        books,
+        addBook,
+        updateBook,
+        deleteBook,
+        shlokas,
+        addShloka,
+        updateShloka,
+        deleteShloka,
         products,
         addProduct,
         updateProduct,

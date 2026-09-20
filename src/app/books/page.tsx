@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCMS } from '@/context/CMSContext';
 import {
   Search,
   BookOpen,
@@ -284,7 +285,14 @@ const BOOKS_DATA: BookItem[] = [
  * - Realistic 3D depth, perspective, and hover animation
  */
 function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
-  const { coverTheme } = book;
+  const coverTheme = book.coverTheme || {
+    bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
+    accentColor: '#FF9933',
+    borderColor: 'border-[#FF9933]',
+    emblem: '🕉️',
+    sacredHeader: '॥ ॐ श्री परमात्मने नमः ॥',
+    spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
+  };
 
   return (
     <div
@@ -400,6 +408,39 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
 }
 
 export default function SpiritualBooksPage() {
+  const { books } = useCMS();
+  const allBooks = useMemo<BookItem[]>(() => {
+    if (!books || books.length === 0) return BOOKS_DATA;
+    return books.map((b) => {
+      const existing = BOOKS_DATA.find((item) => item.id === b.id);
+      return {
+        id: b.id,
+        titleHi: b.titleHi,
+        titleEn: b.titleEn,
+        category: (b.category as any) || 'gita',
+        categoryLabel: b.categoryLabel || 'सनातन धर्मग्रंथ',
+        author: b.author || 'महर्षि वेदव्यास',
+        versesCount: b.versesCount || 'सम्पूर्ण पावन ग्रंथ',
+        languages: existing?.languages || ['संस्कृत', 'हिन्दी', 'English'],
+        coverTheme: existing?.coverTheme || {
+          bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
+          accentColor: b.colorCode || '#FF9933',
+          borderColor: 'border-[#FF9933]',
+          emblem: '🕉️',
+          sacredHeader: '॥ ॐ श्री परमात्मने नमः ॥',
+          spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
+        },
+        shortSummary: b.shortSummary || '',
+        fullOverview: b.fullOverview || '',
+        sampleChapterTitle: existing?.sampleChapterTitle || 'प्रतिनिधि पावन श्लोक',
+        sampleVerseSanskrit: b.sampleVerseSanskrit || '',
+        sampleVerseHindi: b.sampleVerseHindi || '',
+        sampleVerseEnglish: b.sampleVerseEnglish || '',
+        readOnlineUrl: b.readOnlineUrl || `/scriptures/${b.id}`,
+      };
+    });
+  }, [books]);
+
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
@@ -439,7 +480,7 @@ export default function SpiritualBooksPage() {
   };
 
   const filteredBooks = useMemo(() => {
-    return BOOKS_DATA.filter((b) => {
+    return allBooks.filter((b) => {
       const matchesCategory =
         activeCategory === 'all' || b.category === activeCategory;
       const matchesSearch =
@@ -449,7 +490,7 @@ export default function SpiritualBooksPage() {
         b.shortSummary.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [allBooks, activeCategory, searchQuery]);
 
   const categories = [
     { id: 'all', label: 'सभी ग्रंथ (All Books)' },
@@ -637,9 +678,9 @@ export default function SpiritualBooksPage() {
                 }}
               >
                 <span className="text-[7px] text-amber-300 text-center block">
-                  {previewBook.coverTheme.sacredHeader}
+                  {previewBook.coverTheme?.sacredHeader || '॥ ॐ श्री परमात्मने नमः ॥'}
                 </span>
-                <span className="text-center text-lg">{previewBook.coverTheme.emblem}</span>
+                <span className="text-center text-lg">{previewBook.coverTheme?.emblem || '🕉️'}</span>
                 <span className="text-[8px] text-amber-100 font-serif font-bold text-center block leading-tight">
                   {previewBook.titleHi}
                 </span>

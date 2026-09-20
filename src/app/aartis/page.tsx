@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAudio } from '@/context/AudioContext';
+import { useCMS } from '@/context/CMSContext';
 import {
   Search,
   Play,
@@ -169,8 +170,8 @@ Tera Tujhko Arpan, Kya Lage Mera || Om Jai Jagdish Hare ||
 Shri Jagdish Ji Ki Aarti, Jo Koi Nar Gave |
 Kahat Shivananda Swami, Manvaanchhit Phal Paave || Om Jai Jagdish Hare ||`,
     meaning: 'Glory to Lord Vishnu, the Lord of the Universe, who removes the troubles of devotees in an instant. You are Mother and Father, the Supreme Soul and Inner Dweller. You are the Ocean of Compassion and the Sustainer of all. I surrender body, mind, and wealth to You, for everything belongs to You.',
-    youtubeId: 'HfHkBEjofqk',
-    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    youtubeId: 'rRYbHX0DUGo',
+    singer: 'अनुराधा पौडवाल व लखबीर सिंह लक्खा',
     duration: '6:12',
     audioTrack: {
       id: 'audio-jagdish',
@@ -327,7 +328,7 @@ Shri Maalketu Mein Rajat, Koti Ratan Jyoti || Jai Ambe Gauri ||
 Shri Ambe Ji Ki Aarti Jo Koi Nar Gaave |
 Kahat Shivananda Swami, Sukh-Sampati Paave || Jai Ambe Gauri ||`,
     meaning: 'Hail to Mother Ambe Gauri! Whom Vishnu, Brahma, and Shiva worship constantly. Riding a majestic lion, wielding sacred weapons to destroy Mahishasura, Shumbha, and Nishumbha. You are Brahmani, Rudrani, and Lakshmi, removing the fears of all celestial beings and humans.',
-    youtubeId: 'W3q8Od5qJio',
+    youtubeId: 'RY1jmTTjvhI',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:45',
     audioTrack: {
@@ -409,7 +410,7 @@ Tulsidas Prabhu Keerati Gaai ||
 Jo Hanuman Ji Ki Aarti Gaavai |
 Basi Baikunth Param Pad Paavai ||`,
     meaning: 'Perform the aarti of beloved Hanuman, who subdues the wicked and represents Lord Rama’s prowess. His strength makes mountains tremble, and no afflictions dare approach his devotee. He burnt Lanka, brought Sanjeevani to save Lakshmana, and killed Ahiravana in Patala.',
-    youtubeId: 'Aoz6a_t-x5U',
+    youtubeId: 'F3a1U9056g4',
     singer: 'हरिहरन (Hariharan)',
     duration: '5:02',
     audioTrack: {
@@ -473,7 +474,7 @@ Ratna Chaturdash Tum Bin, Koi Nahin Paata || Om Jai Laxmi Mata ||
 Mahalaxmi Ji Ki Aarti, Jo Koi Nar Gaave |
 Ur Aanand Samaave, Paap Utar Jaave || Om Jai Laxmi Mata ||`,
     meaning: 'Glory to Mother Lakshmi, who bestows wealth, righteous prosperity, and peace upon homes where devotion and dharma reside. She is the daughter of the cosmic ocean of milk (Ksheerasagara), and without Her grace, noble deeds, feasts, and sacred yajnas cannot flourish.',
-    youtubeId: 'Ydd0cSY3I8s',
+    youtubeId: 'Edk4kLdSnI4',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:30',
     audioTrack: {
@@ -535,7 +536,7 @@ Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
 Charan Chhavi Shri Balihari, Jahan Sukh Paavat Nar-Naari |
 Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||`,
     meaning: 'Aarti of Kunj Bihari, the bearer of Mount Govardhan, wearing the garland of wildflowers, playing the melodious flute that enchants all living beings. His feet from which Mother Ganga emanated cleanse all sins, and His enchanting smile showers divine nectar.',
-    youtubeId: 'k1t6rM1bJ6w',
+    youtubeId: 'FEMR5alT7CY',
     singer: 'अनुराधा पौडवाल व साथी (Anuradha Paudwal)',
     duration: '5:18',
     audioTrack: {
@@ -593,7 +594,7 @@ Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
 Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
 Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
-    youtubeId: 'c_N2p_4oU-A',
+    youtubeId: 'asn_MEvq950',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:10',
     audioTrack: {
@@ -606,13 +607,31 @@ Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
 ];
 
 export default function AartisPage() {
+  const { aartis } = useCMS();
   const { isPlaying, currentTrack, playAudio, pauseAudio } = useAudio();
+
+  const allAartis = useMemo(() => {
+    return (aartis && aartis.length > 0 ? aartis : AARTIS_DATA) as Aarti[];
+  }, [aartis]);
+
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAarti, setSelectedAarti] = useState<Aarti>(AARTIS_DATA[0]);
+  const [selectedAarti, setSelectedAarti] = useState<Aarti>(allAartis[0] || AARTIS_DATA[0]);
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('large');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [bellChime, setBellChime] = useState(false);
+
+  // Sync selectedAarti if CMS updates it
+  useEffect(() => {
+    if (allAartis && allAartis.length > 0) {
+      const current = allAartis.find((a) => a.id === selectedAarti.id);
+      if (current) {
+        setSelectedAarti(current);
+      } else {
+        setSelectedAarti(allAartis[0]);
+      }
+    }
+  }, [allAartis]);
 
   // Real Aarti Song Player State (Plays authentic song by renowned devotional singers)
   const [playingSongId, setPlayingSongId] = useState<string | null>(null);
@@ -714,7 +733,7 @@ export default function AartisPage() {
 
   // Filtered list based on category & search
   const filteredAartis = useMemo(() => {
-    return AARTIS_DATA.filter((item) => {
+    return allAartis.filter((item) => {
       const matchesCategory =
         activeCategory === 'all' || item.category === activeCategory;
       const matchesSearch =

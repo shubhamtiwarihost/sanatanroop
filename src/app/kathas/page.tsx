@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useCMS } from '@/context/CMSContext';
 import {
   Search,
   BookOpen,
@@ -234,14 +235,30 @@ const KATHAS_DATA: Katha[] = [
 ];
 
 export default function KathasPage() {
+  const { kathas } = useCMS();
+  const allKathas = useMemo(() => {
+    return (kathas && kathas.length > 0 ? kathas : KATHAS_DATA) as Katha[];
+  }, [kathas]);
+
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedKatha, setSelectedKatha] = useState<Katha>(KATHAS_DATA[0]);
+  const [selectedKatha, setSelectedKatha] = useState<Katha>(allKathas[0] || KATHAS_DATA[0]);
   const [fontSize, setFontSize] = useState<'normal' | 'large'>('large');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (allKathas && allKathas.length > 0) {
+      const match = allKathas.find((k) => k.id === selectedKatha.id);
+      if (match) {
+        setSelectedKatha(match);
+      } else {
+        setSelectedKatha(allKathas[0]);
+      }
+    }
+  }, [allKathas]);
+
   const filteredKathas = useMemo(() => {
-    return KATHAS_DATA.filter((katha) => {
+    return allKathas.filter((katha) => {
       const matchesCategory =
         activeCategory === 'all' || katha.category === activeCategory;
       const matchesSearch =
@@ -251,7 +268,7 @@ export default function KathasPage() {
         katha.shortDesc.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [allKathas, activeCategory, searchQuery]);
 
   const handleCopy = (katha: Katha) => {
     const text = `${katha.titleHi}\n\n${katha.shortDesc}\n\nफलश्रुति:\n${katha.phalaShruti}`;
