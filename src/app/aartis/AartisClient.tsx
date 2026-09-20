@@ -234,7 +234,7 @@ Pranavakshara Ke Madhye Ye Teeno Eka || Om Jai Shiv Omkara ||
 Trigun Shivji Ki Aarti Jo Koi Nar Gave |
 Kahat Shivananda Swami, Manvaanchhit Phal Paave || Om Jai Shiv Omkara ||`,
     meaning: 'Hail to Lord Shiva, the sacred Omkara! Brahma, Vishnu, and Sadashiva are undivided in You. Holding the trident, kamandalu, and damru, You bring peace and liberation. Within the sacred syllable AUM, the holy trinity is one.',
-    youtubeId: 'kYJq0689bYk',
+    youtubeId: 'Yb2GMwJyGnE',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '6:44',
     audioTrack: {
@@ -594,7 +594,7 @@ Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
 Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
 Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
-    youtubeId: 'Jb4p7X-t6-c',
+    youtubeId: '_nGygyx1UJk',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:10',
     audioTrack: {

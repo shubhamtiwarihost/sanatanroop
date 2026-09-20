@@ -776,7 +776,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '15:20',
     views: '1.2M',
     img: '/images/hero_shiva.jpg',
-    youtubeId: 'LqN2pB92vjU',
+    youtubeId: 'SBiwLibZqfw',
     description: 'Immerse in the primordial cosmic vibration of ॐ (AUM), tuned to 432Hz for deep nervous system calming and higher spiritual awareness.',
   },
   {
@@ -806,7 +806,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '11:20',
     views: '85M',
     img: '/images/community_banner.jpg',
-    youtubeId: 'n-Wp25V5W6o',
+    youtubeId: '442ewPgXHQ0',
     description: 'Adi Shankaracharya’s rhythmic masterpiece celebrating the victory of the Divine Mother over inner ignorance and demonic forces.',
   },
   {
@@ -816,7 +816,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '24:15',
     views: '450k',
     img: '/images/gita_krishna.jpg',
-    youtubeId: 'kYJ5o-5J4rU',
+    youtubeId: 'FRTpI2Gu1KA',
     description: 'A profound philosophical discourse on how Lord Krishna’s teachings in Chapter 2 dissolve stress, anxiety, and fear of failure.',
   },
   {
@@ -826,7 +826,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '32:10',
     views: '920k',
     img: '/images/article_meditation.jpg',
-    youtubeId: 'qK1O3NQHtvI',
+    youtubeId: 'q1uj3_rW7Uc',
     description: 'Rigvedic life-giving healing mantra for health, longevity, and liberation from mortal fears.',
   },
   {
@@ -836,7 +836,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '06:40',
     views: '15M',
     img: '/images/category_idols.jpg',
-    youtubeId: 'kY3L8325Y_U',
+    youtubeId: 'pzzPowh241o',
     description: 'A sweet devotional melody celebrating the thousand divine names and loving presence of Lord Krishna.',
   },
   {
@@ -846,7 +846,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '18:50',
     views: '310k',
     img: '/images/temple_river_sunrise_1789306575821.jpg',
-    youtubeId: 'JDC-AxrFJnc',
+    youtubeId: 'qMAzUxWSPpc',
     description: 'The inspiring Pauranik legend of King Harishchandra demonstrating that adherence to Satya (Truth) triumphs over all adversity.',
   },
   {
@@ -856,7 +856,7 @@ export const DEFAULT_VIDEOS: CMSVideoItem[] = [
     duration: '20:00',
     views: '680k',
     img: '/images/category_rudraksha.jpg',
-    youtubeId: 'Xh0Yp_e8vW8',
+    youtubeId: '_XQCr5h81vI',
     description: 'A gentle step-by-step Dhyana session guiding awareness from breath observation to the sacred stillness of the Supreme Self.',
   },
 ];
@@ -968,13 +968,13 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
               changed = true;
               return { ...item, youtubeId: 'Ydd0cSY3I8s' };
             }
-            if (item.id === 'aarti-shiv' && (item.youtubeId === 'F0f5u-Jt8pU' || !item.youtubeId)) {
+            if (item.id === 'aarti-shiv' && (item.youtubeId === 'F0f5u-Jt8pU' || item.youtubeId === 'kYJq0689bYk' || !item.youtubeId)) {
               changed = true;
-              return { ...item, youtubeId: 'kYJq0689bYk' };
+              return { ...item, youtubeId: 'Yb2GMwJyGnE' };
             }
-            if (item.id === 'aarti-ram' && (item.youtubeId === 'asn_MEvq950' || !item.youtubeId)) {
+            if (item.id === 'aarti-ram' && (item.youtubeId === 'asn_MEvq950' || item.youtubeId === 'Jb4p7X-t6-c' || !item.youtubeId)) {
               changed = true;
-              return { ...item, youtubeId: 'Jb4p7X-t6-c' };
+              return { ...item, youtubeId: '_nGygyx1UJk' };
             }
             return item;
           });
@@ -1028,7 +1028,49 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedDeities) setDeities(JSON.parse(savedDeities));
 
       const savedVideos = localStorage.getItem('sanatan_cms_videos');
-      if (savedVideos) setVideos(JSON.parse(savedVideos));
+      if (savedVideos) {
+        try {
+          const parsed = JSON.parse(savedVideos);
+          let changed = false;
+          const cleaned = parsed.map((item: any) => {
+            if (item.id === 'v-featured' && (item.youtubeId === 'LqN2pB92vjU' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'SBiwLibZqfw' };
+            }
+            if (item.id === 'v-3' && (item.youtubeId === 'n-Wp25V5W6o' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: '442ewPgXHQ0' };
+            }
+            if (item.id === 'v-4' && (item.youtubeId === 'kYJ5o-5J4rU' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'FRTpI2Gu1KA' };
+            }
+            if (item.id === 'v-5' && (item.youtubeId === 'qK1O3NQHtvI' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'q1uj3_rW7Uc' };
+            }
+            if (item.id === 'v-6' && (item.youtubeId === 'kY3L8325Y_U' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'pzzPowh241o' };
+            }
+            if (item.id === 'v-7' && (item.youtubeId === 'JDC-AxrFJnc' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: 'qMAzUxWSPpc' };
+            }
+            if (item.id === 'v-8' && (item.youtubeId === 'Xh0Yp_e8vW8' || !item.youtubeId)) {
+              changed = true;
+              return { ...item, youtubeId: '_XQCr5h81vI' };
+            }
+            return item;
+          });
+          if (changed) {
+            localStorage.setItem('sanatan_cms_videos', JSON.stringify(cleaned));
+          }
+          setVideos(cleaned);
+        } catch {
+          setVideos(JSON.parse(savedVideos));
+        }
+      }
 
       const savedSEO = localStorage.getItem('sanatan_cms_seo');
       if (savedSEO) setSeoConfig(JSON.parse(savedSEO));

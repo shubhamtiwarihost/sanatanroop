@@ -643,7 +643,7 @@ Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
 Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
 Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
-    youtubeId: 'Jb4p7X-t6-c',
+    youtubeId: '_nGygyx1UJk',
     singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
     duration: '5:10',
     audioTrack: {
