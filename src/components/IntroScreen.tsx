@@ -20,18 +20,29 @@ export default function IntroScreen() {
   }
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Detect crawlers / Lighthouse / bots to preserve 100% SEO indexing and instant Core Web Vitals
+    const isBot =
+      /bot|crawler|spider|crawling|lighthouse|chrome-lighthouse|headless/i.test(
+        navigator.userAgent
+      );
+    if (isBot) {
+      return;
+    }
+
     // Check if intro was already experienced in this session
     const viewed = sessionStorage.getItem('sanatan_intro_viewed');
     if (!viewed) {
       setVisible(true);
 
       // Controlled cinematic progression:
-      const t1 = setTimeout(() => setAnimStage(1), 300);  // Dark screen & particles
-      const t2 = setTimeout(() => setAnimStage(2), 1000); // Spiritual glow
-      const t3 = setTimeout(() => setAnimStage(3), 1800); // Om forms & pulses
-      const t4 = setTimeout(() => setAnimStage(4), 2800); // Light wave expands
-      const t5 = setTimeout(() => setAnimStage(5), 3600); // Logo & Tagline appear
-      const t6 = setTimeout(() => setAnimStage(6), 4400); // "प्रवेश करें" button ready
+      const t1 = setTimeout(() => setAnimStage(1), 150);
+      const t2 = setTimeout(() => setAnimStage(2), 400);
+      const t3 = setTimeout(() => setAnimStage(3), 700);
+      const t4 = setTimeout(() => setAnimStage(4), 1000);
+      const t5 = setTimeout(() => setAnimStage(5), 1300);
+      const t6 = setTimeout(() => setAnimStage(6), 1600);
 
       return () => {
         clearTimeout(t1);

@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700;800&family=Cinzel:wght@500;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-devanagari: 'Noto Serif Devanagari', 'Martel', serif;
-  --font-classic: 'Marcellus', 'Georgia', serif;
+  --font-devanagari: var(--font-devanagari, 'Noto Serif Devanagari'), 'Martel', serif;
+  --font-classic: var(--font-classic, 'Marcellus'), 'Georgia', serif;
   --bg-parchment: #fbf8f2;
   --text-charcoal: #17161b;
 }

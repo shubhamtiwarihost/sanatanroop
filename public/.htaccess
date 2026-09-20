@@ -1,22 +1,26 @@
-# Hostinger LiteSpeed / Apache configuration for Next.js Static Export
+# Hostinger LiteSpeed / Apache configuration for SanatanRoop Next.js Static Export
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
   # Security headers
-  Header set X-Content-Type-Options "nosniff"
-  Header set X-Frame-Options "SAMEORIGIN"
-  Header set X-XSS-Protection "1; mode=block"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
 
-  # Force trailing slash for directories
+  # Redirect www to non-www (HTTPS)
+  RewriteCond %{HTTP_HOST} ^www\.sanatanroop\.com$ [NC]
+  RewriteRule ^(.*)$ https://sanatanroop.com/$1 [L,R=301]
+
+  # Force trailing slash for existing directories
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteCond %{REQUEST_URI} !(.*)/$
   RewriteRule ^(.*)$ $1/ [L,R=301]
 
-  # Serve HTML files directly if matching file exists
+  # Serve .html file if direct match exists (single or multi-level path)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
-  RewriteRule ^([^/]+)/?$ $1.html [L]
+  RewriteRule ^(.*)$ $1.html [L]
 
   # Serve index.html inside directory if exists
   RewriteCond %{REQUEST_FILENAME} -d
@@ -27,16 +31,49 @@
   ErrorDocument 404 /404.html
 </IfModule>
 
-# Browser Caching for Next.js Static Assets
+# Gzip / Deflate Compression for Speed and Core Web Vitals
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/atom+xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/truetype
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE font/woff2
+</IfModule>
+
+# Long-term Cache Headers for Next.js Static Chunks
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2|woff|ttf|svg|webp|jpg|jpeg|png|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# Browser Caching via mod_expires
 <IfModule mod_expires.c>
   ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
   ExpiresByType image/jpg "access plus 1 year"
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/gif "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType text/css "access plus 1 month"
-  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>

@@ -29,6 +29,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function loadUser() {
       try {
+        const hasToken =
+          (typeof document !== 'undefined' && document.cookie.includes('auth_token=')) ||
+          (typeof window !== 'undefined' && localStorage.getItem('auth_token'));
+        if (!hasToken) {
+          setIsLoading(false);
+          return;
+        }
         const res = await fetch('/api/v1/auth/me');
         if (res.ok) {
           const data = await res.json();
@@ -36,8 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(data.user);
           }
         }
-      } catch (err) {
-        console.error('Failed to load session user', err);
+      } catch {
+        // Network or static export fallback
       } finally {
         setIsLoading(false);
       }

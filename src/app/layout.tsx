@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Marcellus, Noto_Serif_Devanagari, Cinzel } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/i18n/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
@@ -10,12 +11,31 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MobileBottomNav from '@/components/MobileBottomNav';
 
+const marcellus = Marcellus({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-classic',
+  display: 'swap',
+});
+
+const notoSerifDevanagari = Noto_Serif_Devanagari({
+  weight: ['400', '500', '600', '700', '800'],
+  subsets: ['devanagari', 'latin'],
+  variable: '--font-devanagari',
+  display: 'swap',
+});
+
+const cinzel = Cinzel({
+  weight: ['500', '700'],
+  subsets: ['latin'],
+  variable: '--font-cinzel',
+  display: 'swap',
+});
+
 export const viewport: Viewport = {
   themeColor: '#FF9933',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 };
 
@@ -28,6 +48,10 @@ export const metadata: Metadata = {
   description:
     'सनातन ज्ञान की डिजिटल धरोहर - प्रामाणिक वेद, उपनिषद, श्रीमद्भगवद्गीता, नित्य पंचांग, पावन आरतियां, एवं आध्यात्मिक वीडियो।',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/icons/icon-192x192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -168,7 +192,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col font-serif selection:bg-amber-200 selection:text-stone-900 pb-20 md:pb-0 overscroll-none touch-manipulation">
+      <body className={`min-h-screen flex flex-col font-serif selection:bg-amber-200 selection:text-stone-900 pb-20 md:pb-0 overscroll-none touch-manipulation ${notoSerifDevanagari.variable} ${marcellus.variable} ${cinzel.variable}`}>
         <LanguageProvider>
           <AuthProvider>
             <CartProvider>

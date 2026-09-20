@@ -46,34 +46,21 @@ export default function HomePage() {
   // Live Panchang Auto-Loader & Daily Midnight Rollover Heartbeat
   useEffect(() => {
     let isMounted = true;
-    async function loadPanchang() {
-      const city = panchangConfig?.defaultCity || 'Varanasi';
-      try {
-        const res = await fetch(`/api/v1/panchang?city=${encodeURIComponent(city)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.panchang) {
-            setPanchang(data.panchang);
-            return;
-          }
-        }
-      } catch (err) {
-        // Fallback to client-side astronomical calculation
-      }
+    function loadPanchang() {
       if (isMounted) {
         setPanchang(calculatePanchang(new Date()));
       }
     }
     loadPanchang();
 
-    // Auto-check every 30 seconds for date changes (daily automatic rollover)
+    // Auto-check every 60 seconds for date changes (daily automatic rollover)
     const interval = setInterval(() => {
       const now = new Date();
       const currentDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       if (panchang && panchang.date !== currentDateStr) {
         loadPanchang();
       }
-    }, 30000);
+    }, 60000);
 
     return () => {
       isMounted = false;
@@ -251,9 +238,9 @@ export default function HomePage() {
 
               <Link
                 href="/books"
-                className="inline-flex items-center space-x-2 bg-white hover:bg-stone-100 text-[#ea580c] font-medium text-sm sm:text-base px-6 py-3 rounded-lg border border-stone-200 shadow-md transition transform hover:-translate-y-0.5"
+                className="inline-flex items-center space-x-2 bg-white hover:bg-stone-100 text-[#b43b08] font-semibold text-sm sm:text-base px-6 py-3 rounded-lg border border-stone-200 shadow-md transition transform hover:-translate-y-0.5"
               >
-                <BookOpen className="w-4 h-4 text-[#ea580c]" />
+                <BookOpen className="w-4 h-4 text-[#b43b08]" />
                 <span>सम्पूर्ण ग्रंथ एवं पुस्तकें</span>
               </Link>
             </div>
@@ -508,7 +495,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/books"
-            className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:text-[#c2410c] flex items-center space-x-1 font-serif"
+            className="text-xs sm:text-sm font-semibold text-[#b43b08] hover:text-[#9a3412] flex items-center space-x-1 font-serif"
           >
             <span>सभी ग्रंथ देखें</span>
             <ArrowRight className="w-4 h-4" />
@@ -560,7 +547,7 @@ export default function HomePage() {
               </h2>
               <Link
                 href="/articles"
-                className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:text-[#c2410c] flex items-center space-x-1"
+                className="text-xs sm:text-sm font-semibold text-[#b43b08] hover:text-[#9a3412] flex items-center space-x-1"
               >
                 <span>View All</span>
                 <ArrowRight className="w-4 h-4" />
@@ -605,7 +592,7 @@ export default function HomePage() {
               </h2>
               <Link
                 href="/shlokas#mantras"
-                className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:text-[#c2410c] flex items-center space-x-1"
+                className="text-xs sm:text-sm font-semibold text-[#b43b08] hover:text-[#9a3412] flex items-center space-x-1"
               >
                 <span>View All</span>
                 <ArrowRight className="w-4 h-4" />
@@ -629,7 +616,7 @@ export default function HomePage() {
                         className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition ${
                           isCurrentlyPlaying
                             ? 'bg-[#ea580c] text-white shadow-md shadow-orange-500/30'
-                            : 'bg-[#fff7ed] text-[#ea580c] hover:bg-[#ffedd5]'
+                            : 'bg-[#fff7ed] text-[#b43b08] hover:bg-[#ffedd5]'
                         }`}
                         title={isCurrentlyPlaying ? 'Pause Mantra' : 'Chant Mantra'}
                       >
@@ -717,7 +704,7 @@ export default function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-lg shadow-md transition shrink-0"
+                  className="w-full sm:w-auto bg-[#b43b08] hover:bg-[#9a3412] text-white text-xs sm:text-sm font-semibold px-6 py-2.5 rounded-lg shadow-md transition shrink-0"
                 >
                   Subscribe
                 </button>

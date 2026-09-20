@@ -26,34 +26,46 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    // Default authentic mantra audio
-    const audio = new Audio('/audio/om_namah_shivaya.wav');
-    audio.loop = true;
-    audio.volume = 0.45;
-    audioRef.current = audio;
+  const getAudio = () => {
+    if (!audioRef.current && typeof window !== 'undefined') {
+      const audio = new Audio('/audio/om_namah_shivaya.wav');
+      audio.preload = 'none';
+      audio.loop = true;
+      audio.volume = 0.45;
+      const savedMute = localStorage.getItem('sanatan_audio_muted');
+      if (savedMute === 'true') {
+        audio.muted = true;
+      }
+      audioRef.current = audio;
+    }
+    return audioRef.current;
+  };
 
+  useEffect(() => {
     const savedMute = localStorage.getItem('sanatan_audio_muted');
     if (savedMute === 'true') {
       setIsMuted(true);
-      audio.muted = true;
     }
 
     return () => {
-      audio.pause();
-      audio.src = '';
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
     };
   }, []);
 
   const playAudio = async (track?: AudioTrack) => {
-    if (!audioRef.current) return;
+    const audio = getAudio();
+    if (!audio) return;
     try {
       if (track && track.audioUrl) {
         if (currentTrack?.id === track.id && isPlaying) {
           pauseAudio();
           return;
         }
-        audioRef.current.src = track.audioUrl;
+        audio.src = track.audioUrl;
         setCurrentTrack(track);
       } else if (!currentTrack) {
         setCurrentTrack({
@@ -64,9 +76,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       }
 
       setIsMuted(false);
-      audioRef.current.muted = false;
+      audio.muted = false;
       localStorage.setItem('sanatan_audio_muted', 'false');
-      await audioRef.current.play();
+      await audio.play();
       setIsPlaying(true);
     } catch (err) {
       console.warn('Browser prevented direct playback until user gesture:', err);
