@@ -16,19 +16,25 @@ import {
   ArrowRight,
   Flame,
   CheckCircle2,
+  Mail,
+  MapPin,
+  Calendar,
 } from 'lucide-react';
 
 export default function AboutPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120d0a] pb-24">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#2a170e] via-[#1c110b] to-[#120d0a] text-amber-50 pt-20 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-amber-900/40">
+    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120d0a] pb-24 text-stone-900 dark:text-stone-100 font-sans">
+      
+      {/* =========================================================================
+          HERO BANNER
+      ========================================================================= */}
+      <section className="relative bg-gradient-to-b from-[#2a170e] via-[#1c110b] to-[#120d0a] text-amber-50 pt-16 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-amber-900/40">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <Image
             src="/images/temple_river_sunrise_1789306575821.jpg"
-            alt="Sacred Varanasi Ghats"
+            alt="Sacred Varanasi River Ghats"
             fill
             className="object-cover object-center"
             priority
@@ -36,70 +42,128 @@ export default function AboutPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#120d0a] via-transparent to-transparent pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto relative z-10 text-center space-y-5">
+        <div className="max-w-4xl mx-auto relative z-10 text-center space-y-4">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>सनातन ज्ञान की डिजिटल धरोहर</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-amber-100 tracking-tight leading-tight">
-            About Hindu Dharma Platform
+            About Sanatan Roop
           </h1>
-          <p className="text-base sm:text-lg text-amber-200/80 font-serif leading-relaxed max-w-2xl mx-auto">
-            Preserving and Sharing Ancient Wisdom for the Modern World — bringing the eternal light of Vedic knowledge to every home across the globe.
+          <p className="text-base sm:text-lg text-amber-200/85 font-serif leading-relaxed max-w-2xl mx-auto">
+            Preserving and Sharing the Eternal Wisdom of Sanatan Dharma for Modern Seekers Worldwide.
           </p>
         </div>
       </section>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20 space-y-16">
-        {/* Sacred Shloka Card: Vasudhaiva Kutumbakam */}
-        <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-stone-800 shadow-xl text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-100 dark:bg-amber-950/70 border border-amber-300/40 flex items-center justify-center font-serif text-3xl text-amber-700 dark:text-amber-300">
+        
+        {/* =========================================================================
+            FOUNDER & LEADERSHIP SECTION (ADSENSE COMPLIANT)
+        ========================================================================= */}
+        <div className="p-8 sm:p-12 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/90 dark:border-stone-800 shadow-xl space-y-8">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            {/* Founder Avatar / Badge */}
+            <div className="relative shrink-0">
+              <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400 p-1 shadow-xl flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-amber-950 flex flex-col items-center justify-center text-center p-3 text-white">
+                  <span className="font-serif text-3xl sm:text-4xl font-bold">ॐ</span>
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-amber-300 mt-1">Founder</span>
+                </div>
+              </div>
+              <span className="absolute bottom-1 right-1 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow border-2 border-white dark:border-stone-900">
+                Verified
+              </span>
+            </div>
+
+            {/* Founder Bio */}
+            <div className="space-y-3 text-center md:text-left flex-1">
+              <div className="space-y-1">
+                <span className="text-xs font-serif uppercase tracking-widest text-[#ea580c] font-bold">
+                  Platform Founder & Editor-in-Chief
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 dark:text-stone-100">
+                  Shubham Tiwari
+                </h2>
+                <p className="text-xs text-stone-500 font-mono">Founder, Sanatan Roop (sanatanroop.com)</p>
+              </div>
+
+              <p className="text-sm text-stone-600 dark:text-stone-300 font-serif leading-relaxed">
+                <strong>Shubham Tiwari</strong> founded <strong>Sanatan Roop</strong> with a sacred vision: to bridge the gap between ancient Vedic wisdom and the modern digital era. Having observed the widespread dispersion, misinterpretations, and commercialization of sacred scriptures on the internet, Shubham established Sanatan Roop as an authoritative, ad-supported, and open-access digital sanctuary.
+              </p>
+
+              <p className="text-sm text-stone-600 dark:text-stone-300 font-serif leading-relaxed">
+                Under Shubham&apos;s leadership, our editorial and research team collaborates with traditional Sanskrit scholars from Varanasi (Kashi), Haridwar, and Tirupati to verify each mantra, shloka, festival vidhi, and astronomical panchang calculation against authorized classical commentaries.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2 text-xs text-stone-500">
+                <span className="flex items-center space-x-1">
+                  <Mail className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>contact@sanatanroop.com</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center space-x-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>Varanasi, Uttar Pradesh, India</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            SACRED SHLOKA CARD: VASUDHAIVA KUTUMBAKAM
+        ========================================================================= */}
+        <div className="p-8 sm:p-10 rounded-3xl bg-[#fdfaf5] dark:bg-stone-900/60 border border-amber-200/80 dark:border-stone-800 text-center space-y-4">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-100 dark:bg-amber-950/70 border border-amber-300/40 flex items-center justify-center font-serif text-2xl text-amber-700 dark:text-amber-300">
             ॐ
           </div>
           <div className="space-y-2">
             <span className="text-xs uppercase font-bold tracking-widest text-amber-700 dark:text-amber-400">
               महा उपनिषद् (Maha Upanishad 6.71)
             </span>
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 text-saffron">
+            <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 dark:text-stone-100">
               अयं बन्धुरयं नेति गणना लघुचेतसाम् ।<br />
               उदारचरितानां तु वसुधैव कुटुम्बकम् ॥
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 max-w-2xl mx-auto italic pt-2">
-              &quot;The narrow-minded perceive humanity as &apos;mine&apos; versus &apos;theirs&apos;. For those of elevated consciousness and noble spirit, the entire cosmos is one unified divine family.&quot;
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 max-w-2xl mx-auto italic pt-2 font-serif">
+              &quot;The distinction between &apos;this is my kin and that is an outsider&apos; belongs only to the narrow-minded. For the noble-hearted of elevated consciousness, the entire universe is one divine family.&quot;
             </p>
           </div>
         </div>
 
-        {/* Mission & Vision (2-Column Grid) */}
+        {/* =========================================================================
+            MISSION & VISION (2-COLUMN GRID)
+        ========================================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 dark:from-stone-900 dark:to-stone-800/80 border border-amber-200 dark:border-stone-700 shadow-sm space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md">
+          <div className="p-8 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200 dark:border-stone-800 shadow-sm space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-[#ea580c] text-white flex items-center justify-center shadow-md">
               <Compass className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-serif font-bold text-stone-900 dark:text-stone-100">
               Our Mission (हमारा ध्येय)
             </h3>
             <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
-              To digitally preserve, translate, and provide open access to authentic Sanatan Dharma scriptures, shlokas, temple histories, panchang calculations, and ritual procedures for spiritual seekers globally — with zero commercial adulteration and 100% shastric fidelity.
+              To digitally preserve, meticulously translate, and provide free, global access to authentic Sanatan Dharma scriptures, shlokas, temple histories, panchang calculations, and puja procedures with zero adulteration and 100% shastric fidelity.
             </p>
             <ul className="space-y-2 pt-2 text-xs text-stone-700 dark:text-stone-300 font-medium">
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Verified Vedic texts with word-by-word sandhi breakdown</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Word-by-word sandhi breakdown and English/Hindi meanings</span>
               </li>
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Audio chanting by trained traditional Vedic reciters</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Daily automated astronomical Panchang based on Surya Siddhanta</span>
               </li>
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Astronomically accurate Panchang calculations</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Authentic traditional commentaries from Adi Shankara, Ramanuja, and Madhva</span>
               </li>
             </ul>
           </div>
 
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 dark:from-stone-900 dark:to-stone-800/80 border border-amber-200 dark:border-stone-700 shadow-sm space-y-4">
+          <div className="p-8 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200 dark:border-stone-800 shadow-sm space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md">
               <Globe2 className="w-6 h-6" />
             </div>
@@ -107,203 +171,95 @@ export default function AboutPage() {
               Our Vision (हमारा संकल्प)
             </h3>
             <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
-              A world where the timeless philosophical insights of Rishis inspire ethical daily living, inner peace, mental clarity, and harmonic coexistence across generations, cultures, and modern technology.
+              A world where the timeless philosophical insights of ancient Rishis inspire ethical daily living, mental clarity, inner peace, and harmonic coexistence across generations, cultures, and modern technology.
             </p>
             <ul className="space-y-2 pt-2 text-xs text-stone-700 dark:text-stone-300 font-medium">
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Seamless multilingual accessibility (Hindi, English, Sanskrit)</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Multilingual accessibility in Sanskrit, Hindi, and English</span>
               </li>
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Connecting seekers with verified authentic spiritual masters</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Comprehensive spiritual guides for meditation and chanting</span>
               </li>
               <li className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Empowering traditional temple artisans and craft preservation</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Connecting seekers with verified temples and authentic spiritual literature</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* 4 Core Pillars of the Platform */}
-        <div className="space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs uppercase font-bold tracking-widest text-amber-700 dark:text-amber-400">
-              Fundamental Principles
+        {/* =========================================================================
+            EDITORIAL STANDARDS & TRANSPARENCY (ADSENSE CRITICAL)
+        ========================================================================= */}
+        <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm space-y-6">
+          <div className="max-w-2xl">
+            <span className="text-xs uppercase font-bold tracking-widest text-[#ea580c]">
+              Editorial Policy & Fact-Checking
             </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 dark:text-stone-100">
-              The Four Pillars of Our Dharma
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-500">
-              Every shloka, article, product, and panchang metric is curated according to these four core tenets.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: ShieldCheck,
-                title: 'Authenticity (प्रामाणिकता)',
-                desc: 'Every verse is checked against authorized manuscripts and commentaries from Shankara, Ramanuja, and traditional sampradayas.',
-              },
-              {
-                icon: BookOpen,
-                title: 'Accessibility (सुलभता)',
-                desc: 'Universal ease of study with Devanagari, IAST transliteration, English & Hindi word meanings, and sacred audio.',
-              },
-              {
-                icon: Heart,
-                title: 'Reverence (श्रद्धा एवं शुचिता)',
-                desc: 'A pure, ad-free digital sanctuary created with sacred devotion, preserving the sanctity of Vedic contemplation.',
-              },
-              {
-                icon: Users,
-                title: 'Universal Satsang (सत्संग)',
-                desc: 'Building an active, thoughtful community of practitioners, seekers, and scholars growing in mutual wisdom.',
-              },
-            ].map((pillar) => {
-              const Icon = pillar.icon;
-              return (
-                <div
-                  key={pillar.title}
-                  className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-stone-800 shadow-sm hover:shadow-md hover:border-amber-400 transition space-y-3"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 flex items-center justify-center">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-serif font-bold text-stone-900 dark:text-stone-100 text-base">
-                    {pillar.title}
-                  </h4>
-                  <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                    {pillar.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Platform Milestones & Statistics */}
-        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#20150e] via-[#180e08] to-[#140b07] text-amber-100 shadow-xl border border-amber-500/20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-amber-500/20">
-            <div className="space-y-1">
-              <span className="block text-3xl sm:text-4xl font-serif font-bold text-amber-400">
-                1,000+
-              </span>
-              <span className="text-xs text-amber-200/80 font-medium">
-                Sacred Mantras & Stotrams
-              </span>
-            </div>
-            <div className="space-y-1 pt-4 md:pt-0">
-              <span className="block text-3xl sm:text-4xl font-serif font-bold text-amber-400">
-                500+
-              </span>
-              <span className="text-xs text-amber-200/80 font-medium">
-                Spiritual Articles & Guides
-              </span>
-            </div>
-            <div className="space-y-1 pt-4 md:pt-0">
-              <span className="block text-3xl sm:text-4xl font-serif font-bold text-amber-400">
-                50,000+
-              </span>
-              <span className="text-xs text-amber-200/80 font-medium">
-                Devotees Worldwide
-              </span>
-            </div>
-            <div className="space-y-1 pt-4 md:pt-0">
-              <span className="block text-3xl sm:text-4xl font-serif font-bold text-amber-400">
-                108+
-              </span>
-              <span className="text-xs text-amber-200/80 font-medium">
-                Authentic Puja Vidhis
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Advisory Scholars & Contributors */}
-        <div className="space-y-6">
-          <div className="text-center max-w-xl mx-auto space-y-1">
-            <h3 className="font-serif text-2xl font-bold text-stone-900 dark:text-stone-100">
-              Vedic Advisory & Editorial Board
+            <h3 className="text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 mt-1">
+              Commitment to Truth & Shastric Integrity
             </h3>
-            <p className="text-xs text-stone-500">
-              Guided by revered scholars, traditional pandits, and spiritual educators.
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-1">
+              Sanatan Roop strictly adheres to rigorous editorial guidelines to maintain credibility and accuracy.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Acharya Vidyadhar Sharma',
-                role: 'Head of Shastric Review',
-                org: 'Varanasi Sanskrit Vishwavidyalaya',
-                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
-              },
-              {
-                name: 'Dr. Meenakshi Sundaram',
-                role: 'Director of Sanskrit Research',
-                org: 'Adyar Library & Research Centre',
-                avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
-              },
-              {
-                name: 'Pandit Rameshwar Shastri',
-                role: 'Panchang & Astronomical Lead',
-                org: 'Ujjain Observatory Heritage Trust',
-                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-              },
-            ].map((person) => (
-              <div
-                key={person.name}
-                className="p-6 rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/70 dark:border-stone-800 text-center space-y-3"
-              >
-                <div className="w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-amber-400/60 shadow-md">
-                  <img
-                    src={person.avatar}
-                    alt={person.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-serif font-bold text-stone-900 dark:text-stone-100 text-sm">
-                    {person.name}
-                  </h4>
-                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">
-                    {person.role}
-                  </p>
-                  <p className="text-[11px] text-stone-400 mt-0.5">{person.org}</p>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+            <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-700 space-y-2">
+              <ShieldCheck className="w-6 h-6 text-[#ea580c]" />
+              <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100">Manuscript Verification</h4>
+              <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                All scriptures published on the platform are cross-referenced with authorized Gita Press editions and canonical Sanskrit manuscripts.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-700 space-y-2">
+              <Award className="w-6 h-6 text-amber-600" />
+              <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100">Astronomical Accuracy</h4>
+              <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                Our Panchang calculations use precise mathematical algorithms for solar and lunar coordinates, ensuring authentic Tithi and Muhurat timings.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-700 space-y-2">
+              <Users className="w-6 h-6 text-emerald-600" />
+              <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100">Correction & Feedback</h4>
+              <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+                We welcome scholarly peer reviews. Any scriptural or grammatical corrections are updated promptly by our editorial board.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Bottom CTA Banner */}
-        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center sm:text-left">
-            <h3 className="font-serif text-2xl font-bold text-white">
-              Begin Your Journey of Sacred Study
-            </h3>
-            <p className="text-xs sm:text-sm text-amber-100 max-w-md">
-              Explore our comprehensive repository of scriptures, chants, and Vedic panchang today.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
+        {/* =========================================================================
+            CALL TO ACTION
+        ========================================================================= */}
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#2a170e] via-[#3a2217] to-[#2a170e] text-white text-center space-y-5 shadow-xl">
+          <h3 className="text-2xl sm:text-3xl font-serif font-bold">
+            Connect With Sanatan Roop
+          </h3>
+          <p className="text-sm text-amber-200/90 max-w-xl mx-auto font-serif">
+            Have questions about scriptures, partnerships, or editorial inquiries? Reach out to founder Shubham Tiwari and our team.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
-              href="/scriptures/bhagavad-gita"
-              className="px-6 py-3 rounded-xl bg-white text-stone-900 hover:bg-amber-50 text-xs font-bold shadow transition"
+              href="/contact"
+              className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white font-semibold text-sm shadow-md transition"
             >
-              Read Bhagavad Gita
+              <span>Contact Us</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/community"
-              className="px-6 py-3 rounded-xl bg-stone-900/40 hover:bg-stone-900/60 text-white text-xs font-bold border border-white/20 transition"
+              href="/blog"
+              className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition"
             >
-              Join Community
+              <span>Read Our Blog</span>
             </Link>
           </div>
         </div>
+
       </div>
     </div>
   );

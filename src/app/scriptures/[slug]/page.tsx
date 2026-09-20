@@ -4,9 +4,14 @@ import ScriptureReaderClient from './ScriptureReaderClient';
 export function generateStaticParams() {
   return [
     { slug: 'bhagavad-gita' },
+    { slug: 'ramcharitmanas' },
     { slug: 'isha-upanishad' },
+    { slug: 'katha-upanishad' },
     { slug: 'mandukya-upanishad' },
     { slug: 'rigveda-samhita' },
+    { slug: 'shrimad-bhagavatam' },
+    { slug: 'patanjali-yoga' },
+    { slug: 'chanakya-niti' },
   ];
 }
 

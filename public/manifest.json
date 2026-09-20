@@ -1,0 +1,19 @@
+{
+  "name": "SanatanRoop - सम्पूर्ण सनातन धर्म",
+  "short_name": "SanatanRoop",
+  "description": "सनातन ज्ञान, पंचांग, पावन आरती, आध्यात्मिक वीडियो और संपूर्ण वेद-ग्रंथ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121216",
+  "theme_color": "#FF9933",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "hi",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

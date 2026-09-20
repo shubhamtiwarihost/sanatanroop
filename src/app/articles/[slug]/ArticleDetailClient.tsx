@@ -145,7 +145,7 @@ export default function ArticleDetailClient() {
                   Acharya Vidyadhar
                 </span>
                 <span className="text-xs text-stone-500 font-sans">
-                  Vedic Scholar &amp; Spiritual Teacher • Hindu Dharma Library
+                  Vedic Scholar &amp; Spiritual Teacher • SanatanRoop Library
                 </span>
               </div>
             </div>

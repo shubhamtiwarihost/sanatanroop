@@ -246,7 +246,7 @@ const DEFAULT_BLOCKS: PageBlock[] = [
     enabled: true,
     order: 1,
     data: {
-      heading: 'Hindu Dharma',
+      heading: 'SanatanRoop',
       subtitle: 'Sanatan Gyan, Har Ghar Tak',
       sanskritVerse: 'ॐ नमः शिवाय',
       descriptionEn:
@@ -342,7 +342,6 @@ const DEFAULT_MENU_ITEMS: CMSMenuItem[] = [
   { id: 'menu-5', label: 'Spiritual Books', url: '/books' },
   { id: 'menu-6', label: 'Divine Vibrations', url: '/divine-vibrations' },
   { id: 'menu-7', label: 'Articles', url: '/articles' },
-  { id: 'menu-8', label: 'Store', url: '/store' },
   { id: 'menu-9', label: 'Videos', url: '/videos' },
   { id: 'menu-10', label: 'Community', url: '/community' },
 ];
@@ -676,15 +675,15 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const [blocks, setBlocks] = useState<PageBlock[]>(DEFAULT_BLOCKS);
   const [headerMenu, setHeaderMenu] = useState<CMSMenuItem[]>(DEFAULT_MENU_ITEMS);
   const [siteIdentity, setSiteIdentity] = useState({
-    brandName: 'Hindu Dharma',
+    brandName: 'SanatanRoop',
     tagline: 'Sanatan Gyan, Har Ghar Tak',
     announcementText: '',
     announcementLink: '',
     announcementActive: false,
     contactPhone: '+91 98765 43210',
-    contactEmail: 'contact@sanatan.org',
-    varanasiAddress: 'Assi Ghat Road, Shivala, Varanasi, Uttar Pradesh - 221005',
-    copyrightText: '© 2026 Hindu Dharma. All rights reserved. Sanatan Gyan, Har Ghar Tak.',
+    contactEmail: 'contact@sanatanroop.com',
+    varanasiAddress: 'Kashi (Varanasi), Uttar Pradesh, India',
+    copyrightText: '© 2026 SanatanRoop. All rights reserved. Sanatan Gyan, Har Ghar Tak.',
   });
 
   const [mantras, setMantras] = useState<CMSMantraItem[]>(DEFAULT_MANTRAS);

@@ -5,12 +5,10 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { SUPPORTED_LANGUAGES, Locale } from '@/i18n';
-import { useCart } from '@/context/CartContext';
 import { useAudio } from '@/context/AudioContext';
 import { useCMS } from '@/context/CMSContext';
 import {
   Search,
-  ShoppingCart,
   Heart,
   ChevronDown,
   Sparkles,
@@ -23,14 +21,12 @@ import {
   Layers,
   Flame,
   Calendar,
-  Compass,
 } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { locale, setLocale, t } = useLanguage();
-  const { itemCount } = useCart();
   const { isPlaying, toggleAudio } = useAudio();
   const { headerMenu, siteIdentity } = useCMS();
 
@@ -83,14 +79,14 @@ export default function Navbar() {
         <div className="bg-[#fffdfa] dark:bg-[#151210] border-b border-[#ebdcca] dark:border-[#2a201b] px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 transition-colors">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
-            {/* 1. Brand Logo matching reference: Om badge + "Hindu Dharma" + "Sanatan Gyan, Har Ghar Tak" */}
+            {/* 1. Brand Logo: Om badge + "SanatanRoop" + "Sanatan Gyan, Har Ghar Tak" */}
             <Link href="/" className="flex items-center space-x-3 shrink-0 group">
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-[#ea580c] via-[#f97316] to-[#fb923c] flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
                 <span className="font-serif text-2xl font-bold leading-none select-none">ॐ</span>
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1c1917] dark:text-[#fbf8f2]">
-                  <span className="text-[#ea580c]">Hindu</span> Dharma
+                  <span className="text-[#ea580c]">Sanatan</span>Roop
                 </span>
                 <span className="text-[11px] sm:text-xs text-stone-500 dark:text-stone-400 font-sans tracking-tight">
                   Sanatan Gyan, Har Ghar Tak
@@ -107,7 +103,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search mantras, articles, puja items, books..."
+                placeholder="Search mantras, shlokas, aartis, books, videos..."
                 className="w-full bg-[#f6f3ed] dark:bg-[#201914] text-stone-800 dark:text-stone-100 placeholder-stone-400 text-sm rounded-full py-2.5 pl-5 pr-11 border border-[#e5dcce] dark:border-[#382b22] focus:outline-none focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c] shadow-inner transition"
               />
               <button
@@ -119,7 +115,7 @@ export default function Navbar() {
               </button>
             </form>
 
-            {/* 3. Right Quick Actions: Profile, Wishlist, Login, Sign Up, Cart */}
+            {/* 3. Right Quick Actions: Audio, Language, Wishlist, Menu */}
             <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
               
               {/* Mantra Audio Ambient Player Toggle */}
@@ -175,18 +171,6 @@ export default function Navbar() {
                 title="Sacred Wishlist"
               >
                 <Heart className="w-5 h-5" />
-              </Link>
-
-              {/* Shopping Cart with Red Badge */}
-              <Link
-                href="/cart"
-                className="relative p-2 text-stone-700 dark:text-stone-200 hover:text-[#ea580c] transition flex items-center"
-                title="Sacred Store Cart"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#dc2626] text-white text-[10px] font-bold flex items-center justify-center font-mono shadow-sm">
-                  {itemCount}
-                </span>
               </Link>
 
               {/* Mobile Menu Toggle */}
@@ -269,17 +253,20 @@ export default function Navbar() {
                 <span>Divine Vibrations</span>
               </Link>
 
-              <Link href="/articles" className="transition hover:text-amber-400">
-                Articles
+              <Link href="/blog" className="transition hover:text-amber-400 font-medium">
+                Blog
               </Link>
-              <Link href="/store" className="transition hover:text-amber-400">
-                Store
-              </Link>
-              <Link href="/videos" className="transition hover:text-amber-400">
+              <Link href="/videos" className="transition hover:text-amber-400 font-medium">
                 Videos
               </Link>
-              <Link href="/community" className="transition hover:text-amber-400">
+              <Link href="/community" className="transition hover:text-amber-400 font-medium">
                 Community
+              </Link>
+              <Link href="/about" className="transition hover:text-amber-400 font-medium">
+                About
+              </Link>
+              <Link href="/contact" className="transition hover:text-amber-400 font-medium">
+                Contact
               </Link>
             </nav>
 
@@ -303,7 +290,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search slokas, aartis, books, store..."
+                placeholder="Search slokas, aartis, books, videos..."
                 className="w-full bg-[#2a201a] text-stone-100 text-xs rounded-lg py-2 px-3 pr-8 border border-stone-700"
               />
               <button type="submit" className="absolute right-2.5 top-2.5 text-stone-400">
@@ -356,18 +343,11 @@ export default function Navbar() {
                 <span>Divine Vibrations</span>
               </Link>
               <Link
-                href="/articles"
+                href="/blog"
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
               >
-                Articles
-              </Link>
-              <Link
-                href="/store"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded bg-stone-900/60 hover:text-amber-400"
-              >
-                Store
+                Blog
               </Link>
               <Link
                 href="/videos"

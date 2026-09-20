@@ -7,7 +7,6 @@ import {
   Search,
   BookOpen,
   Sparkles,
-  ShoppingBag,
   ExternalLink,
   ChevronRight,
   Filter,
@@ -16,6 +15,7 @@ import {
   X,
   Bookmark,
   Layers,
+  Volume2,
 } from 'lucide-react';
 
 interface BookItem {
@@ -42,7 +42,6 @@ interface BookItem {
   sampleVerseHindi: string;
   sampleVerseEnglish: string;
   readOnlineUrl?: string;
-  buyUrl?: string;
 }
 
 const BOOKS_DATA: BookItem[] = [
@@ -70,7 +69,6 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseHindi: 'तुम्हारा अधिकार केवल कर्म करने में है, उसके फलों में कभी नहीं। इसलिए कर्म के फल के हेतु मत बनो और न ही अकर्मण्यता में तुम्हारी आसक्ति हो।',
     sampleVerseEnglish: 'You have a right only to work, never to its fruits; let not the fruits of action be your motive, nor let your attachment be to inaction.',
     readOnlineUrl: '/scriptures/bhagavad-gita',
-    buyUrl: '/store?category=books',
   },
   {
     id: 'ramcharitmanas',
@@ -95,8 +93,7 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'शान्तं शाश्वतमप्रमेयमनघं निर्वाणशान्तिप्रदं\nब्रह्माशम्भुफणीन्द्रसेव्यमनिशं वेदान्तवेद्यं विभुम् ।\nरामाख्यं जगदीश्वरं सुरगुरुं मायामनुष्यं हरिं\nवन्देऽहं करुणाकरं रघुवरं भूपालचूडामणिम् ॥',
     sampleVerseHindi: 'शांत, सनातन, अप्रमेय, निष्पाप, मोक्षरूप परम शांति देने वाले, ब्रह्मा, शम्भु और शेषनाग द्वारा नित्य सेवित, रघुश्रेष्ठ श्री राम को मैं नमस्कार करता हूँ।',
     sampleVerseEnglish: 'I bow to the jewel of kings, the Lord of the universe known as Rama, who is calm, eternal, immeasurable, sinless, and the giver of eternal peace.',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/ramcharitmanas',
   },
   {
     id: 'isha-upanishad',
@@ -122,7 +119,6 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseHindi: 'यह सम्पूर्ण जगत परमात्मा से व्याप्त है। इसलिए त्यागपूर्वक इसका उपभोग करो, किसी के धन की लालसा मत करो।',
     sampleVerseEnglish: 'All this, whatever moves in this moving world, is enveloped by God. Therefore, find your enjoyment in renunciation; do not covet anyone’s wealth.',
     readOnlineUrl: '/scriptures/isha-upanishad',
-    buyUrl: '/store?category=books',
   },
   {
     id: 'katha-upanishad',
@@ -147,8 +143,32 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'उत्तिष्ठत जाग्रत प्राप्य वरान्निबोधत ।\nक्षुरस्य धारा निशिता दुरत्यया दुर्गं पथस्तत्कवयो वदन्ति ॥',
     sampleVerseHindi: 'उठो! जागो! और श्रेष्ठ महापुरुषों के समीप जाकर ज्ञान प्राप्त करो। ज्ञानियों का कहना है कि यह आत्मज्ञान का मार्ग छुरे की तीक्ष्ण धार के समान अत्यंत दुर्गम है।',
     sampleVerseEnglish: 'Arise, awake, and learn by approaching the excellent teachers! The sharp edge of a razor is difficult to cross; thus the wise say the path to spiritual truth is hard.',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/katha-upanishad',
+  },
+  {
+    id: 'mandukya-upanishad',
+    titleHi: 'माण्डूक्योपनिषद्',
+    titleEn: 'Mandukya Upanishad',
+    category: 'upanishads',
+    categoryLabel: 'उपनिषद',
+    author: 'अथर्ववेद',
+    versesCount: '१२ मंत्र',
+    languages: ['संस्कृत', 'हिन्दी', 'English'],
+    coverTheme: {
+      bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
+      accentColor: '#FF9933',
+      borderColor: 'border-[#FF9933]',
+      emblem: '🕉️',
+      sacredHeader: '॥ अयमात्मा ब्रह्म ॥',
+      spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
+    },
+    shortSummary: 'ॐकार के तीन पादों और तुरीय अवस्था का विश्लेषण करने वाली अत्यंत गहन वेदान्त उपनिषद।',
+    fullOverview: 'माण्डूक्योपनिषद् अथर्ववेद की लघु किंतु सर्वाधिक प्रभावशाली उपनिषद है। यह चेतना की चार अवस्थाओं—जाग्रत, स्वप्न, सुषुप्ति और तुरीय—का प्रत्यक्ष विश्लेषण करती है।',
+    sampleChapterTitle: 'प्रथम मंत्र - ॐकार की व्याख्या',
+    sampleVerseSanskrit: 'ॐ इत्येतदक्षरमिदꣳ सर्वं तस्योपव्याख्यानं भूतं भवद् भविष्यदिति सर्वमोङ्कार एव ।\nयच्चान्यत् त्रिकालातीतं तदप्योङ्कार एव ॥',
+    sampleVerseHindi: 'ॐ—यह अविनाशी अक्षर ही यह सब कुछ है। जो बीत चुका है, जो वर्तमान है और जो भविष्य में होगा, वह सब ॐकार ही है।',
+    sampleVerseEnglish: 'OM—this imperishable syllable is all this. What was, what is, and what shall be, all is verily OM.',
+    readOnlineUrl: '/scriptures/mandukya-upanishad',
   },
   {
     id: 'rigveda',
@@ -173,8 +193,7 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'नासदासीन्नो सदासीत्तदानीं नासीद्रजो नो व्योमा परो यत् ।\nकिमावरीवः कुह कस्य शर्मन्नम्भः किमासीद्गहनं गभीरम् ॥',
     sampleVerseHindi: 'सृष्टि के पूर्व न असत था, न सत था। न अंतरिक्ष था, न उससे परे आकाश था। उस समय कौन किसको आच्छादित कर रहा था? कहाँ किसकी शरण में गहन गंभीर जल था?',
     sampleVerseEnglish: 'Then was not non-existence nor existence; there was no realm of air, no sky beyond it. What covered in, and where? And what gave shelter? Was water there, unfathomed depth of water?',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/rigveda-samhita',
   },
   {
     id: 'shrimad-bhagavatam',
@@ -199,8 +218,7 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'स वै पुंसां परो धर्मो यतो भक्तिरधोक्षजे ।\nअहैतुकी प्रतिहता ययात्मा सम्प्रसीदति ॥',
     sampleVerseHindi: 'मनुष्यों के लिए वही सर्वश्रेष्ठ परम धर्म है जिससे इंद्रियातीत परमात्मा श्री कृष्ण में अहैतुकी (निःस्वार्थ) और निष्काम भक्ति उत्पन्न हो, जिससे आत्मा परम प्रसन्न होती है।',
     sampleVerseEnglish: 'The supreme occupation for all humanity is that by which men can attain to loving devotional service unto the transcendent Lord. Such devotional service must be unmotivated and uninterrupted to completely satisfy the self.',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/shrimad-bhagavatam',
   },
   {
     id: 'patanjali-yoga',
@@ -225,8 +243,7 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'योगश्चित्तवृत्तिनिरोधः ॥\nतदा द्रष्टुः स्वरूपेऽवस्थानम् ॥',
     sampleVerseHindi: 'चित्त की वृत्तियों का पूर्ण निरोध (शांत हो जाना) ही योग है। उस समय द्रष्टा (आत्मा) अपने वास्तविक स्वरूप में स्थित हो जाता है।',
     sampleVerseEnglish: 'Yoga is the stilling of the changing states of the mind. Then the witness abides in its own true nature.',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/patanjali-yoga',
   },
   {
     id: 'chanakya-niti',
@@ -251,8 +268,7 @@ const BOOKS_DATA: BookItem[] = [
     sampleVerseSanskrit: 'प्रणम्य शिरसा विष्णुं त्रैलोक्याधिपतिं प्रभुम् ।\nनानाशास्त्रोद्धृतं वक्ष्ये राजनीतिसमुच्चयम् ॥',
     sampleVerseHindi: 'तीनों लोकों के स्वामी भगवान श्री विष्णु को सिर झुकाकर प्रणाम करते हुए, मैं अनेक शास्त्रों से निकाले गए राजनीति और नीति सूत्रों का सार कहता हूँ।',
     sampleVerseEnglish: 'Humbly bowing down before the almighty Lord Vishnu, the Lord of the three worlds, I recite maxims of the science of political ethics selected from various ancient scriptures.',
-    readOnlineUrl: '/scriptures',
-    buyUrl: '/store?category=books',
+    readOnlineUrl: '/scriptures/chanakya-niti',
   },
 ];
 
@@ -387,6 +403,40 @@ export default function SpiritualBooksPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
+  const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
+
+  const stopVoice = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsVoiceSpeaking(false);
+  };
+
+  const handleSpeakVerse = (sanskrit: string, hindi: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (isVoiceSpeaking) {
+      stopVoice();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const cleanText = `${sanskrit.replace(/[॥।]/g, ', ')}. हिन्दी अनुवाद: ${hindi}`;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(
+      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
+    );
+    if (hindiVoice) utterance.voice = hindiVoice;
+
+    utterance.onstart = () => setIsVoiceSpeaking(true);
+    utterance.onend = () => setIsVoiceSpeaking(false);
+    utterance.onerror = () => setIsVoiceSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   const filteredBooks = useMemo(() => {
     return BOOKS_DATA.filter((b) => {
@@ -540,14 +590,6 @@ export default function SpiritualBooksPage() {
                     <BookOpen className="w-3.5 h-3.5" />
                     <span>ग्रंथ पढ़ें (Read Online)</span>
                   </button>
-
-                  <Link
-                    href={book.buyUrl || '/store?category=books'}
-                    className="inline-flex items-center space-x-1 text-xs text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 font-serif font-semibold transition px-3 py-2 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500/50"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>पुस्तक मंगवाएं</span>
-                  </Link>
                 </div>
 
               </div>
@@ -570,7 +612,10 @@ export default function SpiritualBooksPage() {
           <div className="bg-white dark:bg-[#1a1411] rounded-3xl border border-amber-500/40 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in duration-200 relative">
             
             <button
-              onClick={() => setPreviewBook(null)}
+              onClick={() => {
+                stopVoice();
+                setPreviewBook(null);
+              }}
               className="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-stone-900 dark:hover:text-white flex items-center justify-center transition"
             >
               <X className="w-4 h-4" />
@@ -612,9 +657,19 @@ export default function SpiritualBooksPage() {
 
             {/* Sample Verse Preview */}
             <div className="bg-[#faf6ee] dark:bg-[#23170e] border border-amber-300 dark:border-amber-900/60 rounded-2xl p-5 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 font-serif block">
-                📖 {previewBook.sampleChapterTitle}
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 font-serif block">
+                  📖 {previewBook.sampleChapterTitle}
+                </span>
+                <button
+                  onClick={() => handleSpeakVerse(previewBook.sampleVerseSanskrit, previewBook.sampleVerseHindi)}
+                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-600/15 text-amber-900 dark:text-amber-300 text-xs font-serif font-bold hover:bg-amber-600/25 transition"
+                  title="श्लोक स्वर पाठ सुनें"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>{isVoiceSpeaking ? 'स्वर रोकें' : 'स्वर पाठ'}</span>
+                </button>
+              </div>
 
               <blockquote className="text-base sm:text-lg font-serif font-bold text-amber-950 dark:text-amber-100 whitespace-pre-line leading-relaxed">
                 {previewBook.sampleVerseSanskrit}
@@ -639,14 +694,6 @@ export default function SpiritualBooksPage() {
               >
                 <span>संपूर्ण ग्रंथ पढ़ें</span>
                 <ChevronRight className="w-4 h-4" />
-              </Link>
-
-              <Link
-                href={previewBook.buyUrl || '/store?category=books'}
-                className="text-amber-700 dark:text-amber-400 hover:underline text-xs font-serif font-bold inline-flex items-center space-x-1"
-              >
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>हार्डकॉपी पुस्तक खरीदें</span>
               </Link>
             </div>
 

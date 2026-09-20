@@ -28,20 +28,22 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
+import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
+
 export default function ScriptureReaderClient() {
   const params = useParams();
   const searchParams = useSearchParams();
   const slug = params?.slug as string;
   const { locale, setLocale, t } = useLanguage();
 
-  const [scripture, setScripture] = useState<any>(null);
+  const [scripture, setScripture] = useState<any>(() => SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita']);
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedVerseIndex, setSelectedVerseIndex] = useState(0);
   const [verseSearch, setVerseSearch] = useState('');
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('large');
   const [darkReadingMode, setDarkReadingMode] = useState(false);
   const [savedBookmarks, setSavedBookmarks] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
   // Mobile drawer states
@@ -49,33 +51,62 @@ export default function ScriptureReaderClient() {
 
   useEffect(() => {
     async function loadScripture() {
+      // First check static data
+      const staticData = SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita'];
+      if (staticData) {
+        setScripture(staticData);
+        setLoading(false);
+      }
+
       try {
         const res = await fetch(`/api/v1/scriptures/${slug}`);
-        const data = await res.json();
-        if (data.scripture) {
-          setScripture(data.scripture);
-          const qCh = searchParams.get('chapter');
-          const qV = searchParams.get('verse');
-          if (qCh && data.scripture.chapters) {
-            const chIdx = data.scripture.chapters.findIndex(
-              (c: any) => c.chapterNumber === parseInt(qCh)
-            );
-            if (chIdx !== -1) {
-              setSelectedChapterIndex(chIdx);
-              if (qV && data.scripture.chapters[chIdx]?.verses) {
-                const vIdx = data.scripture.chapters[chIdx].verses.findIndex(
-                  (v: any) => v.verseNumber === parseInt(qV)
-                );
-                if (vIdx !== -1) setSelectedVerseIndex(vIdx);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.scripture) {
+            setScripture(data.scripture);
+            const qCh = searchParams.get('chapter');
+            const qV = searchParams.get('verse');
+            if (qCh && data.scripture.chapters) {
+              const chIdx = data.scripture.chapters.findIndex(
+                (c: any) => c.chapterNumber === parseInt(qCh)
+              );
+              if (chIdx !== -1) {
+                setSelectedChapterIndex(chIdx);
+                if (qV && data.scripture.chapters[chIdx]?.verses) {
+                  const vIdx = data.scripture.chapters[chIdx].verses.findIndex(
+                    (v: any) => v.verseNumber === parseInt(qV)
+                  );
+                  if (vIdx !== -1) setSelectedVerseIndex(vIdx);
+                }
               }
             }
+            return;
           }
         }
       } catch (err) {
-        console.error('Failed to load scripture reader', err);
-      } finally {
-        setLoading(false);
+        console.warn('Using static scripture data for offline/export support:', err);
       }
+
+      // Handle search params for static data
+      if (staticData) {
+        const qCh = searchParams.get('chapter');
+        const qV = searchParams.get('verse');
+        if (qCh && staticData.chapters) {
+          const chIdx = staticData.chapters.findIndex(
+            (c: any) => c.chapterNumber === parseInt(qCh)
+          );
+          if (chIdx !== -1) {
+            setSelectedChapterIndex(chIdx);
+            if (qV && staticData.chapters[chIdx]?.verses) {
+              const vIdx = staticData.chapters[chIdx].verses.findIndex(
+                (v: any) => v.verseNumber === parseInt(qV)
+              );
+              if (vIdx !== -1) setSelectedVerseIndex(vIdx);
+            }
+          }
+        }
+      }
+      setLoading(false);
     }
     if (slug) loadScripture();
   }, [slug, searchParams]);

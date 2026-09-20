@@ -2,32 +2,40 @@ import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sanatan.org';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sanatanroop.com';
 
   const staticRoutes = [
     '',
+    '/about',
+    '/blog',
+    '/privacy',
+    '/terms',
+    '/contact',
     '/scriptures',
     '/shlokas',
+    '/books',
+    '/aartis',
+    '/kathas',
+    '/divine-vibrations',
     '/deities',
     '/temples',
     '/festivals',
     '/calendar',
     '/articles',
-    '/store',
+    '/videos',
     '/search',
     '/ai-guide',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
-    priority: route === '' ? 1.0 : 0.8,
+    priority: route === '' ? 1.0 : (route === '/about' || route === '/blog' || route === '/contact' ? 0.9 : 0.8),
   }));
 
   try {
-    const [scriptures, articles, products] = await Promise.all([
+    const [scriptures, articles] = await Promise.all([
       prisma.scripture.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.post.findMany({ where: { status: 'PUBLISHED' }, select: { slug: true, updatedAt: true } }),
-      prisma.product.findMany({ select: { slug: true, updatedAt: true } }),
     ]);
 
     const scriptureUrls = scriptures.map((s) => ({
@@ -44,14 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-    const productUrls = products.map((p) => ({
-      url: `${baseUrl}/store/${p.slug}`,
-      lastModified: p.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    }));
-
-    return [...staticRoutes, ...scriptureUrls, ...articleUrls, ...productUrls];
+    return [...staticRoutes, ...scriptureUrls, ...articleUrls];
   } catch {
     return staticRoutes;
   }

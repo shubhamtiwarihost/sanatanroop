@@ -12,7 +12,6 @@ import {
   Flame,
   BookOpen,
   FileText,
-  ShoppingCart,
   ArrowRight,
   Sun,
   Sunset,
@@ -251,11 +250,11 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href={heroData.btn2Url || '/store'}
+                href="/books"
                 className="inline-flex items-center space-x-2 bg-white hover:bg-stone-100 text-[#ea580c] font-medium text-sm sm:text-base px-6 py-3 rounded-lg border border-stone-200 shadow-md transition transform hover:-translate-y-0.5"
               >
-                <ShoppingCart className="w-4 h-4 text-[#ea580c]" />
-                <span>{heroData.btn2Text || 'Visit Store'}</span>
+                <BookOpen className="w-4 h-4 text-[#ea580c]" />
+                <span>सम्पूर्ण ग्रंथ एवं पुस्तकें</span>
               </Link>
             </div>
           </div>
@@ -495,46 +494,56 @@ export default function HomePage() {
 
 
       {/* =========================================================================
-          SECTION 4: SHOP BY CATEGORY (7-ITEM GRID)
+          SECTION 4: SACRED SCRIPTURES & BOOKS (पवित्र आध्यात्मिक ग्रंथ संग्रह)
       ========================================================================= */}
-      {isShopCategoriesEnabled && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 dark:text-stone-100">
-            {shopCategoriesBlock?.data?.title || 'Shop by Category'}
-          </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 dark:text-stone-100">
+              पवित्र आध्यात्मिक ग्रंथ संग्रह
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-500 font-serif mt-1">
+              वेदों, उपनिषदों, श्रीमद्भगवद्गीता और रामायण का प्रामाणिक संकलन
+            </p>
+          </div>
           <Link
-            href="/store"
-            className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:text-[#c2410c] flex items-center space-x-1"
+            href="/books"
+            className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:text-[#c2410c] flex items-center space-x-1 font-serif"
           >
-            <span>View All Products</span>
+            <span>सभी ग्रंथ देखें</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
-          {shopCategories.map((cat) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          {[
+            { title: 'श्रीमद्भगवद्गीता', href: '/scriptures/bhagavad-gita', emblem: '🕉️', count: '१८ अध्याय' },
+            { title: 'श्रीरामचरितमानस', href: '/scriptures/ramcharitmanas', emblem: '🏹', count: '७ काण्ड' },
+            { title: 'ईशावास्योपनिषद्', href: '/scriptures/isha-upanishad', emblem: '✨', count: '१८ मंत्र' },
+            { title: 'कठोपनिषद्', href: '/scriptures/katha-upanishad', emblem: '🔥', count: '६ वल्लियाँ' },
+            { title: 'ऋग्वेद संहिता', href: '/scriptures/rigveda-samhita', emblem: '☀️', count: '१० मण्डल' },
+            { title: 'सम्पूर्ण आरतियां', href: '/aartis', emblem: '🪔', count: '८ प्रमुख आरती' },
+          ].map((item) => (
             <Link
-              key={cat.title}
-              href={cat.href}
-              className="bg-[#fffdf9] dark:bg-[#1a1411] border border-stone-200/90 dark:border-stone-800 rounded-2xl p-3 sm:p-3.5 text-center group hover:shadow-md transition flex flex-col items-center justify-between"
+              key={item.title}
+              href={item.href}
+              className="bg-[#fffdf9] dark:bg-[#1a1411] border border-amber-500/30 hover:border-amber-500 rounded-2xl p-4 text-center group hover:shadow-lg hover:shadow-amber-500/10 transition flex flex-col items-center justify-between"
             >
-              <div className="w-full aspect-square relative rounded-xl overflow-hidden mb-2.5 bg-stone-100 dark:bg-stone-900">
-                <Image
-                  src={cat.img}
-                  alt={cat.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition duration-300"
-                />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500/20 to-orange-500/20 text-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                {item.emblem}
               </div>
-              <span className="text-xs sm:text-sm font-serif font-semibold text-stone-800 dark:text-stone-200 group-hover:text-[#ea580c] transition">
-                {cat.title}
-              </span>
+              <div>
+                <span className="text-xs sm:text-sm font-serif font-bold text-stone-900 dark:text-stone-100 group-hover:text-[#ea580c] transition block">
+                  {item.title}
+                </span>
+                <span className="text-[11px] text-stone-500 font-serif mt-0.5 block">
+                  {item.count}
+                </span>
+              </div>
             </Link>
           ))}
         </div>
       </section>
-      )}
 
       {/* =========================================================================
           SECTION 5: TWO-COLUMN SPLIT (LATEST ARTICLES + POPULAR MANTRAS)

@@ -217,7 +217,7 @@ export default function DivineVibrationsPage() {
 
   const handleShare = (m: DisplayMantra) => {
     if (typeof window !== 'undefined') {
-      const text = `${m.sanskrit} (${m.titleEn})\n${m.meaning}\n\nShared via Hindu Dharma Divine Vibrations`;
+      const text = `${m.sanskrit} (${m.titleEn})\n${m.meaning}\n\nShared via SanatanRoop Divine Vibrations`;
       navigator.clipboard.writeText(text);
       setCopiedId(m.id);
       setTimeout(() => setCopiedId(null), 2000);

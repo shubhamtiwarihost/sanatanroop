@@ -229,7 +229,7 @@ export default function WordPressAdminPanel() {
   // Settings State
   const [settingsTab, setSettingsTab] = useState<'general' | 'reading' | 'writing' | 'discussion' | 'permalinks'>('general');
   const [generalSettings, setGeneralSettings] = useState({
-    siteTitle: siteIdentity.brandName || 'Hindu Dharma Platform',
+    siteTitle: siteIdentity.brandName || 'SanatanRoop Platform',
     tagline: siteIdentity.tagline || 'Sanatan Gyan, Har Ghar Tak',
     wpUrl: 'http://localhost:3000',
     siteUrl: 'http://localhost:3000',

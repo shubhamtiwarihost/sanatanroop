@@ -2,95 +2,156 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play, Pause, Clock, Eye, Sparkles } from 'lucide-react';
-import { useAudio } from '@/context/AudioContext';
+import { Play, X, Clock, Eye, Sparkles, Film, CheckCircle2 } from 'lucide-react';
+
+interface VideoItem {
+  id: string;
+  title: string;
+  category: string;
+  duration: string;
+  views: string;
+  img: string;
+  youtubeId: string;
+  description: string;
+}
+
+const VIDEOS_DATA: VideoItem[] = [
+  {
+    id: 'v-featured',
+    title: 'Power of Om Mantra: Sacred Cosmic Sound (432Hz Meditation)',
+    category: 'Mantras',
+    duration: '15:20',
+    views: '1.2M',
+    img: '/images/hero_shiva.jpg',
+    youtubeId: '8g0hT44PhzA',
+    description: 'Immerse in the primordial cosmic vibration of ॐ (AUM), tuned to 432Hz for deep nervous system calming and higher spiritual awareness.',
+  },
+  {
+    id: 'v-1',
+    title: 'Shri Hanuman Chalisa: Authentic Vedic Recitation by Hariharan',
+    category: 'Mantras',
+    duration: '09:48',
+    views: '3.4B',
+    img: '/images/article_gita_lessons.jpg',
+    youtubeId: 'AETFvQonfV8',
+    description: 'The world’s most listened-to rendition of Goswami Tulsidas’s 40 chaupais dedicated to Lord Hanuman.',
+  },
+  {
+    id: 'v-2',
+    title: 'Shiv Tandav Stotram with Sanskrit Subtitles: Shankar Mahadevan',
+    category: 'Mantras',
+    duration: '09:14',
+    views: '240M',
+    img: '/images/category_puja.jpg',
+    youtubeId: 'hMBKmQ63GGU',
+    description: 'Ravana’s ecstatic Sanskrit hymn extolling the cosmic dance, matted locks, and supreme prowess of Lord Shiva.',
+  },
+  {
+    id: 'v-3',
+    title: 'Aigiri Nandini • Mahishasura Mardini Stotram (Devi Stuti)',
+    category: 'Bhajans',
+    duration: '11:20',
+    views: '85M',
+    img: '/images/community_banner.jpg',
+    youtubeId: 'W3q8Od5qJio',
+    description: 'Adi Shankaracharya’s rhythmic masterpiece celebrating the victory of the Divine Mother over inner ignorance and demonic forces.',
+  },
+  {
+    id: 'v-4',
+    title: 'Bhagavad Gita Wisdom: Overcoming Anxiety through Karma Yoga',
+    category: 'Discourses',
+    duration: '24:15',
+    views: '450k',
+    img: '/images/gita_krishna.jpg',
+    youtubeId: 'E6uM3wKjSFE',
+    description: 'A profound philosophical discourse on how Lord Krishna’s teachings in Chapter 2 dissolve stress, anxiety, and fear of failure.',
+  },
+  {
+    id: 'v-5',
+    title: 'Maha Mrityunjaya Mantra 108 Times with Meaning',
+    category: 'Mantras',
+    duration: '32:10',
+    views: '920k',
+    img: '/images/article_meditation.jpg',
+    youtubeId: 'Ll5Ccg1qWdc',
+    description: 'Rigvedic life-giving healing mantra for health, longevity, and liberation from mortal fears.',
+  },
+  {
+    id: 'v-6',
+    title: 'Achyutam Keshavam Rama Narayanam • Divine Krishna Bhajan',
+    category: 'Bhajans',
+    duration: '06:40',
+    views: '15M',
+    img: '/images/category_idols.jpg',
+    youtubeId: 'k1t6rM1bJ6w',
+    description: 'A sweet devotional melody celebrating the thousand divine names and loving presence of Lord Krishna.',
+  },
+  {
+    id: 'v-7',
+    title: 'The Story of Raja Harishchandra: Unwavering Truth & Dharma',
+    category: 'Stories',
+    duration: '18:50',
+    views: '310k',
+    img: '/images/temple_river_sunrise_1789306575821.jpg',
+    youtubeId: 'F0f5u-Jt8pU',
+    description: 'The inspiring Pauranik legend of King Harishchandra demonstrating that adherence to Satya (Truth) triumphs over all adversity.',
+  },
+  {
+    id: 'v-8',
+    title: 'Vedic Guided Meditation for Inner Peace & Mind Stillness',
+    category: 'Guided Meditation',
+    duration: '20:00',
+    views: '680k',
+    img: '/images/category_rudraksha.jpg',
+    youtubeId: 'HfHkBEjofqk',
+    description: 'A gentle step-by-step Dhyana session guiding awareness from breath observation to the sacred stillness of the Supreme Self.',
+  },
+];
 
 export default function VideosPage() {
-  const { isPlaying, playAudio, pauseAudio } = useAudio();
-  const [activeCategory, setActiveCategory] = useState('Mantras');
-  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
-  const categories = ['Mantras', 'Discourses', 'Bhajans', 'Stories', 'Guided Meditation'];
+  const categories = ['All', 'Mantras', 'Discourses', 'Bhajans', 'Stories', 'Guided Meditation'];
 
-  const featuredVideo = {
-    id: 'v-featured',
-    title: 'Power of Om Mantra: Sacred Cosmic Sound',
-    duration: '15:20',
-    views: '45k',
-    img: '/images/hero_shiva.jpg',
-  };
+  const filteredVideos = VIDEOS_DATA.filter((vid) => {
+    if (activeCategory === 'All') return true;
+    return vid.category.toLowerCase() === activeCategory.toLowerCase();
+  });
 
-  const videoList = [
-    {
-      id: 'v-1',
-      title: 'Hanuman Chalisa: Authentic Vedic Recitation',
-      duration: '11:45',
-      views: '82k',
-      img: '/images/article_gita_lessons.jpg',
-    },
-    {
-      id: 'v-2',
-      title: 'Shiv Tandav Stotram with Sanskrit Subtitles',
-      duration: '09:30',
-      views: '120k',
-      img: '/images/category_puja.jpg',
-    },
-    {
-      id: 'v-3',
-      title: 'Devi Stuti & Navratri Sacred Bhajans',
-      duration: '18:10',
-      views: '34k',
-      img: '/images/community_banner.jpg',
-    },
-    {
-      id: 'v-4',
-      title: 'Gita Wisdom: Overcoming Anxiety through Karma Yoga',
-      duration: '22:05',
-      views: '65k',
-      img: '/images/gita_krishna.jpg',
-    },
-  ];
-
-  const handleTogglePlay = async (id: string) => {
-    if (playingVideoId === id && isPlaying) {
-      pauseAudio();
-      setPlayingVideoId(null);
-    } else {
-      setPlayingVideoId(id);
-      await playAudio();
-    }
-  };
+  const featuredVideo = VIDEOS_DATA[0];
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1c1917] font-sans pb-16">
+    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120d0a] text-stone-900 dark:text-stone-100 font-sans pb-24">
       
-      {/* =========================================================================
-          HERO BANNER: SPIRITUAL VIDEOS
-      ========================================================================= */}
-      <section className="bg-gradient-to-r from-[#241711] via-[#3a2217] to-[#241711] text-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-[#4d3224]">
+      {/* Hero Banner */}
+      <section className="relative bg-gradient-to-b from-[#241711] via-[#2f1b12] to-[#120d0a] text-amber-50 pt-14 pb-18 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-amber-900/40">
         <div className="max-w-4xl mx-auto text-center space-y-3 relative z-10">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-wide">
-            Spiritual Videos
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
+            <Film className="w-3.5 h-3.5" />
+            <span>सनातन दृश्य दर्शन • Sacred Video Gallery</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-amber-100 tracking-tight">
+            Spiritual Videos &amp; Discourses
           </h1>
-          <p className="text-sm sm:text-base text-amber-200/90 font-serif">
-            Watch, Learn and Grow
+          <p className="text-sm sm:text-base text-amber-200/80 font-serif max-w-xl mx-auto leading-relaxed">
+            Watch authenticated Vedic mantra chants, classical discourses, sacred bhajans, and guided spiritual practices.
           </p>
         </div>
       </section>
 
-      {/* =========================================================================
-          CATEGORY FILTER TABS
-      ========================================================================= */}
+      {/* Category Tabs */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="flex flex-wrap items-center justify-center gap-2">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
                 activeCategory === cat
-                  ? 'bg-[#ea580c] text-white shadow-sm'
-                  : 'bg-white dark:bg-[#1a1411] border border-stone-200/90 text-stone-700 dark:text-stone-300 hover:border-orange-300'
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
+                  : 'bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:border-amber-400'
               }`}
             >
               {cat}
@@ -99,99 +160,152 @@ export default function VideosPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          MAIN FEATURED LARGE VIDEO CARD
-      ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="bg-white dark:bg-[#1a1411] border border-stone-200/90 dark:border-stone-800 rounded-3xl overflow-hidden shadow-sm">
-          <div className="relative w-full h-72 sm:h-96 lg:h-[450px] bg-stone-900 flex items-center justify-center group cursor-pointer"
-               onClick={() => handleTogglePlay(featuredVideo.id)}>
-            <Image
-              src={featuredVideo.img}
-              alt={featuredVideo.title}
-              fill
-              priority
-              className="object-cover opacity-80 group-hover:opacity-90 transition duration-300"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      {/* Main Featured Video */}
+      {activeCategory === 'All' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-stone-800 rounded-3xl overflow-hidden shadow-md">
+            <div
+              className="relative w-full h-72 sm:h-96 lg:h-[460px] bg-stone-900 flex items-center justify-center group cursor-pointer"
+              onClick={() => setActiveVideo(featuredVideo)}
+            >
+              <Image
+                src={featuredVideo.img}
+                alt={featuredVideo.title}
+                fill
+                priority
+                className="object-cover opacity-80 group-hover:opacity-90 transition duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-            {/* Big Play Button in Center */}
-            <div className={`w-20 h-20 rounded-full bg-[#ea580c]/90 text-white flex items-center justify-center shadow-2xl transition transform group-hover:scale-110 ${
-              playingVideoId === featuredVideo.id && isPlaying ? 'ring-4 ring-orange-400' : ''
-            }`}>
-              {playingVideoId === featuredVideo.id && isPlaying ? (
-                <Pause className="w-8 h-8" />
-              ) : (
-                <Play className="w-8 h-8 ml-1" />
-              )}
-            </div>
+              {/* Big Play Button in Center */}
+              <div className="w-20 h-20 rounded-full bg-amber-600/95 text-white flex items-center justify-center shadow-2xl transition transform group-hover:scale-110 group-hover:bg-amber-500">
+                <Play className="w-8 h-8 ml-1 fill-current" />
+              </div>
 
-            {/* Bottom Title Overlay */}
-            <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
-              <span className="px-2.5 py-1 rounded bg-[#ea580c] text-[10px] font-bold uppercase tracking-wider">
-                Featured Chanting
-              </span>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white drop-shadow-md">
-                {featuredVideo.title}
-              </h2>
+              {/* Bottom Title Overlay */}
+              <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
+                <span className="px-3 py-1 rounded-full bg-amber-600 text-xs font-bold uppercase tracking-wider">
+                  Featured Meditation
+                </span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white drop-shadow-md">
+                  {featuredVideo.title}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-200 font-serif max-w-2xl line-clamp-2">
+                  {featuredVideo.description}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* =========================================================================
-          GRID OF VIDEO CARDS (4 CARDS MATCHING REFERENCE IMAGE)
-      ========================================================================= */}
+      {/* Grid of Video Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 mb-6">
-          Popular Spiritual Videos
+          {activeCategory === 'All' ? 'Popular Spiritual Videos' : `${activeCategory} Videos`}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {videoList.map((vid) => {
-            const isThisPlaying = playingVideoId === vid.id && isPlaying;
+          {filteredVideos.map((vid) => (
+            <div
+              key={vid.id}
+              onClick={() => setActiveVideo(vid)}
+              className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-amber-200/80 dark:border-stone-800 shadow-sm hover:shadow-lg transition cursor-pointer group flex flex-col justify-between"
+            >
+              <div className="w-full h-44 relative bg-stone-900 overflow-hidden">
+                <Image
+                  src={vid.img}
+                  alt={vid.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition duration-300 opacity-90"
+                />
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition" />
 
-            return (
-              <div
-                key={vid.id}
-                onClick={() => handleTogglePlay(vid.id)}
-                className="bg-white dark:bg-[#1a1411] rounded-2xl overflow-hidden border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition cursor-pointer group flex flex-col justify-between"
-              >
-                <div className="w-full h-44 relative bg-stone-900">
-                  <Image
-                    src={vid.img}
-                    alt={vid.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-300 opacity-90"
-                  />
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition" />
-
-                  {/* Play Button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-11 h-11 rounded-full bg-[#ea580c]/90 text-white flex items-center justify-center shadow-md group-hover:scale-110 transition">
-                      {isThisPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-                    </div>
+                {/* Play Button */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-amber-600/90 text-white flex items-center justify-center shadow-md group-hover:scale-110 group-hover:bg-amber-500 transition">
+                    <Play className="w-5 h-5 ml-0.5 fill-current" />
                   </div>
-
-                  <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-mono">
-                    {vid.duration}
-                  </span>
                 </div>
 
-                <div className="p-4 space-y-2">
-                  <h3 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-[#ea580c] transition line-clamp-2">
+                <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/80 text-white text-[10px] font-mono">
+                  {vid.duration}
+                </span>
+
+                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-amber-300 text-[10px] font-semibold">
+                  {vid.category}
+                </span>
+              </div>
+
+              <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition line-clamp-2 leading-snug">
                     {vid.title}
                   </h3>
-                  <div className="flex items-center space-x-2 text-[11px] text-stone-400">
-                    <Eye className="w-3.5 h-3.5" />
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 font-serif line-clamp-2 mt-1">
+                    {vid.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-stone-400 pt-2 border-t border-stone-100 dark:border-stone-800">
+                  <span className="flex items-center space-x-1">
+                    <Eye className="w-3 h-3" />
                     <span>{vid.views} views</span>
-                  </div>
+                  </span>
+                  <span className="text-amber-600 font-bold flex items-center space-x-0.5">
+                    <span>Play Now</span>
+                  </span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </section>
+
+      {/* Interactive Video Player Modal */}
+      {activeVideo && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-stone-950 rounded-3xl border border-amber-500/40 shadow-2xl max-w-4xl w-full overflow-hidden animate-in fade-in zoom-in duration-200 relative">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveVideo(null)}
+              className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 text-white hover:bg-amber-600 flex items-center justify-center transition"
+              title="Close Video"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Embedded YouTube Player */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                title={activeVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full border-0"
+              />
+            </div>
+
+            {/* Video Details Bar */}
+            <div className="p-6 bg-[#16100c] text-stone-200 space-y-2 border-t border-stone-800">
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-600/30 text-amber-300 text-xs font-semibold">
+                  {activeVideo.category}
+                </span>
+                <span className="text-xs text-stone-400">• {activeVideo.duration} • {activeVideo.views} views</span>
+              </div>
+              <h3 className="font-serif font-bold text-lg sm:text-xl text-white">
+                {activeVideo.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-400 font-serif leading-relaxed">
+                {activeVideo.description}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

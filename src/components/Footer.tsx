@@ -23,7 +23,7 @@ export default function Footer() {
     });
   };
 
-  const brandName = siteIdentity?.brandName || 'Hindu Dharma';
+  const brandName = siteIdentity?.brandName || 'SanatanRoop';
   const tagline = siteIdentity?.tagline || 'Sanatan Gyan, Har Ghar Tak';
 
   return (
@@ -52,13 +52,13 @@ export default function Footer() {
             <Link href="/about" className="hover:text-amber-400 transition-colors">
               About Us
             </Link>
-            <Link href="/articles" className="hover:text-amber-400 transition-colors">
+            <Link href="/blog" className="hover:text-amber-400 transition-colors">
               Blog
             </Link>
-            <Link href="/about#privacy" className="hover:text-amber-400 transition-colors">
+            <Link href="/privacy" className="hover:text-amber-400 transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/about#terms" className="hover:text-amber-400 transition-colors">
+            <Link href="/terms" className="hover:text-amber-400 transition-colors">
               Terms
             </Link>
             <Link href="/contact" className="hover:text-amber-400 transition-colors">

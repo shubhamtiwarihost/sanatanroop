@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAudio } from '@/context/AudioContext';
 import {
@@ -17,6 +17,8 @@ import {
   Flame,
   Check,
   Bell,
+  Sliders,
+  RotateCcw,
 } from 'lucide-react';
 
 interface Aarti {
@@ -29,6 +31,9 @@ interface Aarti {
   lyricsHi: string;
   lyricsEn: string;
   meaning: string;
+  youtubeId: string;
+  singer: string;
+  duration: string;
   audioTrack: {
     id: string;
     title: string;
@@ -61,6 +66,8 @@ const AARTIS_DATA: Aarti[] = [
 'सूर' श्याम शरण आए, सफल कीजे सेवा ।
 माता जाकी पार्वती, पिता महादेवा ॥
 
+दीनन की लाज राखो, शम्भु सुत वारी ।
+कामना को पूर्ण करो, जग बलिहारी ॥
 जय गणेश, जय गणेश, जय गणेश देवा ।
 माता जाकी पार्वती, पिता महादेवा ॥`,
     lyricsEn: `Jai Ganesh, Jai Ganesh, Jai Ganesh Deva |
@@ -77,8 +84,16 @@ Mata Jaki Parvati, Pita Mahadeva ||
 Andhan Ko Aankh Det, Kodhin Ko Kaya |
 Banjhan Ko Putra Det, Nirdhan Ko Maya ||
 'Sur' Shyam Sharan Aaye, Safal Kije Sewa |
+Mata Jaki Parvati, Pita Mahadeva ||
+
+Deenan Ki Laaj Rakho, Shambhu Sut Vaari |
+Kamana Ko Pooran Karo, Jag Balihari ||
+Jai Ganesh, Jai Ganesh, Jai Ganesh Deva |
 Mata Jaki Parvati, Pita Mahadeva ||`,
-    meaning: 'Glory to Lord Ganesha, son of Goddess Parvati and Lord Shiva. The one with a single tusk, compassionate, four-armed, adorned with vermilion on the forehead, riding a mouse. Devotees offer betel leaves, flowers, and sweets.',
+    meaning: 'Glory to Lord Ganesha, son of Goddess Parvati and Lord Shiva. The compassionate one with a single tusk, four arms, adorned with vermilion on the forehead, riding the mouse. Devotees offer betel leaves, flowers, and sweets. He bestows sight to the blind, health to the sick, children to the childless, and wealth to the impoverished. Protect our honor, O son of Shambhu!',
+    youtubeId: 'Ll5Ccg1qWdc',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '4:21',
     audioTrack: {
       id: 'audio-ganesh',
       title: 'श्री गणेश जी की आरती',
@@ -109,6 +124,9 @@ Mata Jaki Parvati, Pita Mahadeva ||`,
 तुम करुणा के सागर, तुम पालनकर्ता ।
 मैं मूरख खल कामी, कृपा करो भर्ता ॥ ॐ जय जगदीश हरे ॥
 
+तुम हो एक अगोचर, सब के प्राणपति ।
+किस विधि मिलूं दयामय, तुमको मैं कुमति ॥ ॐ जय जगदीश हरे ॥
+
 दीनबन्धु दुखहर्ता, तुम ठाकुर मेरे ।
 अपने हाथ उठाओ, द्वार पड़ा तेरे ॥ ॐ जय जगदीश हरे ॥
 
@@ -116,7 +134,10 @@ Mata Jaki Parvati, Pita Mahadeva ||`,
 श्रद्धा भक्ति बढ़ाओ, सन्तन की सेवा ॥ ॐ जय जगदीश हरे ॥
 
 तन मन धन सब कुछ है तेरा, स्वामी सब कुछ है तेरा ।
-तेरा तुझको अर्पण, क्या लागे मेरा ॥ ॐ जय जगदीश हरे ॥`,
+तेरा तुझको अर्पण, क्या लागे मेरा ॥ ॐ जय जगदीश हरे ॥
+
+श्री जगदीश जी की आरती, जो कोई नर गावे ।
+कहत शिवानन्द स्वामी, मनवांछित फल पावे ॥ ॐ जय जगदीश हरे ॥`,
     lyricsEn: `Om Jai Jagdish Hare, Swami Jai Jagdish Hare |
 Bhakta Jano Ke Sankat, Daas Jano Ke Sankat,
 Kshan Mein Door Kare || Om Jai Jagdish Hare ||
@@ -128,8 +149,29 @@ Maat Pita Tum Mere, Sharan Gahoon Kiski |
 Tum Bin Aur Na Dooja, Aas Karoon Jiski || Om Jai Jagdish Hare ||
 
 Tum Pooran Paramatma, Tum Antaryami |
-Parabrahma Parameshwar, Tum Sab Ke Swami || Om Jai Jagdish Hare ||`,
-    meaning: 'Glory to Lord Vishnu, the Lord of the Universe, who removes the troubles of devotees in an instant. You are Mother and Father, the Supreme Soul and Inner Dweller.',
+Parabrahma Parameshwar, Tum Sab Ke Swami || Om Jai Jagdish Hare ||
+
+Tum Karuna Ke Sagar, Tum Palanakarta |
+Main Moorakh Khal Kami, Kripa Karo Bharta || Om Jai Jagdish Hare ||
+
+Tum Ho Ek Agochar, Sab Ke Pranapati |
+Kis Vidhi Miloon Dayamaya, Tumko Main Kumati || Om Jai Jagdish Hare ||
+
+Deenabandhu Dukhaharta, Tum Thakur Mere |
+Apne Haath Uthao, Dwaar Pada Tere || Om Jai Jagdish Hare ||
+
+Vishaya Vikaar Mitao, Paap Haro Deva |
+Shraddha Bhakti Badhao, Santan Ki Sewa || Om Jai Jagdish Hare ||
+
+Tan Man Dhan Sab Kuch Hai Tera, Swami Sab Kuch Hai Tera |
+Tera Tujhko Arpan, Kya Lage Mera || Om Jai Jagdish Hare ||
+
+Shri Jagdish Ji Ki Aarti, Jo Koi Nar Gave |
+Kahat Shivananda Swami, Manvaanchhit Phal Paave || Om Jai Jagdish Hare ||`,
+    meaning: 'Glory to Lord Vishnu, the Lord of the Universe, who removes the troubles of devotees in an instant. You are Mother and Father, the Supreme Soul and Inner Dweller. You are the Ocean of Compassion and the Sustainer of all. I surrender body, mind, and wealth to You, for everything belongs to You.',
+    youtubeId: 'HfHkBEjofqk',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '6:12',
     audioTrack: {
       id: 'audio-jagdish',
       title: 'श्री जगदीश जी की आरती',
@@ -163,7 +205,10 @@ Parabrahma Parameshwar, Tum Sab Ke Swami || Om Jai Jagdish Hare ||`,
 सुखकारी दुखहारी जगपालनकारी ॥ ॐ जय शिव ओंकारा ॥
 
 ब्रह्मा विष्णु सदाशिव जानत अविवेका ।
-प्रणवाक्षर के मध्ये ये तीनों एका ॥ ॐ जय शिव ओंकारा ॥`,
+प्रणवाक्षर के मध्ये ये तीनों एका ॥ ॐ जय शिव ओंकारा ॥
+
+त्रिगुण शिवजी की आरती जो कोई नर गावे ।
+कहत शिवानन्द स्वामी, मनवांछित फल पावे ॥ ॐ जय शिव ओंकारा ॥`,
     lyricsEn: `Om Jai Shiv Omkara, Swami Jai Shiv Omkara |
 Brahma, Vishnu, Sadashiv, Ardhangi Dhara || Om Jai Shiv Omkara ||
 
@@ -171,8 +216,26 @@ Ekanan Chaturanan Panchanan Raje |
 Hansasana Garudasana Vrishavahana Saje || Om Jai Shiv Omkara ||
 
 Do Bhuja Chaar Chaturbhuja Dasabhuja Ati Sohe |
-Teenon Roop Nirakhata Tribhuvana Jana Mohe || Om Jai Shiv Omkara ||`,
-    meaning: 'Hail to Shiva, the sacred Omkara! Lord Brahma, Vishnu, and Sadashiva unite in you. You hold the trident, damru, and bring peace and liberation to all beings.',
+Teenon Roop Nirakhata Tribhuvana Jana Mohe || Om Jai Shiv Omkara ||
+
+Akshamala Vanamala Mundamala Dhari |
+Tripurari Kansari Karmala Dhari || Om Jai Shiv Omkara ||
+
+Shwetambar Peetambar Baghambar Ange |
+Sanakadik Garudadik Bhootadik Sange || Om Jai Shiv Omkara ||
+
+Kar Ke Madhye Kamandalu Chakra Trishuldhari |
+Sukhakari Dukhahari Jagapalanakari || Om Jai Shiv Omkara ||
+
+Brahma Vishnu Sadashiv Jaanat Aviveka |
+Pranavakshara Ke Madhye Ye Teeno Eka || Om Jai Shiv Omkara ||
+
+Trigun Shivji Ki Aarti Jo Koi Nar Gave |
+Kahat Shivananda Swami, Manvaanchhit Phal Paave || Om Jai Shiv Omkara ||`,
+    meaning: 'Hail to Lord Shiva, the sacred Omkara! Brahma, Vishnu, and Sadashiva are undivided in You. Holding the trident, kamandalu, and damru, You bring peace and liberation. Within the sacred syllable AUM, the holy trinity is one.',
+    youtubeId: 'F0f5u-Jt8pU',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '6:44',
     audioTrack: {
       id: 'audio-shiv',
       title: 'श्री शिव जी की आरती',
@@ -203,16 +266,70 @@ Teenon Roop Nirakhata Tribhuvana Jana Mohe || Om Jai Shiv Omkara ||`,
 कोटिक चन्द्र दिवाकर, सम राजत ज्योति ॥ जय अम्बे गौरी ॥
 
 शुम्भ-निशुम्भ बिदारे, महिषासुर घाती ।
-धूम्र विलोचन नैना, निशदिन मदमाती ॥ जय अम्बे गौरी ॥`,
+धूम्र विलोचन नैना, निशदिन मदमाती ॥ जय अम्बे गौरी ॥
+
+चण्ड-मुण्ड संहारे, शोणित बीज हरे ।
+मधु-कैटभ दोउ मारे, सुर भयहीन करे ॥ जय अम्बे गौरी ॥
+
+ब्रह्माणी, रुद्राणी, तुम कमला रानी ।
+आगम निगम बखानी, तुम शिव पटरानी ॥ जय अम्बे गौरी ॥
+
+चौंसठ योगिनी गावत, नृत्य करत भैरों ।
+बाजत ताल मृदंगा, और बाजत डमरू ॥ जय अम्बे गौरी ॥
+
+तुम ही जग की माता, तुम ही हो भरता ।
+भक्तन की दुःख हरता, सुख सम्पति करता ॥ जय अम्बे गौरी ॥
+
+भुजा चार अति शोभित, वरमुद्रा धारी ।
+मनवांछित फल पावत, सेवत नर नारी ॥ जय अम्बे गौरी ॥
+
+कंचन थाल विराजत, अगर कपूर बाती ।
+श्री मालकेतु में राजत, कोटि रतन ज्योती ॥ जय अम्बे गौरी ॥
+
+श्री अम्बेजी की आरती जो कोई नर गावे ।
+कहत शिवानन्द स्वामी, सुख-सम्पति पावे ॥ जय अम्बे गौरी ॥`,
     lyricsEn: `Jai Ambe Gauri, Maiya Jai Shyama Gauri |
 Tumko Nisadin Dhyawat, Hari Brahma Shivri || Jai Ambe Gauri ||
 
-Maang Sindoor Virajat, Teeko Mrigmad Ko |
+Maang Sindoor Virajat, Teeko Mrigamad Ko |
 Ujjwal Se Dou Naina, Chandravadan Neeko || Jai Ambe Gauri ||
 
+Kanak Samaan Kalevar, Raktambar Raje |
+Raktapushpa Galmala, Kanthan Par Saaje || Jai Ambe Gauri ||
+
 Kehari Vahan Rajat, Khadga Khappar Dhari |
-Sur-Nar-Muni-Jan Sewat, Tinke Dukhahari || Jai Ambe Gauri ||`,
-    meaning: 'Hail to Mother Ambe Gauri! Whom Vishnu, Brahma, and Shiva worship constantly. Riding a lion, holding weapons to slay demonic forces and protect Her devotees.',
+Sur-Nar-Muni-Jan Sewat, Tinke Dukhahari || Jai Ambe Gauri ||
+
+Kanan Kundal Shobhit, Nasagre Moti |
+Kotik Chandra Divakar, Sam Rajat Jyoti || Jai Ambe Gauri ||
+
+Shumbha-Nishumbha Bidaare, Mahishasura Ghati |
+Dhoomra Vilochan Naina, Nishadin Madamati || Jai Ambe Gauri ||
+
+Chanda-Munda Sanhare, Shonita Beeja Hare |
+Madhu-Kaitabha Dou Maare, Sura Bhayheen Kare || Jai Ambe Gauri ||
+
+Brahmani, Rudrani, Tum Kamala Rani |
+Agam Nigam Bakhani, Tum Shiva Patrani || Jai Ambe Gauri ||
+
+Chausath Yogini Gawat, Nritya Karat Bhairo |
+Baajat Taal Mridanga, Aur Baajat Damroo || Jai Ambe Gauri ||
+
+Tum Hi Jag Ki Mata, Tum Hi Ho Bharta |
+Bhaktan Ki Dukh Harta, Sukh Sampati Karta || Jai Ambe Gauri ||
+
+Bhuja Chaar Ati Shobhit, Var-Mudra Dhari |
+Manvaanchhit Phal Paavat, Sewat Nar Naari || Jai Ambe Gauri ||
+
+Kanchan Thaal Virajat, Agar Kapoor Baati |
+Shri Maalketu Mein Rajat, Koti Ratan Jyoti || Jai Ambe Gauri ||
+
+Shri Ambe Ji Ki Aarti Jo Koi Nar Gaave |
+Kahat Shivananda Swami, Sukh-Sampati Paave || Jai Ambe Gauri ||`,
+    meaning: 'Hail to Mother Ambe Gauri! Whom Vishnu, Brahma, and Shiva worship constantly. Riding a majestic lion, wielding sacred weapons to destroy Mahishasura, Shumbha, and Nishumbha. You are Brahmani, Rudrani, and Lakshmi, removing the fears of all celestial beings and humans.',
+    youtubeId: 'W3q8Od5qJio',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '5:45',
     audioTrack: {
       id: 'audio-durga',
       title: 'श्री अम्बे माता की आरती',
@@ -253,15 +370,48 @@ Sur-Nar-Muni-Jan Sewat, Tinke Dukhahari || Jai Ambe Gauri ||`,
 सुर नर मुनि जन आरती उतारें ।
 जय जय जय हनुमान उचारें ॥
 कंचन थार कपूर लौ छाई ।
-आरती करत संजना माई ॥`,
+आरती करत संजना माई ॥
+
+लंकविध्वंस कीन्ह रघुराई ।
+तुलसीदास प्रभु कीरति गाई ॥
+जो हनुमान जी की आरती गावै ।
+बसि बैकुण्ठ परम पद पावै ॥`,
     lyricsEn: `Aarti Kijai Hanuman Lala Ki |
 Dusht Dalan Raghunath Kala Ki ||
 
 Jaake Bal Se Girivar Kaapein |
 Rog Dosh Jaake Nikat Na Jhaapein ||
 Anjani Putra Mahabaladai |
-Santan Ke Prabhu Sada Sahai ||`,
-    meaning: 'Perform the aarti of beloved Hanuman, who subdues the wicked and represents Lord Rama’s prowess. His strength makes mountains tremble, and no afflictions dare approach his devotee.',
+Santan Ke Prabhu Sada Sahai ||
+
+De Beeda Raghunath Pathaye |
+Lanka Jaari Siya Sudhi Laaye ||
+Lanka So Kot Samudra Si Khaai |
+Jaat Pawansut Baar Na Laai ||
+
+Lanka Jaari Asur Sanhaare |
+Siyaramji Ke Kaaj Sanwaare ||
+Lakshman Moorchhit Pade Sakaare |
+Aani Sanjeevan Praan Ubaare ||
+
+Paithi Pataal Tori Jam-Kaare |
+Ahiravan Ki Bhuja Ukhaare ||
+Baayein Bhuja Asur Dal Maare |
+Daahine Bhuja Santjan Taare ||
+
+Sur Nar Muni Jan Aarti Utaarein |
+Jai Jai Jai Hanuman Uchaarein ||
+Kanchan Thaar Kapoor Lau Chhaai |
+Aarti Karat Sanjana Maai ||
+
+Lank-Vidhvans Keenh Raghuraai |
+Tulsidas Prabhu Keerati Gaai ||
+Jo Hanuman Ji Ki Aarti Gaavai |
+Basi Baikunth Param Pad Paavai ||`,
+    meaning: 'Perform the aarti of beloved Hanuman, who subdues the wicked and represents Lord Rama’s prowess. His strength makes mountains tremble, and no afflictions dare approach his devotee. He burnt Lanka, brought Sanjeevani to save Lakshmana, and killed Ahiravana in Patala.',
+    youtubeId: 'Aoz6a_t-x5U',
+    singer: 'हरिहरन (Hariharan)',
+    duration: '5:02',
     audioTrack: {
       id: 'audio-hanuman',
       title: 'श्री हनुमान जी की आरती',
@@ -292,13 +442,40 @@ Santan Ke Prabhu Sada Sahai ||`,
 सब सम्भव हो जाता, मन नहीं घबराता ॥ ॐ जय लक्ष्मी माता ॥
 
 तुम बिन यज्ञ न होते, वस्त्र न कोई पाता ।
-खान-पान का वैभव, सब तुमसे आता ॥ ॐ जय लक्ष्मी माता ॥`,
+खान-पान का वैभव, सब तुमसे आता ॥ ॐ जय लक्ष्मी माता ॥
+
+शुभ-गुण मंदिर सुंदर, क्षीरोदधि-जाता ।
+रत्न चतुर्दश तुम बिन, कोई नहीं पाता ॥ ॐ जय लक्ष्मी माता ॥
+
+महालक्ष्मी जी की आरती, जो कोई नर गावे ।
+उर आनन्द समावे, पाप उतर जावे ॥ ॐ जय लक्ष्मी माता ॥`,
     lyricsEn: `Om Jai Laxmi Mata, Maiya Jai Laxmi Mata |
 Tumko Nisadin Sewat, Har Vishnu Vidhata || Om Jai Laxmi Mata ||
 
 Uma, Rama, Brahmani, Tum Hi Jag-Mata |
-Surya-Chandrama Dhyawat, Narad Rishi Gaata || Om Jai Laxmi Mata ||`,
-    meaning: 'Glory to Mother Lakshmi, who bestows wealth, righteous prosperity, and peace upon homes where devotion and dharma reside.',
+Surya-Chandrama Dhyawat, Narad Rishi Gaata || Om Jai Laxmi Mata ||
+
+Durga Roop Niranjani, Sukh Sampati Data |
+Jo Koi Tumko Dhyawat, Riddhi-Siddhi Dhan Paata || Om Jai Laxmi Mata ||
+
+Tum Paatal-Nivasini, Tum Hi Shubhdata |
+Karma-Prabhav-Prakashini, Bhavanidhi Ki Traata || Om Jai Laxmi Mata ||
+
+Jis Ghar Mein Tum Rahteen, Sab Sadguna Aata |
+Sab Sambhav Ho Jaata, Man Nahin Ghabraata || Om Jai Laxmi Mata ||
+
+Tum Bin Yajna Na Hote, Vastra Na Koi Paata |
+Khaan-Paan Ka Vaibhav, Sab Tumse Aata || Om Jai Laxmi Mata ||
+
+Shubh-Guna Mandir Sundar, Ksheerodadhi-Jaata |
+Ratna Chaturdash Tum Bin, Koi Nahin Paata || Om Jai Laxmi Mata ||
+
+Mahalaxmi Ji Ki Aarti, Jo Koi Nar Gaave |
+Ur Aanand Samaave, Paap Utar Jaave || Om Jai Laxmi Mata ||`,
+    meaning: 'Glory to Mother Lakshmi, who bestows wealth, righteous prosperity, and peace upon homes where devotion and dharma reside. She is the daughter of the cosmic ocean of milk (Ksheerasagara), and without Her grace, noble deeds, feasts, and sacred yajnas cannot flourish.',
+    youtubeId: 'Ydd0cSY3I8s',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '5:30',
     audioTrack: {
       id: 'audio-laxmi',
       title: 'श्री लक्ष्मी माता की आरती',
@@ -321,17 +498,46 @@ Surya-Chandrama Dhyawat, Narad Rishi Gaata || Om Jai Laxmi Mata ||`,
 मृगमद तिलक ललाट सुहावै, अलक कस्तूरी महकावै ॥
 आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
 
+बंशी मधुर बजावै, सबही के मन को लुभावै ।
+मन्द-मन्द मुसुकावै, प्रेम रस बरसै अमृत बरसावै ॥
+आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
+
 जहं ते प्रगट भई गंगा, कलुष कलिहारिणी श्रीगंगा ।
 स्मरन ते होत मोह भंगा, बसी शिव शीश जटा के संगा ॥
 आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
 
 श्री राधा-मुख-कमल-लोचन, भवाभय-दारुन-विमोचन ।
 करन-रस-माधुरी-सीचन, कृपा-रस-वारिधि-उदंचन ॥
+आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥
+
+चरण छवि श्री बलिहारी, जहां सुख पावत नर-नारी ।
 आरती कुंजबिहारी की, श्री गिरिधर कृष्ण मुरारी की ॥`,
     lyricsEn: `Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
 Gale Mein Baijanti Mala, Bajavai Murli Madhur Baala |
-Shravan Mein Kundal Jhalkata, Jugal Chhavi Dekhi Man Bhaata ||`,
-    meaning: 'Aarti of Kunj Bihari, the bearer of Mount Govardhan, wearing the garland of wildflowers, playing the melodious flute that enchants all living beings.',
+Shravan Mein Kundal Jhalkata, Jugal Chhavi Dekhi Man Bhaata ||
+
+Kanakmaya Mukut Biraaje, Latak Mukh Ghunghuraari Kaaje |
+Mrigamad Tilak Lalaat Suhaavai, Alak Kastoori Mahkaavai ||
+Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
+
+Banshi Madhur Bajaavai, Sabahi Ke Man Ko Lubhaavai |
+Mand-Mand Musukaavai, Prem Ras Barsai Amrit Barsaavai ||
+Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
+
+Jahan Te Pragat Bhai Ganga, Kalush Kalihaarini Shri Ganga |
+Smaran Te Hot Moh Bhanga, Basi Shiv Sheesh Jata Ke Sanga ||
+Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
+
+Shri Radha-Mukh-Kamal-Lochan, Bhava-Bhaya-Daarun-Vimochan |
+Karan-Ras-Madhuri-Seechan, Kripa-Ras-Vaaridhi-Udancahan ||
+Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||
+
+Charan Chhavi Shri Balihari, Jahan Sukh Paavat Nar-Naari |
+Aarti Kunj Bihari Ki, Shri Giridhar Krishna Murari Ki ||`,
+    meaning: 'Aarti of Kunj Bihari, the bearer of Mount Govardhan, wearing the garland of wildflowers, playing the melodious flute that enchants all living beings. His feet from which Mother Ganga emanated cleanse all sins, and His enchanting smile showers divine nectar.',
+    youtubeId: 'k1t6rM1bJ6w',
+    singer: 'अनुराधा पौडवाल व साथी (Anuradha Paudwal)',
+    duration: '5:18',
     audioTrack: {
       id: 'audio-krishna',
       title: 'श्री कुंजबिहारी जी की आरती',
@@ -359,13 +565,37 @@ Shravan Mein Kundal Jhalkata, Jugal Chhavi Dekhi Man Bhaata ||`,
 आजानुभुज शर चाप धर, संग्राम-जित-खरदूषणम् ॥
 
 इति वदति तुलसीदास शंकर शेष मुनि-मन-रंजनम् ।
-मम हृदय कंज निवास कुरु, कामादि खल-दल-मंजनम् ॥`,
+मम हृदय कंज निवास कुरु, कामादि खल-दल-मंजनम् ॥
+
+मनु जाहिं राचेउ मिलिहि सो बरु सहज सुंदर सांवरो ।
+करुना निधान सुजान सीलु सनेहु जानत रावरो ॥
+
+एहि भांति गौरि असीस सुनि सिय सहित हियं हरषीं अली ।
+तुलसी भवानिहि पूजि पुनि पुनि मुदित मन मंदिर चली ॥`,
     lyricsEn: `Shri Ramachandra Kripalu Bhaju Man Harana Bhavabhaya Darunam |
 Nava-Kanja Lochana, Kanj Mukha, Kara Kanja, Pada Kanj-Arunam ||
 
 Kandarpa Aganita Amita Chhavi, Nava-Neela Neerada Sundaram |
-Pata-Peeta Manahu Tadita Ruchi Shuchi Naumi Janaka Sutavaram ||`,
-    meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet.',
+Pata-Peeta Manahu Tadita Ruchi Shuchi Naumi Janaka Sutavaram ||
+
+Bhaju Deenabandhu Dinesha Danava Daitya Vamsha Nikandanam |
+Raghunanda Anandakanda Koshala Chanda Dasharatha Nandanam ||
+
+Sira Mukuta Kundala Tilaka Chaaru Udaaru Anga Vibhooshanam |
+Aajaanubhuja Shara Chaapa Dhara, Sangraama-Jita-Kharadooshanam ||
+
+Iti Vadati Tulsidas Shankara Shesha Muni-Mana-Ranjanam |
+Mama Hridaya Kanja Nivaasa Kuru, Kaamaadi Khala-Dala-Manjanam ||
+
+Manu Jaahin Raacheu Milihi So Baru Sahaja Sundara Saanvaro |
+Karuna Nidhaana Sujaana Seelu Sanehu Jaanata Raavaro ||
+
+Ehi Bhaanti Gauri Aseesa Suni Siya Sahita Hiyan Harasheen Alee |
+Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
+    meaning: 'O mind, worship the compassionate Lord Ramachandra, who dispels the terrifying fears of mundane life. He has eyes like fresh lotus petals, a lotus-like face, hands, and reddish lotus-like feet. His beauty surpasses millions of Cupids. Tulsidas prays: O Lord, dwell forever in the lotus of my heart, destroying all inner vices.',
+    youtubeId: 'c_N2p_4oU-A',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '5:10',
     audioTrack: {
       id: 'audio-ram',
       title: 'श्री रामचन्द्र कृपालु भजु मन',
@@ -384,6 +614,104 @@ export default function AartisPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [bellChime, setBellChime] = useState(false);
 
+  // Real Aarti Song Player State (Plays authentic song by renowned devotional singers)
+  const [playingSongId, setPlayingSongId] = useState<string | null>(null);
+
+  // Hindi Voice Synthesis States (Secondary spoken recitation mode)
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [voiceSpeed, setVoiceSpeed] = useState<number>(0.88);
+  const [voiceSupported, setVoiceSupported] = useState(true);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // Check speech synthesis support on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !('speechSynthesis' in window)) {
+      setVoiceSupported(false);
+    }
+  }, []);
+
+  // Stop voice when switching aarti or on unmount
+  useEffect(() => {
+    stopVoice();
+  }, [selectedAarti]);
+
+  const stopVoice = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsVoiceActive(false);
+  };
+
+  const handlePlayRealSong = (aarti: Aarti) => {
+    stopVoice();
+    if (playingSongId === aarti.id) {
+      setPlayingSongId(null);
+    } else {
+      setSelectedAarti(aarti);
+      setPlayingSongId(aarti.id);
+    }
+  };
+
+  const startVoiceRecitation = (aarti: Aarti) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      handleToggleAudio(aarti);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    // Clean text for natural Hindi recitation
+    const textToSpeak = `${aarti.titleHi}. ${aarti.lyricsHi.replace(/[॥।]/g, ', ')}`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+    // Pick Hindi voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(
+      (v) => v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi')
+    );
+    if (hindiVoice) {
+      utterance.voice = hindiVoice;
+    }
+    utterance.lang = 'hi-IN';
+    utterance.rate = voiceSpeed;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      setIsVoiceActive(true);
+      // Simultaneously play soft background devotional music
+      playAudio(aarti.audioTrack);
+    };
+
+    utterance.onend = () => {
+      setIsVoiceActive(false);
+    };
+
+    utterance.onerror = () => {
+      setIsVoiceActive(false);
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleToggleVoice = (aarti: Aarti) => {
+    if (isVoiceActive) {
+      stopVoice();
+      pauseAudio();
+    } else {
+      startVoiceRecitation(aarti);
+    }
+  };
+
+  const handleToggleAudio = (aarti: Aarti) => {
+    if (isPlaying && currentTrack?.id === aarti.audioTrack.id) {
+      pauseAudio();
+      stopVoice();
+    } else {
+      handleToggleVoice(aarti);
+    }
+  };
+
   // Filtered list based on category & search
   const filteredAartis = useMemo(() => {
     return AARTIS_DATA.filter((item) => {
@@ -398,14 +726,6 @@ export default function AartisPage() {
     });
   }, [activeCategory, searchQuery]);
 
-  const handleTogglePlay = (aarti: Aarti) => {
-    if (isPlaying && currentTrack?.id === aarti.audioTrack.id) {
-      pauseAudio();
-    } else {
-      playAudio(aarti.audioTrack);
-    }
-  };
-
   const handleCopy = (aarti: Aarti) => {
     navigator.clipboard.writeText(`${aarti.titleHi}\n\n${aarti.lyricsHi}\n\nभावार्थ:\n${aarti.meaning}`);
     setCopiedId(aarti.id);
@@ -415,6 +735,22 @@ export default function AartisPage() {
   const ringBell = () => {
     setBellChime(true);
     setTimeout(() => setBellChime(false), 800);
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 1.2);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 1.2);
+    } catch (e) {
+      // AudioContext not allowed or unsupported
+    }
   };
 
   const categories = [
@@ -446,7 +782,7 @@ export default function AartisPage() {
           </h1>
 
           <p className="text-stone-300 max-w-2xl mx-auto text-sm sm:text-base font-serif">
-            सनातन देवी-देवताओं की पावन आरतियां, स्तुतियां, हिंदी अर्थ और भावार्थ सहित। नित्य पाठ करें और प्रभु कृपा पाएं।
+            सनातन देवी-देवताओं की पावन आरतियां, स्तुतियां, हिंदी अर्थ और भावार्थ सहित। असली भक्ति आरती गीत (Original Devotional Songs) और पावन स्वर पाठ के साथ।
           </p>
 
           {/* Search Bar */}
@@ -456,17 +792,17 @@ export default function AartisPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="आरती या देवी-देवता का नाम खोजें..."
+              placeholder="आरती, देवता अथवा बोल खोजें..."
               className="w-full bg-black/40 border border-amber-500/40 text-white rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 backdrop-blur-md placeholder:text-stone-400"
             />
           </div>
         </div>
       </div>
 
-      {/* Main Container */}
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
-        {/* Category Pill Filters */}
+        {/* Category Filters */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-4 scrollbar-none">
           {categories.map((cat) => (
             <button
@@ -483,41 +819,44 @@ export default function AartisPage() {
           ))}
         </div>
 
-        {/* Two Columns: Aarti List & Active Reader */}
+        {/* Aarti Layout: 2 Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
           
-          {/* Left: Aarti Cards List (5 Cols) */}
+          {/* Left: Aarti Selector List (5 Cols) */}
           <div className="lg:col-span-5 space-y-3">
-            <h2 className="text-sm font-serif font-bold text-stone-500 uppercase tracking-wider px-1">
-              आरती सूची ({filteredAartis.length})
-            </h2>
+            <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 px-1 font-serif">
+              उपलब्ध आरतियां ({filteredAartis.length})
+            </span>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {filteredAartis.map((aarti) => {
                 const isSelected = selectedAarti.id === aarti.id;
-                const isAudioPlaying = isPlaying && currentTrack?.id === aarti.audioTrack.id;
+                const isSongActive = playingSongId === aarti.id;
 
                 return (
                   <div
                     key={aarti.id}
                     onClick={() => setSelectedAarti(aarti)}
-                    className={`p-4 rounded-2xl border transition cursor-pointer flex items-center justify-between ${
+                    className={`p-4 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${
                       isSelected
-                        ? 'bg-amber-50 dark:bg-[#27170c] border-amber-500/70 shadow-md ring-1 ring-amber-500/30'
-                        : 'bg-white dark:bg-[#1a1411] border-stone-200 dark:border-stone-800 hover:border-amber-400/50 shadow-sm'
+                        ? 'bg-amber-50/90 dark:bg-[#231812] border-amber-500 shadow-md shadow-amber-500/15 ring-1 ring-amber-500/50'
+                        : 'bg-white dark:bg-[#1a1411] border-stone-200 dark:border-stone-800 hover:border-amber-500/40'
                     }`}
                   >
-                    <div className="space-y-1 pr-3">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 font-serif">
+                    <div className="space-y-1.5 pr-3 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-serif">
                           {aarti.deity}
                         </span>
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-serif">
+                          ⏱️ {aarti.duration}
+                        </span>
                       </div>
-                      <h3 className="font-serif font-bold text-base text-stone-900 dark:text-white">
+                      <h3 className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition truncate">
                         {aarti.titleHi}
                       </h3>
                       <p className="text-xs text-stone-500 dark:text-stone-400 font-serif line-clamp-1">
-                        {aarti.tagline}
+                        स्वर: <span className="font-semibold text-stone-700 dark:text-stone-300">{aarti.singer.split(' (')[0]}</span>
                       </p>
                     </div>
 
@@ -525,22 +864,28 @@ export default function AartisPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleTogglePlay(aarti);
+                          handlePlayRealSong(aarti);
                         }}
-                        className={`w-9 h-9 rounded-full flex items-center justify-center transition ${
-                          isAudioPlaying
-                            ? 'bg-amber-600 text-white shadow-md animate-pulse'
-                            : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-200'
+                        className={`px-3 py-1.5 rounded-xl flex items-center space-x-1.5 text-xs font-serif font-bold transition shadow-sm ${
+                          isSongActive
+                            ? 'bg-amber-600 text-white shadow-md animate-pulse ring-2 ring-amber-400'
+                            : 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/80'
                         }`}
-                        title={isAudioPlaying ? 'Pause Aarti' : 'Play Aarti'}
+                        title={isSongActive ? 'आरती गीत बंद करें' : 'असली आरती गीत सुनें'}
                       >
-                        {isAudioPlaying ? (
-                          <Pause className="w-4 h-4 fill-current" />
+                        {isSongActive ? (
+                          <>
+                            <Pause className="w-3.5 h-3.5 fill-current" />
+                            <span>गीत चालू</span>
+                          </>
                         ) : (
-                          <Play className="w-4 h-4 fill-current ml-0.5" />
+                          <>
+                            <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                            <span>गीत सुनें</span>
+                          </>
                         )}
                       </button>
-                      <ChevronRight className={`w-4 h-4 text-stone-400 ${isSelected ? 'rotate-90 sm:rotate-0 text-amber-600' : ''}`} />
+                      <ChevronRight className={`w-4 h-4 text-stone-400 ${isSelected ? 'text-amber-600' : ''}`} />
                     </div>
                   </div>
                 );
@@ -626,41 +971,122 @@ export default function AartisPage() {
                 </div>
               </div>
 
-              {/* Audio Banner Bar */}
-              <div className="bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <Music className="w-5 h-5" />
+              {/* 1. Authentic Real Aarti Devotional Song Player Box */}
+              <div className="bg-gradient-to-br from-[#2a1306] via-[#3d1a08] to-[#1c0c04] border-2 border-amber-500/60 rounded-3xl p-5 sm:p-6 text-white shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center space-x-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center shadow-lg shrink-0">
+                      <Music className="w-6 h-6 animate-bounce" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="bg-amber-500/25 text-amber-300 border border-amber-500/40 text-[11px] font-bold px-2.5 py-0.5 rounded-full font-serif">
+                          ✨ प्रामाणिक आरती गीत (Original Devotional Song)
+                        </span>
+                        <span className="text-amber-200/80 text-xs font-serif">
+                          ⏱️ {selectedAarti.duration}
+                        </span>
+                      </div>
+                      <h4 className="font-serif font-bold text-base sm:text-lg text-amber-100 mt-1">
+                        {selectedAarti.titleHi}
+                      </h4>
+                      <p className="text-xs text-amber-200/90 font-serif">
+                        स्वर (Singer): <span className="text-white font-semibold">{selectedAarti.singer}</span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="block font-serif font-bold text-xs sm:text-sm text-stone-900 dark:text-white">
-                      आरती की मधुर धुन सुनें
-                    </span>
-                    <span className="text-[11px] text-stone-500 dark:text-stone-400">
-                      भक्तिमय आरती गायन एवं वाद्य
-                    </span>
+
+                  <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <button
+                      onClick={() => handlePlayRealSong(selectedAarti)}
+                      className="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-5 py-2.5 rounded-xl font-serif font-bold text-sm shadow-lg shadow-amber-600/30 transition flex items-center justify-center space-x-2"
+                    >
+                      {playingSongId === selectedAarti.id ? (
+                        <>
+                          <Pause className="w-4 h-4 fill-current" />
+                          <span>गीत रोकें (Pause Song)</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 fill-current" />
+                          <span>आरती गीत सुनें (Play Real Song)</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleTogglePlay(selectedAarti)}
-                  className="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold font-serif shadow-md transition flex items-center space-x-1.5"
-                >
-                  {isPlaying && currentTrack?.id === selectedAarti.audioTrack.id ? (
-                    <>
-                      <Pause className="w-3.5 h-3.5 fill-current" />
-                      <span>आरती रोकें</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>आरती सुनें</span>
-                    </>
-                  )}
-                </button>
+                {/* Real Aarti Song Video / Audio Embed */}
+                {playingSongId === selectedAarti.id && (
+                  <div className="mt-4 pt-4 border-t border-amber-500/30 space-y-3">
+                    <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video max-h-[360px] border border-amber-500/40">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${selectedAarti.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                        title={`${selectedAarti.titleHi} - ${selectedAarti.singer}`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-amber-200/80 font-serif px-1">
+                      <span>✨ पावन आरती सुनते हुए नीचे दिए गए संपूर्ण पदों का पाठ करें।</span>
+                      <button
+                        onClick={ringBell}
+                        className="hover:text-amber-300 transition flex items-center space-x-1 font-semibold"
+                      >
+                        <Bell className="w-3.5 h-3.5" />
+                        <span>मंदिर घंटी बजाएं</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Aarti Sacred Lyrics Content */}
+              {/* 2. Secondary Voice Recitation Mode (Text to speech) */}
+              <div className="flex items-center justify-between bg-stone-50 dark:bg-stone-900/60 rounded-xl px-4 py-2.5 border border-stone-200 dark:border-stone-800 text-xs">
+                <div className="flex items-center space-x-2 text-stone-600 dark:text-stone-400 font-serif">
+                  <Volume2 className="w-4 h-4 text-amber-600" />
+                  <span>धीमे स्वर में पाठ (Voice Recitation mode)</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <select
+                    value={voiceSpeed}
+                    onChange={(e) => {
+                      const newSpeed = parseFloat(e.target.value);
+                      setVoiceSpeed(newSpeed);
+                      if (isVoiceActive) {
+                        stopVoice();
+                        setTimeout(() => startVoiceRecitation(selectedAarti), 100);
+                      }
+                    }}
+                    className="bg-white dark:bg-stone-800 border border-amber-400/40 rounded-lg px-2 py-1 text-[11px] font-serif font-semibold text-stone-800 dark:text-stone-200"
+                    title="स्वर गति (Voice Speed)"
+                  >
+                    <option value="0.8">0.8x</option>
+                    <option value="0.88">1.0x</option>
+                    <option value="1.05">1.2x</option>
+                  </select>
+
+                  <button
+                    onClick={() => handleToggleVoice(selectedAarti)}
+                    className="text-amber-700 dark:text-amber-400 hover:text-amber-800 font-serif font-bold text-xs flex items-center space-x-1"
+                  >
+                    {isVoiceActive ? (
+                      <>
+                        <Pause className="w-3 h-3 fill-current" />
+                        <span>स्वर पाठ रोकें</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3 h-3 fill-current" />
+                        <span>स्वर पाठ सुनें</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Aarti Sacred Lyrics Content - 100% Complete */}
               <div
                 className={`font-serif leading-loose whitespace-pre-line text-stone-800 dark:text-stone-100 transition-all ${
                   fontSize === 'normal'

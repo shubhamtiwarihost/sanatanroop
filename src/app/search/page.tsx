@@ -80,25 +80,23 @@ function SearchPageContent() {
     },
     {
       id: 'res-5',
-      type: 'PRODUCT',
-      category: 'Store',
-      title: 'Handcrafted Brass Panchamukhi Shiva Idol (9 Inch)',
-      subtitle: 'पंचमुखी शिव पीतल विग्रह • 1.8 kg Solid Brass',
+      type: 'AARTI',
+      category: 'Aarti',
+      title: 'Shri Ganesh Aarti (Jai Ganesh Deva)',
+      subtitle: 'विघ्नहर्ता भगवान श्री गणेश की पावन आरती',
       description:
-        'Authentic solid brass idol handcrafted by skilled hereditary artisans of Aligarh and Kashi. Consecrated with sacred Vedic chantings.',
-      url: '/store/brass-shiva-idol',
-      price: '₹2,499',
+        'Original singing aarti recited in praise of Lord Ganesha by Anuradha Paudwal, with lyrics and meaning.',
+      url: '/aartis',
     },
     {
       id: 'res-6',
-      type: 'PRODUCT',
-      category: 'Store',
-      title: 'Authentic 5-Mukhi Indonesian Rudraksha Mala (108+1 Beads)',
-      subtitle: 'मूल पंचमुखी रुद्राक्ष माला • Certified Lab Origin',
+      type: 'SCRIPTURE',
+      category: 'Scripture',
+      title: 'Shrimad Bhagavad Gita - Chapter 2: Sankhya Yoga',
+      subtitle: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन',
       description:
-        'Natural beads hand-knotted in sacred yellow silk thread, traditionally used for Shiva japa and mental equilibrium.',
-      url: '/store/rudraksha-mala',
-      price: '₹899',
+        'The eternal dialogue between Lord Krishna and Arjuna on the immortal soul and Nishkama Karma.',
+      url: '/scriptures/bhagavad-gita',
     },
     {
       id: 'res-7',
@@ -151,7 +149,7 @@ function SearchPageContent() {
     { key: 'SHLOKA', label: 'Mantras' },
     { key: 'SCRIPTURE', label: 'Scriptures' },
     { key: 'ARTICLE', label: 'Articles' },
-    { key: 'PRODUCT', label: 'Store Products' },
+    { key: 'AARTI', label: 'Aartis' },
     { key: 'VIDEO', label: 'Videos' },
   ];
 
@@ -174,7 +172,7 @@ function SearchPageContent() {
             Search Results for &quot;{query}&quot;
           </h1>
           <p className="text-xs sm:text-sm text-amber-200/80 font-serif">
-            Multilingual canonical search across scriptures, shlokas, articles, store items, and sacred videos.
+            Multilingual canonical search across scriptures, shlokas, articles, aartis, and sacred videos.
           </p>
 
           {/* Search Input Bar */}

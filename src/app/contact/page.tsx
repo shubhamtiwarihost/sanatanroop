@@ -5,17 +5,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/i18n/LanguageContext';
 import {
-  MapPin,
   Phone,
   Mail,
   Clock,
   Send,
-  Sparkles,
-  MessageCircle,
   CheckCircle2,
+  AlertCircle,
   HelpCircle,
-  ChevronDown,
+  HeartHandshake,
   ShieldCheck,
+  BookOpen,
+  Sparkles,
 } from 'lucide-react';
 
 export default function ContactPage() {
@@ -107,20 +107,6 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-amber-200/50 dark:border-stone-700">
                   <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">
-                      Varanasi Research Ashram
-                    </h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5 leading-relaxed">
-                      Assi Ghat Marg, Shivala, Kashi (Varanasi), Uttar Pradesh 221005, India
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-amber-200/50 dark:border-stone-700">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
@@ -139,10 +125,10 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200 uppercase tracking-wider">
-                      Electronic Mail
+                      Official Publisher Email
                     </h4>
                     <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
-                      contact@sanatan.org / support@sanatan.org
+                      <a href="mailto:contact@sanatanroop.com" className="hover:text-amber-600 underline">contact@sanatanroop.com</a> / <a href="mailto:shubhamtiwarihost@gmail.com" className="hover:text-amber-600 underline">shubhamtiwarihost@gmail.com</a>
                     </p>
                   </div>
                 </div>
@@ -160,6 +146,17 @@ export default function ContactPage() {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Founder & Publisher Card for AdSense Compliance */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/30 space-y-2">
+                <div className="flex items-center space-x-2 text-amber-900 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
+                  <ShieldCheck className="w-4 h-4 text-amber-600" />
+                  <span>Founder &amp; Publisher Identity</span>
+                </div>
+                <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
+                  <strong>Sanatan Roop</strong> is published and managed by <strong>Shubham Tiwari</strong>. For formal publisher notices, copyright inquiries, or advertising communications, please email directly to <a href="mailto:contact@sanatanroop.com" className="text-amber-700 dark:text-amber-400 underline font-semibold">contact@sanatanroop.com</a>.
+                </p>
               </div>
 
               {/* Shloka Card on Seva */}
