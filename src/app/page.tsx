@@ -134,21 +134,21 @@ export default function HomePage() {
       title: 'Meditation: The Path to Inner Peace',
       date: '12 September 2026',
       img: '/images/article_meditation.jpg',
-      slug: 'four-purusharthas',
+      slug: 'benefits-of-daily-mantra-meditation',
     },
     {
       id: 'a2',
       title: 'Significance of Ekadashi Vrat',
       date: '10 September 2026',
       img: '/images/article_ekadashi.jpg',
-      slug: 'four-purusharthas',
+      slug: 'significance-of-ekadashi-vrat',
     },
     {
       id: 'a3',
       title: 'Life Lessons from Bhagavad Gita',
       date: '08 September 2026',
       img: '/images/article_gita_lessons.jpg',
-      slug: 'four-purusharthas',
+      slug: 'life-lessons-from-bhagavad-gita',
     },
   ];
 
@@ -493,124 +493,6 @@ export default function HomePage() {
       ========================================================================= */}
       <LiveFestival />
 
-      {/* =========================================================================
-          SECTION 4: 6 QUICK FEATURE TILES (Daily Panchang, Mantras, etc.)
-      ========================================================================= */}
-      {isQuickCategoriesEnabled && (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          
-          {/* Tile 1: Daily Panchang */}
-          <Link
-            href="/calendar"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fef2f2] dark:bg-[#2c1818] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Calendar className="w-6 h-6 text-[#dc2626]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Daily Panchang
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Check today's tithi, nakshatra, muhurat
-              </p>
-            </div>
-          </Link>
-
-          {/* Tile 2: Mantras */}
-          <Link
-            href="/shlokas#mantras"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fff1f2] dark:bg-[#2c171d] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-6 h-6 text-[#e11d48]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Mantras
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Powerful mantras for every aspect of life
-              </p>
-            </div>
-          </Link>
-
-          {/* Tile 3: Puja Vidhi */}
-          <Link
-            href="/articles?category=puja-vidhi"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fffbeb] dark:bg-[#2c2415] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <Flame className="w-6 h-6 text-[#d97706]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Puja Vidhi
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Step by step guides for rituals
-              </p>
-            </div>
-          </Link>
-
-          {/* Tile 4: Hindu Scriptures */}
-          <Link
-            href="/scriptures"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fff7ed] dark:bg-[#2c1e15] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <BookOpen className="w-6 h-6 text-[#ea580c]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Hindu Scriptures
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Gita, Ramayana, Vedas and more
-              </p>
-            </div>
-          </Link>
-
-          {/* Tile 5: Spiritual Articles */}
-          <Link
-            href="/articles"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fefce8] dark:bg-[#2c2916] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <FileText className="w-6 h-6 text-[#ca8a04]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Spiritual Articles
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Learn & grow your spiritual journey
-              </p>
-            </div>
-          </Link>
-
-          {/* Tile 6: Online Store */}
-          <Link
-            href="/store"
-            className="bg-white dark:bg-[#1a1411] rounded-2xl p-4 sm:p-5 text-center border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group hover:-translate-y-1 flex flex-col items-center justify-between"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#fef2f2] dark:bg-[#2c1717] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <ShoppingCart className="w-6 h-6 text-[#c2410c]" />
-            </div>
-            <div>
-              <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                Online Store
-              </h3>
-              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1 leading-tight">
-                Books, Puja Items, Spiritual Products
-              </p>
-            </div>
-          </Link>
-
-        </div>
-      </section>
-      )}
 
       {/* =========================================================================
           SECTION 4: SHOP BY CATEGORY (7-ITEM GRID)

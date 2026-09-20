@@ -27,7 +27,7 @@ export default function ArticlesPage() {
       title: 'Meditation: The Path to Inner Peace',
       date: '13 September 2026',
       category: 'Spirituality',
-      slug: 'four-purusharthas',
+      slug: 'benefits-of-daily-mantra-meditation',
       img: '/images/article_meditation.jpg',
     },
     {
@@ -35,7 +35,7 @@ export default function ArticlesPage() {
       title: 'Significance of Ekadashi Vrat',
       date: '11 September 2026',
       category: 'Vrat & Upwas',
-      slug: 'four-purusharthas',
+      slug: 'significance-of-ekadashi-vrat',
       img: '/images/article_ekadashi.jpg',
     },
     {
@@ -43,12 +43,12 @@ export default function ArticlesPage() {
       title: 'Life Lessons from Bhagavad Gita',
       date: '08 September 2026',
       category: 'Scriptures',
-      slug: 'four-purusharthas',
+      slug: 'life-lessons-from-bhagavad-gita',
       img: '/images/article_gita_lessons.jpg',
     },
     {
       id: 'a4',
-      title: 'Benefits of Chanting Gayatri Mantra',
+      title: 'The Four Purusharthas: Dharma, Artha, Kama, Moksha',
       date: '05 September 2026',
       category: 'Spirituality',
       slug: 'four-purusharthas',
@@ -59,7 +59,7 @@ export default function ArticlesPage() {
       title: 'Story of Lord Ganesha: Wisdom & Devotion',
       date: '02 September 2026',
       category: 'Festivals',
-      slug: 'four-purusharthas',
+      slug: 'ganesha-chaturthi-significance',
       img: '/images/category_idols.jpg',
     },
     {
@@ -67,7 +67,7 @@ export default function ArticlesPage() {
       title: 'Navratri: Nine Forms of Divine Feminine',
       date: '01 September 2026',
       category: 'Festivals',
-      slug: 'four-purusharthas',
+      slug: 'sharad-navratri-vidhi',
       img: '/images/category_puja.jpg',
     },
     {
@@ -75,7 +75,7 @@ export default function ArticlesPage() {
       title: 'Importance of Rudraksha & Sacred Malas',
       date: '28 August 2026',
       category: 'Lifestyle',
-      slug: 'four-purusharthas',
+      slug: 'rudraksha-spiritual-benefits',
       img: '/images/category_rudraksha.jpg',
     },
     {
@@ -83,7 +83,7 @@ export default function ArticlesPage() {
       title: 'How to do Daily Vedic Puja at Home',
       date: '25 August 2026',
       category: 'Lifestyle',
-      slug: 'four-purusharthas',
+      slug: 'daily-sandhyavandanam-guide',
       img: '/images/category_puja.jpg',
     },
     {
@@ -91,7 +91,7 @@ export default function ArticlesPage() {
       title: 'Power of Hanuman Chalisa Chanting',
       date: '20 August 2026',
       category: 'Scriptures',
-      slug: 'four-purusharthas',
+      slug: 'hanuman-chalisa-spiritual-power',
       img: '/images/article_gita_lessons.jpg',
     },
   ];

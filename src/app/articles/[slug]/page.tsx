@@ -2,10 +2,15 @@ import ArticleDetailClient from './ArticleDetailClient';
 
 export function generateStaticParams() {
   return [
-    { slug: 'four-purusharthas' },
     { slug: 'benefits-of-daily-mantra-meditation' },
     { slug: 'significance-of-ekadashi-vrat' },
     { slug: 'life-lessons-from-bhagavad-gita' },
+    { slug: 'four-purusharthas' },
+    { slug: 'ganesha-chaturthi-significance' },
+    { slug: 'sharad-navratri-vidhi' },
+    { slug: 'rudraksha-spiritual-benefits' },
+    { slug: 'daily-sandhyavandanam-guide' },
+    { slug: 'hanuman-chalisa-spiritual-power' },
   ];
 }
 
