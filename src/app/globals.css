@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700;800&family=Cinzel:wght@500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-devanagari: 'Noto Serif Devanagari', 'Martel', serif;
+  --font-classic: 'Marcellus', 'Georgia', serif;
+  --bg-parchment: #fbf8f2;
+  --text-charcoal: #17161b;
+}
+
+body {
+  color: var(--text-charcoal);
+  background-color: var(--bg-parchment);
+  font-family: var(--font-devanagari);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Devanagari Typography Precision */
+.devanagari {
+  font-family: var(--font-devanagari);
+  letter-spacing: 0.01em;
+  line-height: 1.85;
+}
+
+.classic-serif {
+  font-family: var(--font-classic);
+}
+
+/* Sacred Indian Manuscript Aesthetics (पोथी / पत्र) */
+.manuscript-patra {
+  background-color: #fcf9f2;
+  border: 1px solid #e2d2b5;
+  box-shadow: inset 0 0 40px rgba(197, 160, 89, 0.08), 0 4px 20px -2px rgba(42, 23, 14, 0.07);
+  position: relative;
+}
+
+.manuscript-patra::before,
+.manuscript-patra::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: rgba(122, 31, 37, 0.35); /* Traditional vermillion margin rules */
+  pointer-events: none;
+}
+
+.manuscript-patra::before {
+  left: 28px;
+}
+
+.manuscript-patra::after {
+  right: 28px;
+}
+
+@media (max-width: 640px) {
+  .manuscript-patra::before { left: 14px; }
+  .manuscript-patra::after { right: 14px; }
+}
+
+/* Digital Book Spine & 3D Cover */
+.book-spine-3d {
+  position: relative;
+  box-shadow: 
+    -6px 0 12px -2px rgba(0, 0, 0, 0.3),
+    inset 4px 0 8px rgba(255, 255, 255, 0.15),
+    inset -4px 0 8px rgba(0, 0, 0, 0.35),
+    0 12px 28px rgba(18, 18, 22, 0.18);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.book-spine-3d:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 
+    -8px 0 16px -2px rgba(0, 0, 0, 0.35),
+    inset 4px 0 8px rgba(255, 255, 255, 0.2),
+    inset -4px 0 8px rgba(0, 0, 0, 0.4),
+    0 20px 35px rgba(18, 18, 22, 0.25);
+}
+
+/* Antique Gold Accents */
+.gold-text-glow {
+  color: #d8b965;
+  text-shadow: 0 0 20px rgba(216, 185, 101, 0.4);
+}
+
+.gold-border-ornament {
+  border: 1px solid #c5a059;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.15);
+}
+
+/* Subtle Geometric Pattern Overlay */
+.bg-sacred-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgba(197, 160, 89, 0.12) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Dark Reading Mode for Scriptures */
+.dark-temple-mode {
+  background-color: #111114 !important;
+  color: #e5dfd2 !important;
+  border-color: #382014 !important;
+}
+
+.dark-temple-mode .manuscript-patra {
+  background-color: #16151b !important;
+  border-color: #3d2c18 !important;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6), 0 8px 30px rgba(0, 0, 0, 0.7) !important;
+}
+
+.dark-temple-mode .manuscript-patra::before,
+.dark-temple-mode .manuscript-patra::after {
+  background-color: rgba(197, 160, 89, 0.25) !important;
+}
+
+/* Smooth Devotional Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f6efe3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5a059;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a64d12;
+}

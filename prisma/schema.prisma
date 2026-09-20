@@ -1,0 +1,458 @@
+// Hindu Dharma Digital Platform Prisma Schema
+// Aligned with Hindu Dharma Platform Antigravity Master Plan
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. AUTHENTICATION, USERS & RBAC
+// ==========================================
+
+model User {
+  id               String           @id @default(cuid())
+  email            String           @unique
+  name             String
+  passwordHash     String
+  avatar           String?
+  role             String           @default("USER") // SUPER_ADMIN, CONTENT_ADMIN, STORE_ADMIN, EDITOR, AUTHOR, MODERATOR, USER
+  preferredLocale  String           @default("en")   // en, hi, sa
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  // User activity & content relations
+  posts            Post[]
+  bookmarks        Bookmark[]
+  readingHistory   ReadingHistory[]
+  wishlists        WishlistItem[]
+  orders           Order[]
+  reviews          Review[]
+  auditLogs        AuditLog[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   // CREATE, UPDATE, DELETE, PUBLISH, APPROVE, EXPORT, LOGIN
+  entityType String   // POST, BOOK, SCRIPTURE, PRODUCT, ORDER, USER, SETTING
+  entityId   String?
+  details    String?  // JSON string
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([action])
+  @@index([entityType])
+  @@index([createdAt])
+}
+
+// ==========================================
+// 2. SCRIPTURES, BOOKS & CHAPTERS
+// ==========================================
+
+model ScriptureCollection {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  titleEn     String
+  titleHi     String
+  titleSa     String
+  description String?
+  order       Int         @default(0)
+  scriptures  Scripture[]
+}
+
+model Scripture {
+  id           String              @id @default(cuid())
+  collectionId String?
+  slug         String              @unique
+  titleEn      String
+  titleHi      String
+  titleSa      String
+  category     String              // Veda, Upanishad, Gita, Purana, Darshana, Smriti, Ramayana, Mahabharata, Stotra
+  description  String
+  coverImage   String?
+  provenance   String?             // Historical origin & tradition
+  rightsStatus String              @default("PUBLIC_DOMAIN") // PUBLIC_DOMAIN, LICENSED, ADMIN_OWNED, USER_SUBMITTED, RESTRICTED
+  published    Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  collection   ScriptureCollection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  chapters     BookChapter[]
+  shlokas      Shloka[]
+  mantras      Mantra[]
+
+  @@index([slug])
+  @@index([category])
+}
+
+model Book {
+  id           String           @id @default(cuid())
+  slug         String           @unique
+  titleEn      String
+  titleHi      String
+  titleSa      String
+  author       String?
+  tradition    String?          // Advaita, Vishishtadvaita, Shaiva, Vaishnava, Shakta, etc.
+  category     String
+  description  String
+  coverImage   String?
+  rightsStatus String           @default("PUBLIC_DOMAIN") // PUBLIC_DOMAIN, LICENSED, ADMIN_OWNED, RESTRICTED
+  provenance   String?
+  published    Boolean          @default(true)
+  totalChapters Int             @default(1)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  chapters     BookChapter[]
+
+  @@index([slug])
+}
+
+model BookChapter {
+  id           String      @id @default(cuid())
+  scriptureId  String?
+  bookId       String?
+  chapterNumber Int
+  titleEn      String
+  titleHi      String
+  titleSa      String
+  summaryEn    String?
+  summaryHi    String?
+  versesCount  Int         @default(0)
+
+  scripture    Scripture?  @relation(fields: [scriptureId], references: [id], onDelete: Cascade)
+  book         Book?       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  verses       BookVerse[]
+
+  @@index([scriptureId, chapterNumber])
+  @@index([bookId, chapterNumber])
+}
+
+model BookVerse {
+  id           String           @id @default(cuid())
+  chapterId    String
+  verseNumber  Int
+  sanskrit     String           // Original Sanskrit in Devanagari
+  transliteration String?       // IAST Romanized transliteration
+  hindiMeaning String
+  englishMeaning String
+  wordByWord   String?          // JSON mapping of word -> meaning
+  commentary   String?          // Traditional acharya commentary (Shankara, Ramanuja, etc.)
+
+  chapter      BookChapter      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  bookmarks    Bookmark[]
+
+  @@index([chapterId, verseNumber])
+}
+
+// Standalone Shlokas with verified attribution
+model Shloka {
+  id             String      @id @default(cuid())
+  scriptureId    String?
+  slug           String      @unique
+  titleEn        String
+  titleHi        String
+  titleSa        String
+  sanskrit       String
+  transliteration String?
+  hindiMeaning   String
+  englishMeaning String
+  sourceChapter  String?
+  sourceVerse    String?
+  audioUrl       String?
+  tags           String?     // Comma-separated or JSON
+  isPopular      Boolean     @default(false)
+
+  scripture      Scripture?  @relation(fields: [scriptureId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([isPopular])
+}
+
+model Mantra {
+  id             String      @id @default(cuid())
+  scriptureId    String?
+  slug           String      @unique
+  deityName      String
+  titleEn        String
+  titleHi        String
+  titleSa        String
+  sanskrit       String
+  transliteration String?
+  hindiMeaning   String
+  englishMeaning String
+  chantCount     Int         @default(108)
+  benefitsEn     String?
+  benefitsHi     String?
+  audioUrl       String?
+  isPopular      Boolean     @default(false)
+
+  scripture      Scripture?  @relation(fields: [scriptureId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([deityName])
+}
+
+// ==========================================
+// 3. DHARMA KNOWLEDGE: DEITIES, TEMPLES, FESTIVALS
+// ==========================================
+
+model Deity {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  nameEn           String
+  nameHi           String
+  nameSa           String
+  mantra           String?
+  iconography      String?
+  significanceEn   String
+  significanceHi   String
+  significanceSa   String
+  storyEn          String?
+  storyHi          String?
+  imageUrl         String?
+  popularTemples   String?   // JSON list of temple names
+  festivals        String?   // JSON list of festival names
+  scripturalRefs   String?   // JSON list of verified scripture references
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  temples          Temple[]
+
+  @@index([slug])
+}
+
+model Temple {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  nameEn         String
+  nameHi         String
+  nameSa         String
+  primaryDeityId String?
+  deityName      String
+  state          String
+  country        String    @default("Bharat (India)")
+  city           String
+  historyEn      String
+  historyHi      String
+  timings        String?
+  significance   String?
+  imageUrl       String?
+  officialUrl    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  primaryDeity   Deity?    @relation(fields: [primaryDeityId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([state])
+}
+
+model Festival {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  nameEn         String
+  nameHi         String
+  nameSa         String
+  lunarMonth     String    // Chaitra, Vaishakha, etc.
+  tithi          String    // Pratipada, Purnima, etc.
+  descriptionEn  String
+  descriptionHi  String
+  pujaVidhiEn    String?
+  pujaVidhiHi    String?
+  associatedDeity String?
+  imageUrl       String?
+  isMajor        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  @@index([slug])
+  @@index([isMajor])
+}
+
+// ==========================================
+// 4. CMS ARTICLES, CATEGORIES, TAGS
+// ==========================================
+
+model Post {
+  id             String       @id @default(cuid())
+  slug           String       @unique
+  titleEn        String
+  titleHi        String
+  titleSa        String
+  summaryEn      String
+  summaryHi      String
+  summarySa      String
+  contentEn      String
+  contentHi      String
+  contentSa      String
+  coverImage     String?
+  authorId       String
+  categoryId     String?
+  tags           String?      // Comma-separated
+  status         String       @default("DRAFT") // DRAFT, REVIEW, APPROVED, PUBLISHED
+  isFeatured     Boolean      @default(false)
+  seoTitleEn     String?
+  seoTitleHi     String?
+  seoDescEn      String?
+  seoDescHi      String?
+  publishedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  author         User         @relation(fields: [authorId], references: [id])
+  category       Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([status])
+  @@index([isFeatured])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  nameEn      String
+  nameHi      String
+  nameSa      String
+  description String?
+  posts       Post[]
+}
+
+// ==========================================
+// 5. E-COMMERCE / MARKETPLACE
+// ==========================================
+
+model Product {
+  id             String           @id @default(cuid())
+  slug           String           @unique
+  titleEn        String
+  titleHi        String
+  titleSa        String
+  category       String           // BOOKS, PUJA_ITEMS, IDOLS, DHYANA, VASTRA, TEMPLE_DECOR
+  descriptionEn  String
+  descriptionHi  String
+  price          Float
+  mrp            Float
+  stock          Int              @default(10)
+  sku            String           @unique
+  imageUrl       String
+  isFeatured     Boolean          @default(false)
+  specifications String?          // JSON specs
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  orderItems     OrderItem[]
+  reviews        Review[]
+  wishlists      WishlistItem[]
+
+  @@index([slug])
+  @@index([category])
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  userId         String
+  status         String      @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+  totalAmount    Float
+  discountAmount Float       @default(0)
+  shippingAmount Float       @default(0)
+  shippingAddress String     // JSON address
+  paymentMethod  String      @default("ONLINE")
+  paymentStatus  String      @default("PAID") // PENDING, PAID, FAILED
+  trackingNumber String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user           User        @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+
+  @@index([userId])
+  @@index([orderNumber])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  title     String
+  price     Float
+  quantity  Int      @default(1)
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int      @default(5)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==========================================
+// 6. USER PREFERENCES, BOOKMARKS & MEDIA
+// ==========================================
+
+model Bookmark {
+  id        String     @id @default(cuid())
+  userId    String
+  verseId   String
+  note      String?
+  createdAt DateTime   @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verse     BookVerse  @relation(fields: [verseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, verseId])
+}
+
+model ReadingHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  entityType   String   // SCRIPTURE, BOOK, ARTICLE
+  entitySlug   String
+  chapterIndex Int      @default(1)
+  lastReadAt   DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entityType, entitySlug])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  fileName  String
+  url       String
+  mimeType  String
+  sizeBytes Int
+  altText   String?
+  license   String   @default("PUBLIC_DOMAIN")
+  createdAt DateTime @default(now())
+}
