@@ -32,6 +32,20 @@ jobs:
           cp public/.htaccess out/.htaccess
 
       - name: Deploy to Hostinger via FTP
+        id: ftp_deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        continue-on-error: true
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /domains/sanatanroop.com/public_html/
+          local-dir: ./out/
+          dangerous-clean-slate: false
+          timeout: 600000
+
+      - name: Retry Deploy to Hostinger via FTP (if needed)
+        if: steps.ftp_deploy.outcome == 'failure'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -40,3 +54,4 @@ jobs:
           server-dir: /domains/sanatanroop.com/public_html/
           local-dir: ./out/
           dangerous-clean-slate: false
+          timeout: 600000
