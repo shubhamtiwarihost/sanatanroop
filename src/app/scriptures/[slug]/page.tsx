@@ -27,10 +27,18 @@ const SCRIPTURE_METADATA: Record<
   'ramcharitmanas': {
     title: 'श्रीरामचरितमानस सम्पूर्ण सातों काण्ड अर्थ सहित | Ramcharitmanas Hindi',
     description:
-      'गोस्वामी तुलसीदास जी विरचित श्रीरामचरितमानस के सातों काण्ड (बालकाण्ड, अयोध्याकाण्ड, अरण्यकाण्ड, किष्किन्धाकाण्ड, सुन्दरकाण्ड, लंकाकाण्ड, उत्तरकाण्ड) दोहे, चौपाई एवं हिंदी भावार्थ सहित पढ़ें।',
-    keywords: ['श्रीरामचरितमानस', 'Ramcharitmanas Hindi', 'तुलसीदास रामायण', 'बालकाण्ड', 'सुन्दरकाण्ड', 'रामकथा'],
+      'गोस्वामी तुलसीदास जी विरचित श्रीरामचरितमानस के सातों काण्ड (बालकाण्ड, अयोध्याकाण्ड, अरण्यकाण्ड, किष्किन्धाकाण्ड, सुन्दरकाण्ड, लंकाकाण्ड, उत्तरकाण्ड) दोहे, चौपाई, हिंदी भावार्थ एवं सम्पूर्ण PDF डाउनलोड।',
+    keywords: ['श्रीरामचरितमानस', 'Ramcharitmanas Hindi', 'तुलसीदास रामायण', 'बालकाण्ड', 'सुन्दरकाण्ड', 'रामकथा', 'Ramcharitmanas PDF download'],
     author: 'गोस्वामी तुलसीदास',
     originalLanguage: 'अवधी (Awadhi / Sanskrit)',
+  },
+  'mahabharat': {
+    title: 'महाभारत सम्पूर्ण १८ पर्व हिंदी अर्थ एवं श्लोक | Mahabharata Full Book',
+    description:
+      'महर्षि वेदव्यास विरचित महाभारत सम्पूर्ण १८ पर्व (आदि, सभा, वन, विराट, उद्योग, भीष्म, द्रोण, कर्ण, शल्य, सौप्तिक, स्त्री, शांति, अनुशासन, अश्वमेधिक, आश्रमवासिक, मौसल, महाप्रस्थानिक, स्वर्गारोहण) एवं सम्पूर्ण PDF डाउनलोड।',
+    keywords: ['महाभारत', 'Mahabharata in Hindi', 'Mahabharat PDF download', 'वेदव्यास महाभारत', '१८ पर्व', 'कुरुक्षेत्र युद्ध', 'भीष्म पर्व'],
+    author: 'महर्षि कृष्ण द्वैपायन वेदव्यास',
+    originalLanguage: 'संस्कृत (Sanskrit)',
   },
   'isha-upanishad': {
     title: 'ईशावास्योपनिषद् संस्कृत श्लोक एवं हिंदी अनुवाद | Isha Upanishad',
@@ -94,6 +102,7 @@ export function generateStaticParams() {
   return [
     { slug: 'bhagavad-gita' },
     { slug: 'ramcharitmanas' },
+    { slug: 'mahabharat' },
     { slug: 'isha-upanishad' },
     { slug: 'katha-upanishad' },
     { slug: 'mandukya-upanishad' },

@@ -1191,6 +1191,416 @@ export const SCRIPTURES_STATIC_DATA: Record<string, StaticScripture> = {
       }
     ]
   },
+  "mahabharat": {
+    "id": "mahabharat",
+    "slug": "mahabharat",
+    "titleHi": "महाभारत",
+    "titleEn": "Mahabharata",
+    "author": "महर्षि कृष्ण द्वैपायन वेदव्यास",
+    "category": "itihasa",
+    "descriptionHi": "महर्षि वेदव्यास विरचित विश्व का सबसे विशाल महाकाव्य, जिसमें धर्म, नीति, कुरुक्षेत्र युद्ध, श्रीमद्भगवद्गीता और मोक्ष का १८ पर्वों में अद्भुत वर्णन है।",
+    "descriptionEn": "The world's greatest epic composed by Sage Krishna Dwaipayana Vedavyasa, comprising 18 Parvas, 100,000 verses, and encompassing the entire cosmic wisdom of Dharma, Artha, Kama, and Moksha.",
+    "totalVerses": 18,
+    "totalChapters": 18,
+    "chapters": [
+      {
+        "id": "mb-ch-1",
+        "chapterNumber": 1,
+        "titleHi": "पर्व १: आदि पर्व (Adi Parva)",
+        "titleEn": "Parva 1: Adi Parva (The Book of the Beginning)",
+        "summaryHi": "महाभारत का मंगलाचरण, कुरु वंश की उत्पत्ति, पाण्डवों और कौरवों का जन्म, लाक्षागृह षड्यंत्र, हिडिम्बा वध, बकासुर वध, द्रौपदी स्वयंवर तथा इन्द्रप्रस्थ की स्थापना।",
+        "summaryEn": "The auspicious invocation, genesis of the Kuru dynasty, birth of Pandavas and Kauravas, the lacquer house conspiracy, Draupadi's swayamvara, and founding of Indraprastha.",
+        "verses": [
+          {
+            "id": "mb-1-1",
+            "verseNumber": 1,
+            "sanskritText": "नारायणं नमस्कृत्य नरं चैव नरोत्तमम् |\nदेवीं सरस्वतीं व्यासं ततो जयमुदीरयेत् || १-१ ||",
+            "sanskrit": "नारायणं नमस्कृत्य नरं चैव नरोत्तमम् |\nदेवीं सरस्वतीं व्यासं ततो जयमुदीरयेत् || १-१ ||",
+            "transliteration": "nārāyaṇaṁ namaskṛtya naraṁ caiva narottamam |\ndevīṁ sarasvatīṁ vyāsaṁ tato jayamudīrayet || 1-1 ||",
+            "translationHi": "भगवान नारायण, नरों में श्रेष्ठ अर्जुन, भगवती सरस्वती और महर्षि वेदव्यास को नमस्कार करके 'जय' (महाभारत) नामक इतिहास का पाठ करना चाहिए।",
+            "hindiMeaning": "भगवान नारायण, नरों में श्रेष्ठ अर्जुन, भगवती सरस्वती और महर्षि वेदव्यास को नमस्कार करके 'जय' (महाभारत) नामक इतिहास का पाठ करना चाहिए।",
+            "translationEn": "Having bowed down to Lord Narayana, and to Nara the foremost of beings, and to Goddess Saraswati, and to Sage Vyasa, one should recite the sacred history named Jaya.",
+            "englishMeaning": "Having bowed down to Lord Narayana, and to Nara the foremost of beings, and to Goddess Saraswati, and to Sage Vyasa, one should recite the sacred history named Jaya.",
+            "commentary": "महाभारत का यह परम पावन मंगलाचरण श्लोक किसी भी शास्त्र स्वाध्याय और पावन अनुष्ठान के प्रारंभ में पढ़ा जाता है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-2",
+        "chapterNumber": 2,
+        "titleHi": "पर्व २: सभा पर्व (Sabha Parva)",
+        "titleEn": "Parva 2: Sabha Parva (The Book of the Assembly Hall)",
+        "summaryHi": "मय दानव द्वारा दिव्य मयसभा का निर्माण, पाण्डवों का राजसूय यज्ञ, शिशुपाल वध, दुर्योधन की ईर्ष्या, द्यूत क्रीड़ा (जुआ), द्रौपदी चीरहरण और पाण्डवों को १२ वर्ष वनवास व १ वर्ष अज्ञातवास।",
+        "summaryEn": "Construction of Maya Sabha, Yudhishthira's Rajasuya sacrifice, slaying of Shishupala, the treacherous dice game, humiliation of Draupadi, and exile of the Pandavas.",
+        "verses": [
+          {
+            "id": "mb-2-1",
+            "verseNumber": 1,
+            "sanskritText": "यतो धर्मस्ततो जयः |\nयतः कृष्णस्ततो धर्मो यतो धर्मस्ततो जयः || २-१ ||",
+            "sanskrit": "यतो धर्मस्ततो जयः |\nयतः कृष्णस्ततो धर्मो यतो धर्मस्ततो जयः || २-१ ||",
+            "transliteration": "yato dharmastato jayaḥ |\nyataḥ kṛṣṇastato dharmo yato dharmastato jayaḥ || 2-1 ||",
+            "translationHi": "जहाँ धर्म है, वहीं विजय है। और जहाँ भगवान श्रीकृष्ण हैं, वहीं धर्म है, तथा जहाँ धर्म है वहीं शाश्वत जय है।",
+            "hindiMeaning": "जहाँ धर्म है, वहीं विजय है। और जहाँ भगवान श्रीकृष्ण हैं, वहीं धर्म है, तथा जहाँ धर्म है वहीं शाश्वत जय है।",
+            "translationEn": "Where there is Dharma (righteousness), there is victory; and where Krishna is, there is Dharma, and where Dharma is, there is victory.",
+            "englishMeaning": "Where there is Dharma (righteousness), there is victory; and where Krishna is, there is Dharma, and where Dharma is, there is victory.",
+            "commentary": "सभा पर्व में धर्म के महत्व को रेखांकित करते हुए स्पष्ट किया गया है कि अधर्म चाहे कितना भी शक्तिशाली दिखे, अंत में विजय धर्म की ही होती है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-3",
+        "chapterNumber": 3,
+        "titleHi": "पर्व ३: वन पर्व / अरण्यक पर्व (Vana Parva)",
+        "titleEn": "Parva 3: Vana Parva (The Book of the Forest)",
+        "summaryHi": "काम्यक और द्वैत वन में पाण्डवों का १२ वर्ष का कठिन वनवास, अर्जुन की पाशुपतास्त्र हेतु तपस्या, नलोपाख्यान, रामोपाख्यान, सावित्री-सत्यवान कथा तथा यक्ष-युधिष्ठिर संवाद।",
+        "summaryEn": "The twelve-year exile in Kamyaka and Dwaita forests, Arjuna's penance for divine weapons, tales of Nala-Damayanti and Savitri, and the profound Yaksha Prashna dialogue.",
+        "verses": [
+          {
+            "id": "mb-3-1",
+            "verseNumber": 1,
+            "sanskritText": "किं स्थैर्यमुच्यते राजन् किं धैर्यं च प्रकीर्तितम् |\nस्वधर्मे स्थिरता स्थैर्यं धैर्यमिन्द्रियनिग्रहः || ३-१ ||",
+            "sanskrit": "किं स्थैर्यमुच्यते राजन् किं धैर्यं च प्रकीर्तितम् |\nस्वधर्मे स्थिरता स्थैर्यं धैर्यमिन्द्रियनिग्रहः || ३-१ ||",
+            "transliteration": "kiṁ sthairyamucyate rājan kiṁ dhairyaṁ ca prakīrtitam |\nsvadharme sthiratā sthairyaṁ dhairyamindriyanigrahaḥ || 3-1 ||",
+            "translationHi": "यक्ष ने पूछा: स्थिरता क्या है और धैर्य किसे कहा गया है? युधिष्ठिर ने उत्तर दिया: अपने स्वधर्म में दृढ़ रहना ही स्थिरता है और मन व इन्द्रियों का निग्रह ही सच्चा धैर्य है।",
+            "hindiMeaning": "यक्ष ने पूछा: स्थिरता क्या है और धैर्य किसे कहा गया है? युधिष्ठिर ने उत्तर दिया: अपने स्वधर्म में दृढ़ रहना ही स्थिरता है और मन व इन्द्रियों का निग्रह ही सच्चा धैर्य है।",
+            "translationEn": "The Yaksha asked: What is steadfastness, and what is patience? Yudhishthira replied: Steadfastness is abiding faithfully in one's own Dharma, and true patience is the restraint of the senses.",
+            "englishMeaning": "The Yaksha asked: What is steadfastness, and what is patience? Yudhishthira replied: Steadfastness is abiding faithfully in one's own Dharma, and true patience is the restraint of the senses.",
+            "commentary": "वन पर्व के यक्ष प्रश्न में युधिष्ठिर द्वारा दिए गए उत्तर सनातन धर्म की व्यावहारिक नीति और दर्शन के सर्वोच्च शिखर हैं।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-4",
+        "chapterNumber": 4,
+        "titleHi": "पर्व ४: विराट पर्व (Virata Parva)",
+        "titleEn": "Parva 4: Virata Parva (The Book of Virata)",
+        "summaryHi": "मत्स्य देश के राजा विराट के यहाँ पाण्डवों का १ वर्ष का अज्ञातवास (कंक, वल्लभ, बृहन्नला, ग्रन्थिक, तन्तिपाल व सैरंध्री रूप में), कीचक वध, कौरवों द्वारा गो-हरण और अर्जुन द्वारा कौरव सेना का पराभव।",
+        "summaryEn": "The Pandavas' thirteenth year of incognito exile in King Virata's kingdom, the slaying of Kichaka, the cattle raid by Kauravas, and Arjuna's single-handed victory.",
+        "verses": [
+          {
+            "id": "mb-4-1",
+            "verseNumber": 1,
+            "sanskritText": "न हि सत्यात् परो धर्मो नानृतात् पातकं परम् |\nसत्येन धार्यते पृथ्वी सत्येन तपते रविः || ४-१ ||",
+            "sanskrit": "न हि सत्यात् परो धर्मो नानृतात् पातकं परम् |\nसत्येन धार्यते पृथ्वी सत्येन तपते रविः || ४-१ ||",
+            "transliteration": "na hi satyāt paro dharmo nānṛtāt pātakaṁ param |\nsatyena dhāryate pṛthvī satyena tapate raviḥ || 4-1 ||",
+            "translationHi": "सत्य से बड़ा कोई धर्म नहीं है और असत्य से बड़ा कोई पाप नहीं। सत्य से ही यह पृथ्वी टिकी हुई है और सत्य से ही सूर्य तपता है।",
+            "hindiMeaning": "सत्य से बड़ा कोई धर्म नहीं है और असत्य से बड़ा कोई पाप नहीं। सत्य से ही यह पृथ्वी टिकी हुई है और सत्य से ही सूर्य तपता है।",
+            "translationEn": "There is no Dharma higher than Truth, and no sin greater than falsehood. By Truth the earth is upheld, and by Truth the sun gives warmth.",
+            "englishMeaning": "There is no Dharma higher than Truth, and no sin greater than falsehood. By Truth the earth is upheld, and by Truth the sun gives warmth.",
+            "commentary": "विराट नगर में अत्यंत कठिन परीक्षा के समय भी पाण्डवों ने सत्य और धर्म की मर्यादा का रंचमात्र भी उल्लंघन नहीं किया।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-5",
+        "chapterNumber": 5,
+        "titleHi": "पर्व ५: उद्योग पर्व (Udyoga Parva)",
+        "titleEn": "Parva 5: Udyoga Parva (The Book of Effort)",
+        "summaryHi": "अज्ञातवास की समाप्ति, दोनों पक्षों की सैन्य तैयारी, विदुर नीति, सनत्सुजात का आत्मज्ञान उपदेश, भगवान श्रीकृष्ण का शांति दूत बनकर हस्तिनापुर गमन, दुर्योधन द्वारा श्रीकृष्ण को बंदी बनाने का कुप्रयास एवं विश्वरूप दर्शन।",
+        "summaryEn": "Preparations for war, Vidura Niti, Sanatsujata's spiritual discourse, Lord Krishna's peace mission to Hastinapura, Duryodhana's refusal, and Krishna's Vishwaroopa.",
+        "verses": [
+          {
+            "id": "mb-5-1",
+            "verseNumber": 1,
+            "sanskritText": "सुवर्णपुष्पां पृथिवीं चिन्वन्ति पुरुषास्त्रयः |\nशूरश्च कृतविद्यश्च यश्च जानाति सेवितुम् || ५-१ ||",
+            "sanskrit": "सुवर्णपुष्पां पृथिवीं चिन्वन्ति पुरुषास्त्रयः |\nशूरश्च कृतविद्यश्च यश्च जानाति सेवितुम् || ५-१ ||",
+            "transliteration": "suvarṇapuṣpāṁ pṛthivīṁ cinvanti puruṣāstrayaḥ |\nśūraśca kṛtavidyaśca yaśca jānāti sevitum || 5-1 ||",
+            "translationHi": "इस पृथ्वी रूपी स्वर्ण-पुष्प का चयन तीन प्रकार के पुरुष करते हैं: शूरवीर (पराक्रमी), कृतविद्य (विद्वान) और जो दूसरों की यथायोग्य सेवा करना जानता है।",
+            "hindiMeaning": "इस पृथ्वी रूपी स्वर्ण-पुष्प का चयन तीन प्रकार के पुरुष करते हैं: शूरवीर (पराक्रमी), कृतविद्य (विद्वान) और जो दूसरों की यथायोग्य सेवा करना जानता है।",
+            "translationEn": "Three kinds of men gather the golden flowers of this earth: the heroic warrior, the wise and learned scholar, and he who knows how to render humble service.",
+            "englishMeaning": "Three kinds of men gather the golden flowers of this earth: the heroic warrior, the wise and learned scholar, and he who knows how to render humble service.",
+            "commentary": "उद्योग पर्व में महात्मा विदुर द्वारा धृतराष्ट्र को दिया गया नीति उपदेश (विदुर नीति) जीवन प्रबंधन का अनमोल शास्त्र है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-6",
+        "chapterNumber": 6,
+        "titleHi": "पर्व ६: भीष्म पर्व (Bhishma Parva)",
+        "titleEn": "Parva 6: Bhishma Parva (The Book of Bhishma)",
+        "summaryHi": "कुरुक्षेत्र युद्ध का शुभारंभ, भगवान श्रीकृष्ण द्वारा अर्जुन को सम्पूर्ण श्रीमद्भगवद्गीता का दिव्य उपदेश, १० दिनों तक भीष्म पितामह का सेनापतित्व और शिखंडी के माध्यम से भीष्म का शरशैया पर शयन।",
+        "summaryEn": "Commencement of the Kurukshetra war, Lord Krishna's divine discourse of the Srimad Bhagavad Gita to Arjuna, Bhishma's 10 days of supreme command, and his falling upon the bed of arrows.",
+        "verses": [
+          {
+            "id": "mb-6-1",
+            "verseNumber": 1,
+            "sanskritText": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन |\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि || ६-१ ||",
+            "sanskrit": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन |\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि || ६-१ ||",
+            "transliteration": "karmaṇyevādhikāraste mā phaleṣu kadācana |\nmā karmaphalaheturbhūrmā te saṅgo'stvakarmaṇi || 6-1 ||",
+            "translationHi": "तुम्हारा अधिकार केवल कर्म करने में है, उसके फलों में कभी नहीं। इसलिए कर्म के फल के हेतु मत बनो और न ही अकर्मण्यता में तुम्हारी आसक्ति हो।",
+            "hindiMeaning": "तुम्हारा अधिकार केवल कर्म करने में है, उसके फलों में कभी नहीं। इसलिए कर्म के फल के हेतु मत बनो और न ही अकर्मण्यता में तुम्हारी आसक्ति हो।",
+            "translationEn": "You have a right only to work, never to its fruits. Let not the fruits of action be your motive, nor let your attachment be to inaction.",
+            "englishMeaning": "You have a right only to work, never to its fruits. Let not the fruits of action be your motive, nor let your attachment be to inaction.",
+            "commentary": "भीष्म पर्व महाभारत का परम पावन हृदय है, जिसमें समस्त मानवता के कल्याण हेतु श्रीमद्भगवद्गीता का अमृत निहित है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-7",
+        "chapterNumber": 7,
+        "titleHi": "पर्व ७: द्रोण पर्व (Drona Parva)",
+        "titleEn": "Parva 7: Drona Parva (The Book of Drona)",
+        "summaryHi": "द्रोणाचार्य का ५ दिनों का सेनापतित्व, चक्रव्यूह रचना, वीर अभिमन्यु का अप्रतिम पराक्रम और षड्यंत्रपूर्वक वध, अर्जुन की प्रतिज्ञा, जयद्रथ वध, घटोत्कच का आत्मबलिदान और द्रोणाचार्य की गति।",
+        "summaryEn": "Drona's five days of command, formation of the Chakravyuha, heroic martyrdom of Abhimanyu, Arjuna's vow and slaying of Jayadratha, Ghatotkacha's sacrifice, and Drona's fall.",
+        "verses": [
+          {
+            "id": "mb-7-1",
+            "verseNumber": 1,
+            "sanskritText": "शूराश्च बलगर्विताश्च संग्रामे दुर्जया रणे |\nधर्मार्थं युध्यमानानां यशो लोके विधीयते || ७-१ ||",
+            "sanskrit": "शूराश्च बलगर्विताश्च संग्रामे दुर्जया रणे |\nधर्मार्थं युध्यमानानां यशो लोके विधीयते || ७-१ ||",
+            "transliteration": "śūrāśca balagarvitāśca saṁgrāme durjayā raṇe |\ndharmārthaṁ yudhyamānānāṁ yaśo loke vidhīyate || 7-1 ||",
+            "translationHi": "युद्ध में धर्म के लिए पराक्रम दिखाने वाले वीर योद्धाओं की पावन कीर्ति तीनों लोकों में सदा अमर रहती है।",
+            "hindiMeaning": "युद्ध में धर्म के लिए पराक्रम दिखाने वाले वीर योद्धाओं की पावन कीर्ति तीनों लोकों में सदा अमर रहती है।",
+            "translationEn": "The fame of heroic warriors who fight steadfastly on the battlefield for the cause of righteousness endures eternally throughout the worlds.",
+            "englishMeaning": "The fame of heroic warriors who fight steadfastly on the battlefield for the cause of righteousness endures eternally throughout the worlds.",
+            "commentary": "वीर अभिमन्यु ने चक्रव्यूह में प्रवेश कर जिस अदम्य साहस का परिचय दिया, वह सनातन संस्कृति में शौर्य का अमर मानदंड है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-8",
+        "chapterNumber": 8,
+        "titleHi": "पर्व ८: कर्ण पर्व (Karna Parva)",
+        "titleEn": "Parva 8: Karna Parva (The Book of Karna)",
+        "summaryHi": "दानवीर कर्ण का कौरव सेनापतित्व, मद्रराज शल्य का सारथ्य, कर्ण-अर्जुन का महासंग्राम, कर्ण के रथ का पहिया धंसना और अर्जुन द्वारा कर्ण का वध।",
+        "summaryEn": "Karna appointed supreme commander, Shalya becomes his charioteer, the epic duel between Karna and Arjuna, and the fall of Karna.",
+        "verses": [
+          {
+            "id": "mb-8-1",
+            "verseNumber": 1,
+            "sanskritText": "दैवायत्तं कुले जन्म मदायत्तं तु पौरुषम् |\nजानामि धर्मं न च मे प्रवृत्तिर्ज्ञातोऽप्यधर्मो न च मे निवृत्तिः || ८-१ ||",
+            "sanskrit": "दैवायत्तं कुले जन्म मदायत्तं तु पौरुषम् |\nजानामि धर्मं न च मे प्रवृत्तिर्ज्ञातोऽप्यधर्मो न च मे निवृत्तिः || ८-१ ||",
+            "transliteration": "daivāyattaṁ kule janma madāyattaṁ tu pauruṣam |\njānāmi dharmaṁ na ca me pravṛttirjñāto'pyadharmo na ca me nivṛttiḥ || 8-1 ||",
+            "translationHi": "किसी कुल में जन्म लेना भाग्य के अधीन है, परंतु पराक्रम और पुरुषार्थ मेरे अपने अधीन है।",
+            "hindiMeaning": "किसी कुल में जन्म लेना भाग्य के अधीन है, परंतु पराक्रम और पुरुषार्थ मेरे अपने अधीन है।",
+            "translationEn": "Birth in a noble family is subject to destiny, but valor, dignity, and enterprise are entirely in my own hands.",
+            "englishMeaning": "Birth in a noble family is subject to destiny, but valor, dignity, and enterprise are entirely in my own hands.",
+            "commentary": "दानवीर कर्ण का यह कथन मनुष्य के आत्मबल, पुरुषार्थ और स्वाभिमान का शाश्वत संदेश है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-9",
+        "chapterNumber": 9,
+        "titleHi": "पर्व ९: शल्य पर्व (Shalya Parva)",
+        "titleEn": "Parva 9: Shalya Parva (The Book of Shalya)",
+        "summaryHi": "शल्य का सेनापतित्व, युधिष्ठिर द्वारा शल्य वध, शकुनि वध, दुर्योधन का द्वैपायन सरोवर में छिपना, भीम और दुर्योधन का भीषण गदा युद्ध तथा दुर्योधन की जंघा भंजन।",
+        "summaryEn": "Shalya's command and fall at the hands of Yudhishthira, slaying of Shakuni, Duryodhana hiding in Dvaipayana lake, and the final mace duel between Bhima and Duryodhana.",
+        "verses": [
+          {
+            "id": "mb-9-1",
+            "verseNumber": 1,
+            "sanskritText": "अधर्मेणैधते तावत् ततो भद्राणि पश्यति |\nततः सपत्नाञ्जयति समूलस्तु विनश्यति || ९-१ ||",
+            "sanskrit": "अधर्मेणैधते तावत् ततो भद्राणि पश्यति |\nततः सपत्नाञ्जयति समूलस्तु विनश्यति || ९-१ ||",
+            "transliteration": "adharmeṇaidhate tāvat tato bhadrāṇi paśyati |\ntataḥ sapatnāñjayati samūlastu vinaśyati || 9-1 ||",
+            "translationHi": "अधर्म के मार्ग से मनुष्य पहले फलता-फूलता है, अनुकूलता देखता है, शत्रुओं को भी जीत लेता है, किंतु अंत में वह समूल (जड़ सहित) नष्ट हो जाता है।",
+            "hindiMeaning": "अधर्म के मार्ग से मनुष्य पहले फलता-फूलता है, अनुकूलता देखता है, शत्रुओं को भी जीत लेता है, किंतु अंत में वह समूल (जड़ सहित) नष्ट हो जाता है।",
+            "translationEn": "Through unrighteousness, a man may initially prosper, witness favorable times, and even overcome his foes, but ultimately he is destroyed root and branch.",
+            "englishMeaning": "Through unrighteousness, a man may initially prosper, witness favorable times, and even overcome his foes, but ultimately he is destroyed root and branch.",
+            "commentary": "शल्य पर्व में दुर्योधन का अंत अधर्म, अहंकार और अन्याय के अनिवार्य विनाश का साक्षात प्रमाण है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-10",
+        "chapterNumber": 10,
+        "titleHi": "पर्व १०: सौप्तिक पर्व (Sauptika Parva)",
+        "titleEn": "Parva 10: Sauptika Parva (The Book of the Sleeping Warriors)",
+        "summaryHi": "अश्वत्थामा, कृपाचार्य और कृतवर्मा द्वारा रात्रि में सोती हुई पाण्डव सेना, धृष्टद्युम्न और द्रौपदी के पाँचों पुत्रों का संहार, अश्वत्थामा द्वारा ब्रह्मास्त्र प्रयोग और श्रीकृष्ण द्वारा उत्तरा के गर्भ की रक्षा।",
+        "summaryEn": "Ashwatthama's nocturnal slaughter of the sleeping Pandava army, Draupadi's five sons, release of the Brahmashira weapon, and Krishna reviving Uttara's unborn child (Parikshit).",
+        "verses": [
+          {
+            "id": "mb-10-1",
+            "verseNumber": 1,
+            "sanskritText": "क्रोधो हि शत्रुः प्रथमो नराणां देहस्थितो देहविनाशनाय |\nयथा स्थितः काष्ठगतो हि वह्निः स एव तं दह्यते च काष्ठम् || १०-१ ||",
+            "sanskrit": "क्रोधो हि शत्रुः प्रथमो नराणां देहस्थितो देहविनाशनाय |\nयथा स्थितः काष्ठगतो हि वह्निः स एव तं दह्यते च काष्ठम् || १०-१ ||",
+            "transliteration": "krodho hi śatruḥ prathamo narāṇāṁ dehasthito dehavināśanāya |\nyathā sthitaḥ kāṣṭhagato hi vahniḥ sa eva taṁ dahyate ca kāṣṭham || 10-1 ||",
+            "translationHi": "क्रोध मनुष्य के शरीर में स्थित उसका पहला शत्रु है जो उसी का नाश करता है, जैसे काठ (लकड़ी) में छिपी आग उसी लकड़ी को जलाकर भस्म कर देती है।",
+            "hindiMeaning": "क्रोध मनुष्य के शरीर में स्थित उसका पहला शत्रु है जो उसी का नाश करता है, जैसे काठ (लकड़ी) में छिपी आग उसी लकड़ी को जलाकर भस्म कर देती है।",
+            "translationEn": "Anger is man's foremost internal enemy residing within his own body to destroy him, just as the latent fire within wood burns the very wood itself.",
+            "englishMeaning": "Anger is man's foremost internal enemy residing within his own body to destroy him, just as the latent fire within wood burns the very wood itself.",
+            "commentary": "अश्वत्थामा के प्रतिशोध और क्रोध का परिणाम बताता है कि अंधा क्रोध अंततः कुल और सद्गति दोनों को नष्ट कर देता है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-11",
+        "chapterNumber": 11,
+        "titleHi": "पर्व ११: स्त्री पर्व (Stri Parva)",
+        "titleEn": "Parva 11: Stri Parva (The Book of the Women)",
+        "summaryHi": "कुरुक्षेत्र के रणक्षेत्र में गांधारी, कुंती, द्रौपदी और कुरु स्त्रियों का दारुण विलाप, मृतकों का तर्पण, गांधारी द्वारा श्रीकृष्ण को शाप और युद्ध की विभीषिका का कारुणिक चित्रण।",
+        "summaryEn": "The heartbreaking lamentation of Queen Gandhari, Kunti, Draupadi, and the women over the fallen heroes, funeral rites, and Gandhari's curse upon Krishna.",
+        "verses": [
+          {
+            "id": "mb-11-1",
+            "verseNumber": 1,
+            "sanskritText": "सर्वे क्षयान्ता निचयाः पतनान्ताः समुच्छ्रयाः |\nसंयोगा विप्रयोगान्ता मरणान्तं च जीवितम् || ११-१ ||",
+            "sanskrit": "सर्वे क्षयान्ता निचयाः पतनान्ताः समुच्छ्रयाः |\nसंयोगा विप्रयोगान्ता मरणान्तं च जीवितम् || ११-१ ||",
+            "transliteration": "sarve kṣayāntā nicayāḥ patanāntāḥ samucchrayāḥ |\nsaṁyogā viprayogāntā maraṇāntaṁ ca jīvitam || 11-1 ||",
+            "translationHi": "सारे संचय का अंत क्षय में है, ऊँचाइयों का अंत पतन में है, सारे संयोगों का अंत वियोग में है और सम्पूर्ण जीवन का अंत मृत्यु में है।",
+            "hindiMeaning": "सारे संचय का अंत क्षय में है, ऊँचाइयों का अंत पतन में है, सारे संयोगों का अंत वियोग में है और सम्पूर्ण जीवन का अंत मृत्यु में है।",
+            "translationEn": "All accumulations end in depletion, all elevations end in a fall, all unions end in separation, and all worldly life ends in death.",
+            "englishMeaning": "All accumulations end in depletion, all elevations end in a fall, all unions end in separation, and all worldly life ends in death.",
+            "commentary": "स्त्री पर्व संसार की क्षणभंगुरता, युद्ध के विनाशकारी परिणामों और वैराग्य का सर्वोच्च दार्शनिक उद्घोष है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-12",
+        "chapterNumber": 12,
+        "titleHi": "पर्व १२: शांति पर्व (Shanti Parva)",
+        "titleEn": "Parva 12: Shanti Parva (The Book of Peace)",
+        "summaryHi": "युधिष्ठिर का राज्याभिषेक और शोक, भीष्म पितामह द्वारा शरशैया से युधिष्ठिर को राजधर्म, आपद्धर्म और मोक्षधर्म का महाभारत का सबसे विशाल दार्शनिक उपदेश।",
+        "summaryEn": "Coronation of Yudhishthira, and the monumental discourse on statecraft (Rajadharma), ethics in crisis (Apaddharma), and spiritual liberation (Mokshadharma) by Bhishma.",
+        "verses": [
+          {
+            "id": "mb-12-1",
+            "verseNumber": 1,
+            "sanskritText": "न राज्यं न च राजाऽऽसीन्न दण्डो न च दाण्डिकः |\nधर्मेणैव प्रजाः सर्वा रक्षन्ति स्म परस्परम् || १२-१ ||",
+            "sanskrit": "न राज्यं न च राजाऽऽसीन्न दण्डो न च दाण्डिकः |\nधर्मेणैव प्रजाः सर्वा रक्षन्ति स्म परस्परम् || १२-१ ||",
+            "transliteration": "na rājyaṁ na ca rājā''sīnna daṇḍo na ca dāṇḍikaḥ |\ndharmeṇaiva prajāḥ sarvā rakṣanti sma parasparam || 12-1 ||",
+            "translationHi": "आदिकाल में न कोई राज्य था, न कोई राजा था, न कोई दण्ड था और न कोई दण्ड देने वाला; सभी प्रजा धर्म के अनुसार आचरण करते हुए एक-दूसरे की रक्षा करती थी।",
+            "hindiMeaning": "आदिकाल में न कोई राज्य था, न कोई राजा था, न कोई दण्ड था और न कोई दण्ड देने वाला; सभी प्रजा धर्म के अनुसार आचरण करते हुए एक-दूसरे की रक्षा करती थी।",
+            "translationEn": "In the primordial age, there was neither state nor king, neither punishment nor punisher; all beings protected one another through Dharma alone.",
+            "englishMeaning": "In the primordial age, there was neither state nor king, neither punishment nor punisher; all beings protected one another through Dharma alone.",
+            "commentary": "शांति पर्व महाभारत का सबसे बड़ा ज्ञानकोश है, जिसमें राजनीति, समाजशास्त्र, नीतिशास्त्र और अध्यात्म का अद्भुत समन्वय है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-13",
+        "chapterNumber": 13,
+        "titleHi": "पर्व १३: अनुशासन पर्व (Anushasana Parva)",
+        "titleEn": "Parva 13: Anushasana Parva (The Book of Instructions)",
+        "summaryHi": "भीष्म पितामह द्वारा दानधर्म, वर्ण-आश्रम धर्म, श्री विष्णु सहस्रनाम स्तोत्र, शिव सहस्रनाम स्तोत्र का उपदेश तथा उत्तरायण सूर्य में भीष्म की इच्छा-मृत्यु (परमधाम गमन)।",
+        "summaryEn": "Bhishma's instructions on duties, charity, the revelation of the sacred Sri Vishnu Sahasranama, Shiva Sahasranama, and Bhishma's departure to the transcendent realm.",
+        "verses": [
+          {
+            "id": "mb-13-1",
+            "verseNumber": 1,
+            "sanskritText": "अहिंसा परमो धर्मस्तथाहिंसा परं दमः |\nअहिंसा परमं दानमहिंसा परमं तपः || १३-१ ||",
+            "sanskrit": "अहिंसा परमो धर्मस्तथाहिंसा परं दमः |\nअहिंसा परमं दानमहिंसा परमं तपः || १३-१ ||",
+            "transliteration": "ahiṁsā paramo dharmastathāhiṁsā paraṁ damaḥ |\nahiṁsā paramaṁ dānamahiṁsā paramaṁ tapaḥ || 13-1 ||",
+            "translationHi": "अहिंसा ही परम धर्म है, अहिंसा ही परम संयम है, अहिंसा ही सर्वश्रेष्ठ दान है और अहिंसा ही सर्वोच्च तपस्या है।",
+            "hindiMeaning": "अहिंसा ही परम धर्म है, अहिंसा ही परम संयम है, अहिंसा ही सर्वश्रेष्ठ दान है और अहिंसा ही सर्वोच्च तपस्या है।",
+            "translationEn": "Non-violence is the supreme virtue, non-violence is the supreme self-restraint, non-violence is the highest charity, and non-violence is the highest austerity.",
+            "englishMeaning": "Non-violence is the supreme virtue, non-violence is the supreme self-restraint, non-violence is the highest charity, and non-violence is the highest austerity.",
+            "commentary": "अनुशासन पर्व में प्रसिद्ध 'विष्णु सहस्रनाम' समाहित है, जो प्रतिदिन करोड़ों सनातनी भक्तों द्वारा जपा जाता है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-14",
+        "chapterNumber": 14,
+        "titleHi": "पर्व १४: अश्वमेधिक पर्व (Ashvamedhika Parva)",
+        "titleEn": "Parva 14: Ashvamedhika Parva (The Book of the Horse Sacrifice)",
+        "summaryHi": "युधिष्ठिर द्वारा अश्वमेध यज्ञ का अनुष्ठान, श्रीकृष्ण द्वारा अर्जुन को अनुगीता का उपदेश तथा अश्व के पीछे अर्जुन की दिग्विजा यात्रा।",
+        "summaryEn": "Performance of the Ashvamedha sacrifice by Yudhishthira, Krishna delivering the Anugita to Arjuna, and Arjuna's triumphant campaign across all kingdoms.",
+        "verses": [
+          {
+            "id": "mb-14-1",
+            "verseNumber": 1,
+            "sanskritText": "यज्ञेन यज्ञमयजन्त देवास्तानि धर्माणि प्रथमान्यासन् |\nते ह नाकं महिमानः सचन्त यत्र पूर्वे साध्याः सन्ति देवाः || १४-१ ||",
+            "sanskrit": "यज्ञेन यज्ञमयजन्त देवास्तानि धर्माणि प्रथमान्यासन् |\nते ह नाकं महिमानः सचन्त यत्र पूर्वे साध्याः सन्ति देवाः || १४-१ ||",
+            "transliteration": "yajñena yajñamayajanta devāstāni dharmāṇi prathamānyāsan |\nte ha nākaṁ mahimānaḥ sacanta yatra pūrve sādhyāḥ santi devāḥ || 14-1 ||",
+            "translationHi": "देवताओं ने यज्ञ द्वारा यज्ञस्वरूप परमात्मा का यजन किया। वे ही धर्म के प्रथम नियम बने। वे महात्मा स्वर्ग को प्राप्त हुए जहाँ प्राचीन साध्य देवता निवास करते हैं।",
+            "hindiMeaning": "देवताओं ने यज्ञ द्वारा यज्ञस्वरूप परमात्मा का यजन किया। वे ही धर्म के प्रथम नियम बने। वे महात्मा स्वर्ग को प्राप्त हुए जहाँ प्राचीन साध्य देवता निवास करते हैं।",
+            "translationEn": "By means of sacrifice the Gods offered sacrifice; these were the earliest ordinances of Dharma. These great souls attained heaven where the ancient deities abide.",
+            "englishMeaning": "By means of sacrifice the Gods offered sacrifice; these were the earliest ordinances of Dharma. These great souls attained heaven where the ancient deities abide.",
+            "commentary": "अश्वमेधिक पर्व में आंतरिक चित्त-शुद्धि और निष्काम यज्ञीय भावना को ही वास्तविक अश्वमेध बताया गया है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-15",
+        "chapterNumber": 15,
+        "titleHi": "पर्व १५: आश्रमवासिक पर्व (Ashramavasika Parva)",
+        "titleEn": "Parva 15: Ashramavasika Parva (The Book of the Hermitage)",
+        "summaryHi": "धृतराष्ट्र, गांधारी, कुंती और विदुर का वानप्रस्थ आश्रम हेतु वन गमन, वन में तपस्या, विदुर का देहत्याग और दावानल में धृतराष्ट्र, गांधारी व कुंती का समाधिस्थ होना।",
+        "summaryEn": "Retirement of Dhritarashtra, Gandhari, Kunti, and Vidura to the forest hermitage, Vidura's passing, and the absorption of the elders in a forest conflagration.",
+        "verses": [
+          {
+            "id": "mb-15-1",
+            "verseNumber": 1,
+            "sanskritText": "आयुषः खण्डमादाय रविरस्तमयं गतः |\nअहनि गच्छति नरा न बुध्यन्ते कालगतिं पराम् || १५-१ ||",
+            "sanskrit": "आयुषः खण्डमादाय रविरस्तमयं गतः |\nअहनि गच्छति नरा न बुध्यन्ते कालगतिं पराम् || १५-१ ||",
+            "transliteration": "āyuṣaḥ khaṇḍamādāya ravirastamayaṁ gataḥ |\nahani gacchati narā na budhyante kālagatiṁ parām || 15-1 ||",
+            "translationHi": "सूर्य प्रतिदिन मनुष्य की आयु का एक भाग लेकर अस्त हो जाता है। दिन बीतते जाते हैं किंतु मनुष्य काल की इस अमोघ गति को नहीं समझता।",
+            "hindiMeaning": "सूर्य प्रतिदिन मनुष्य की आयु का एक भाग लेकर अस्त हो जाता है। दिन बीतते जाते हैं किंतु मनुष्य काल की इस अमोघ गति को नहीं समझता।",
+            "translationEn": "Every setting sun carries away a fragment of human life. Days pass by, yet mortals fail to comprehend the inexorable march of Time.",
+            "englishMeaning": "Every setting sun carries away a fragment of human life. Days pass by, yet mortals fail to comprehend the inexorable march of Time.",
+            "commentary": "संसार के समस्त सुख-वैभव का त्याग कर अंत में ईश्वर आराधना में लीन होना ही सनातन जीवन की अंतिम सार्थकता है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-16",
+        "chapterNumber": 16,
+        "titleHi": "पर्व १६: मौसल पर्व (Mausala Parva)",
+        "titleEn": "Parva 16: Mausala Parva (The Book of the Clubs)",
+        "summaryHi": "ऋषियों के शाप से उत्पन्न मूसल द्वारा यदुवंश का गृहयुद्ध में संहार, भगवान बलराम का शेषनाग रूप में देहत्याग तथा भगवान श्रीकृष्ण का स्वधाम गमन।",
+        "summaryEn": "The destruction of the Vrishni/Yadava dynasty due to the sages' curse, passing of Balarama, and Lord Sri Krishna's departure to His supreme transcendental abode.",
+        "verses": [
+          {
+            "id": "mb-16-1",
+            "verseNumber": 1,
+            "sanskritText": "कालः सृजति भूतानि कालः संहरति प्रजाः |\nसर्वे कालस्य वशगा न कालः कस्यचिद्वशे || १६-१ ||",
+            "sanskrit": "कालः सृजति भूतानि कालः संहरति प्रजाः |\nसर्वे कालस्य वशगा न कालः कस्यचिद्वशे || १६-१ ||",
+            "transliteration": "kālaḥ sṛjati bhūtāni kālaḥ saṁharati prajāḥ |\nsarve kālasya vaśagā na kālaḥ kasyacidvaśe || 16-1 ||",
+            "translationHi": "काल ही समस्त प्राणियों की सृष्टि करता है और काल ही सबका संहार करता है। सभी प्राणी काल के वश में हैं, परंतु काल किसी के वश में नहीं है।",
+            "hindiMeaning": "काल ही समस्त प्राणियों की सृष्टि करता है और काल ही सबका संहार करता है। सभी प्राणी काल के वश में हैं, परंतु काल किसी के वश में नहीं है।",
+            "translationEn": "Time creates all beings, and Time dissolves all creatures. All are subject to Time, but Time is subject to none.",
+            "englishMeaning": "Time creates all beings, and Time dissolves all creatures. All are subject to Time, but Time is subject to none.",
+            "commentary": "मौसल पर्व सिखाता है कि इस भौतिक जगत में किसी का भी अहंकार या कुल स्थिर नहीं रह सकता; केवल परमात्मा ही शाश्वत हैं।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-17",
+        "chapterNumber": 17,
+        "titleHi": "पर्व १७: महाप्रस्थानिक पर्व (Mahaprasthanika Parva)",
+        "titleEn": "Parva 17: Mahaprasthanika Parva (The Great Journey)",
+        "summaryHi": "परीक्षित को राज्य सौंपकर पाण्डवों और द्रौपदी की हिमालय की ओर महाप्रस्थान यात्रा, मार्ग में द्रौपदी और चारों भाइयों का पतन तथा केवल युधिष्ठिर का श्वान (धर्मराज) सहित आगे बढ़ना।",
+        "summaryEn": "The Pandavas crown Parikshit and undertake their final pilgrimage towards the Himalayas; the sequential fall of Draupadi and the brothers, leaving Yudhishthira and a faithful dog.",
+        "verses": [
+          {
+            "id": "mb-17-1",
+            "verseNumber": 1,
+            "sanskritText": "धर्म एव हतो हन्ति धर्मो रक्षति रक्षितः |\nतस्माद्धर्मो न हन्तव्यो मा नो धर्मो हतोऽवधीत् || १७-१ ||",
+            "sanskrit": "धर्म एव हतो हन्ति धर्मो रक्षति रक्षितः |\nतस्माद्धर्मो न हन्तव्यो मा नो धर्मो हतोऽवधीत् || १७-१ ||",
+            "transliteration": "dharma eva hato hanti dharmo rakṣati rakṣitaḥ |\ntasmāddharmo na hantavyo mā no dharmo hato'vadhīt || 17-1 ||",
+            "translationHi": "नष्ट किया हुआ धर्म मनुष्य का नाश कर देता है, और सुरक्षित रखा हुआ धर्म रक्षा करता है। इसलिए धर्म का कभी हनन नहीं करना चाहिए।",
+            "hindiMeaning": "नष्ट किया हुआ धर्म मनुष्य का नाश कर देता है, और सुरक्षित रखा हुआ धर्म रक्षा करता है। इसलिए धर्म का कभी हनन नहीं करना चाहिए।",
+            "translationEn": "Dharma destroyed destroys; Dharma protected protects. Therefore, Dharma must never be violated, lest violated Dharma destroy us.",
+            "englishMeaning": "Dharma destroyed destroys; Dharma protected protects. Therefore, Dharma must never be violated, lest violated Dharma destroy us.",
+            "commentary": "युधिष्ठिर ने स्वर्ग के द्वार पर भी उस मूक श्वान (धर्मराज) का त्याग करने से मना कर दिया, जो उनकी करुणा और धर्मनिष्ठा की पराकाष्ठा है।"
+          }
+        ]
+      },
+      {
+        "id": "mb-ch-18",
+        "chapterNumber": 18,
+        "titleHi": "पर्व १८: स्वर्गारोहण पर्व (Svargarohana Parva)",
+        "titleEn": "Parva 18: Svargarohana Parva (The Ascent to Heaven)",
+        "summaryHi": "युधिष्ठिर का सशरीर स्वर्ग गमन, अंतिम परीक्षा, नरक दर्शन का भ्रम दूर होना, सभी पाण्डवों, द्रौपदी और कौरवों का दिव्य रूप में साक्षात्कार तथा भारतसावित्री का अमर संदेश।",
+        "summaryEn": "Yudhishthira's bodily ascent to heaven, final test of compassion, dissolution of illusory hell, reunion with his brothers in their divine forms, and the timeless Bharatasavitri.",
+        "verses": [
+          {
+            "id": "mb-18-1",
+            "verseNumber": 1,
+            "sanskritText": "ऊर्ध्वबाहुर्विरौम्येष न च कश्चिच्छृणोति मे |\nधर्मादर्थश्च कामश्च स किमर्थं न सेव्यते || १८-१ ||",
+            "sanskrit": "ऊर्ध्वबाहुर्विरौम्येष न च कश्चिच्छृणोति मे |\nधर्मादर्थश्च कामश्च स किमर्थं न सेव्यते || १८-१ ||",
+            "transliteration": "ūrdhvabāhurviraumyeṣa na ca kaścicchṛṇoti me |\ndharmādarthaśca kāmaśca sa kimarthaṁ na sevyate || 18-1 ||",
+            "translationHi": "मैं दोनों भुजाएं उठाकर पुकार रहा हूँ, पर कोई मेरी बात नहीं सुनता! धर्म से ही अर्थ और काम दोनों सिद्ध होते हैं, फिर लोग उस धर्म का आचरण क्यों नहीं करते?",
+            "hindiMeaning": "मैं दोनों भुजाएं उठाकर पुकार रहा हूँ, पर कोई मेरी बात नहीं सुनता! धर्म से ही अर्थ और काम दोनों सिद्ध होते हैं, फिर लोग उस धर्म का आचरण क्यों नहीं करते?",
+            "translationEn": "With uplifted arms I cry aloud, yet no one listens to me! From Dharma alone arise both prosperity and rightful desires; why then is Dharma not practiced?",
+            "englishMeaning": "With uplifted arms I cry aloud, yet no one listens to me! From Dharma alone arise both prosperity and rightful desires; why then is Dharma not practiced?",
+            "commentary": "महर्षि वेदव्यास का 'भारतसावित्री' श्लोक महाभारत का अंतिम और शाश्वत सार है कि जीवन के प्रत्येक क्षण में केवल धर्म का ही आश्रय लेना चाहिए।"
+          }
+        ]
+      }
+    ]
+  },
   "isha-upanishad": {
     "id": "isha-upanishad",
     "slug": "isha-upanishad",
