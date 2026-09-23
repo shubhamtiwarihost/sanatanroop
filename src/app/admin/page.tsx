@@ -311,9 +311,12 @@ export default function WordPressAdminPanel() {
   // Live Festival Admin State
   const [liveFestivalConfig, setLiveFestivalConfig] = useState({
     enabled: true,
+    statusMode: 'auto', // 'auto' | 'upcoming' | 'live'
+    startDate: '2026-10-11',
+    startDateDisplay: '11 अक्टूबर 2026',
     nameHi: 'शारदीय नवरात्रि महापर्व',
     nameEn: 'Maha Navratri Celebration',
-    tagline: 'माँ जगदम्बा की असीम कृपा, शक्ति और भक्ति का पावन उत्सव',
+    tagline: 'माँ जगदम्बा की असीम कृपा, शक्ति और भक्ति का पावन उत्सव शीघ्र आ रहा है',
     tithi: 'आश्विन शुक्ल प्रतिपदा • प्रथम नवरात्र',
     deity: 'माँ शैलपुत्री (Maa Shailaputri)',
     deityRole: 'हिमालय पुत्री, नवदुर्गा का प्रथम स्वरूप • शक्ति एवं स्थिरता की अधिष्ठात्री',
@@ -3654,20 +3657,37 @@ export default function WordPressAdminPanel() {
                       </p>
                     </div>
 
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <span className="font-semibold text-stone-700">Festival Banner:</span>
-                      <input
-                        type="checkbox"
-                        checked={liveFestivalConfig.enabled}
-                        onChange={(e) =>
-                          setLiveFestivalConfig({ ...liveFestivalConfig, enabled: e.target.checked })
-                        }
-                        className="rounded border-[#8c8f94] text-[#2271b1] w-4 h-4"
-                      />
-                      <span className={`font-bold ${liveFestivalConfig.enabled ? 'text-emerald-700' : 'text-stone-400'}`}>
-                        {liveFestivalConfig.enabled ? 'Active (Live)' : 'Paused'}
-                      </span>
-                    </label>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="flex items-center space-x-2">
+                        <label className="text-xs font-semibold text-stone-700">Display Mode:</label>
+                        <select
+                          value={liveFestivalConfig.statusMode || 'auto'}
+                          onChange={(e) =>
+                            setLiveFestivalConfig({ ...liveFestivalConfig, statusMode: e.target.value })
+                          }
+                          className="border border-[#8c8f94] rounded px-2 py-1 text-xs bg-white font-medium"
+                        >
+                          <option value="auto">Auto (Countdown until start, then Live)</option>
+                          <option value="upcoming">Force Upcoming Preview (आगामी महापर्व)</option>
+                          <option value="live">Force Live Celebration (लाइव महापर्व)</option>
+                        </select>
+                      </div>
+
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <span className="font-semibold text-stone-700">Banner:</span>
+                        <input
+                          type="checkbox"
+                          checked={liveFestivalConfig.enabled}
+                          onChange={(e) =>
+                            setLiveFestivalConfig({ ...liveFestivalConfig, enabled: e.target.checked })
+                          }
+                          className="rounded border-[#8c8f94] text-[#2271b1] w-4 h-4"
+                        />
+                        <span className={`font-bold ${liveFestivalConfig.enabled ? 'text-emerald-700' : 'text-stone-400'}`}>
+                          {liveFestivalConfig.enabled ? 'Enabled' : 'Paused'}
+                        </span>
+                      </label>
+                    </div>
                   </div>
 
                   {/* Form Grid */}
@@ -3708,6 +3728,26 @@ export default function WordPressAdminPanel() {
                         type="text"
                         value={liveFestivalConfig.tithi}
                         onChange={(e) => setLiveFestivalConfig({ ...liveFestivalConfig, tithi: e.target.value })}
+                        className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs bg-white font-serif"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-stone-700 block mb-1">Upcoming Start Date (YYYY-MM-DD):</label>
+                      <input
+                        type="date"
+                        value={liveFestivalConfig.startDate || '2026-10-11'}
+                        onChange={(e) => setLiveFestivalConfig({ ...liveFestivalConfig, startDate: e.target.value })}
+                        className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-stone-700 block mb-1">Start Date Display Text (Hindi):</label>
+                      <input
+                        type="text"
+                        value={liveFestivalConfig.startDateDisplay || '11 अक्टूबर 2026'}
+                        onChange={(e) => setLiveFestivalConfig({ ...liveFestivalConfig, startDateDisplay: e.target.value })}
                         className="w-full border border-[#8c8f94] rounded px-3 py-1.5 text-xs bg-white font-serif"
                       />
                     </div>
