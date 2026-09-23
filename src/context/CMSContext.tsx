@@ -991,7 +991,24 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedKathas) setKathas(JSON.parse(savedKathas));
 
       const savedBooks = localStorage.getItem('sanatan_cms_books');
-      if (savedBooks) setBooks(JSON.parse(savedBooks));
+      if (savedBooks) {
+        try {
+          const parsed = JSON.parse(savedBooks);
+          const existingIds = new Set(parsed.map((b: any) => b.id));
+          const missingDefaults = DEFAULT_CMS_BOOKS.filter((b) => !existingIds.has(b.id));
+          if (missingDefaults.length > 0) {
+            const merged = [...parsed, ...missingDefaults];
+            try {
+              localStorage.setItem('sanatan_cms_books', JSON.stringify(merged));
+            } catch (e) {}
+            setBooks(merged);
+          } else {
+            setBooks(parsed);
+          }
+        } catch {
+          setBooks(DEFAULT_CMS_BOOKS);
+        }
+      }
 
       const savedShlokas = localStorage.getItem('sanatan_cms_shlokas');
       if (savedShlokas) {

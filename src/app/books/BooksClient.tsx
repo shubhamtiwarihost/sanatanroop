@@ -9,22 +9,18 @@ import {
   Search,
   BookOpen,
   Sparkles,
-  ExternalLink,
   ChevronRight,
   Filter,
-  Star,
   Check,
   X,
-  Bookmark,
-  Layers,
-  Volume2,
   FileText,
   Download,
+  Info,
+  ShieldCheck,
 } from 'lucide-react';
-import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
-import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 
 import { BOOKS_DATA, BookItem } from '@/data/booksData';
+import BookPayModal, { PayBookInfo } from '@/components/BookPayModal';
 
 export type { BookItem };
 export { BOOKS_DATA };
@@ -108,7 +104,7 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
         {book.pdfUrl && (
           <div className="absolute top-2.5 right-2.5 z-40 bg-red-600/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow flex items-center gap-1 border border-red-400/50">
             <FileText className="w-2.5 h-2.5" />
-            <span>PDF</span>
+            <span>PDF ग्रंथ</span>
           </div>
         )}
 
@@ -126,8 +122,8 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
 
           {/* Top Header Inscription */}
           <div className="text-center pt-1">
-            <span className="text-[10px] font-serif font-bold tracking-widest text-amber-950 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)] block">
-              {coverTheme.sacredHeader}
+            <span className="text-[10px] font-serif font-bold tracking-widest text-amber-950 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)] block truncate">
+              {coverTheme.sacredHeader || '॥ ॐ नमः शिवाय ॥'}
             </span>
           </div>
 
@@ -135,12 +131,12 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
           <div className="text-center my-auto space-y-2">
             {/* Sacred Emblem in Golden Circle */}
             <div className="mx-auto w-12 h-12 rounded-full border-2 border-amber-950/40 bg-white/25 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(255,153,51,0.5)]">
-              <span>{coverTheme.emblem}</span>
+              <span>{coverTheme.emblem || '🕉️'}</span>
             </div>
 
             {/* Book Title in Heavy Embossed Devanagari */}
             <h4
-              className="text-lg sm:text-xl font-serif font-bold text-stone-950 tracking-wide leading-snug drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)]"
+              className="text-lg sm:text-xl font-serif font-bold text-stone-950 tracking-wide leading-snug drop-shadow-[0_1px_2px_rgba(255,255,255,0.6)] line-clamp-2"
               style={{
                 textShadow: '0 1px 2px rgba(255,255,255,0.6), 0 2px 4px rgba(0,0,0,0.4)',
               }}
@@ -149,23 +145,22 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
             </h4>
 
             {/* English Subtitle */}
-            <span className="block text-[10px] font-serif font-bold tracking-wider text-stone-900/90 uppercase">
+            <span className="block text-[10px] font-serif font-bold tracking-wider text-stone-900/90 uppercase truncate">
               {book.titleEn}
             </span>
           </div>
 
-          {/* Bottom Author & Granthakara info */}
+          {/* Bottom Author info */}
           <div className="text-center pb-1 border-t border-amber-950/30 pt-1.5 space-y-0.5">
-            <span className="block text-[9px] font-serif text-stone-950 font-bold">
+            <span className="block text-[9px] font-serif text-stone-950 font-bold truncate">
               {book.author}
             </span>
-            <span className="block text-[8px] font-serif text-stone-900 font-semibold">
-              {book.versesCount}
+            <span className="block text-[8px] font-serif text-stone-900 font-semibold truncate">
+              {book.categoryLabel || 'सनातन ग्रंथ'}
             </span>
           </div>
 
         </div>
-
       </div>
     </div>
   );
@@ -196,11 +191,11 @@ export default function SpiritualBooksPage() {
         },
         shortSummary: b.shortSummary || '',
         fullOverview: b.fullOverview || '',
-        sampleChapterTitle: existing?.sampleChapterTitle || 'प्रतिनिधि पावन श्लोक',
-        sampleVerseSanskrit: b.sampleVerseSanskrit || '',
-        sampleVerseHindi: b.sampleVerseHindi || '',
-        sampleVerseEnglish: b.sampleVerseEnglish || '',
-        readOnlineUrl: b.readOnlineUrl || `/scriptures/${b.id}`,
+        sampleChapterTitle: existing?.sampleChapterTitle || '',
+        sampleVerseSanskrit: '',
+        sampleVerseHindi: '',
+        sampleVerseEnglish: '',
+        readOnlineUrl: b.readOnlineUrl || `/books/${b.id}`,
         pdfUrl: b.pdfUrl,
         pdfFileName: b.pdfFileName,
         pdfFileSize: b.pdfFileSize,
@@ -212,29 +207,7 @@ export default function SpiritualBooksPage() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
-  const [modalTab, setModalTab] = useState<'CHAPTERS' | 'SAMPLE'>('CHAPTERS');
-  const [isVoiceSpeaking, setIsVoiceSpeaking] = useState(false);
-
-  const stopVoice = () => {
-    stopVedicVoice();
-    setIsVoiceSpeaking(false);
-  };
-
-  const handleSpeakVerse = (sanskrit: string, hindi: string) => {
-    if (!isVoiceSupported()) return;
-    if (isVoiceSpeaking) {
-      stopVoice();
-      return;
-    }
-    const cleanText = `${sanskrit}. हिन्दी अनुवाद: ${hindi}`;
-    speakVedicVoice(cleanText, {
-      rate: 0.85,
-      pitch: 1.0,
-      onStart: () => setIsVoiceSpeaking(true),
-      onEnd: () => setIsVoiceSpeaking(false),
-      onError: () => setIsVoiceSpeaking(false),
-    });
-  };
+  const [payBook, setPayBook] = useState<PayBookInfo | null>(null);
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((b) => {
@@ -249,50 +222,53 @@ export default function SpiritualBooksPage() {
     });
   }, [allBooks, activeCategory, searchQuery]);
 
-  const categories = useMemo(() => [
+  const categories = [
     { id: 'all', label: locale === 'en' ? 'All Books' : locale === 'sa' ? 'सर्वे ग्रन्थाः' : 'सभी ग्रंथ (All Books)' },
     { id: 'gita', label: locale === 'en' ? 'Bhagavad Gita' : locale === 'sa' ? 'श्रीमद्भगवद्गीता' : 'श्रीमद्भगवद्गीता' },
-    { id: 'itihasa', label: locale === 'en' ? 'Itihasa (Epics)' : locale === 'sa' ? 'इतिहासः' : 'रामायण व महाभारत' },
+    { id: 'itihasa', label: locale === 'en' ? 'Itihasa & Stotras' : locale === 'sa' ? 'इतिहासः' : 'रामायण, महाभारत व स्तोत्र' },
     { id: 'upanishads', label: locale === 'en' ? 'Upanishads' : locale === 'sa' ? 'उपनिषदः' : 'उपनिषद (Upanishads)' },
     { id: 'vedas', label: locale === 'en' ? 'Four Vedas' : locale === 'sa' ? 'चत्वारः वेदाः' : 'चार वेद (Vedas)' },
     { id: 'puranas', label: locale === 'en' ? 'Maha Puranas' : locale === 'sa' ? 'महापुराणानि' : 'महापुराण (Puranas)' },
     { id: 'darshana', label: locale === 'en' ? 'Philosophy' : locale === 'sa' ? 'दर्शनम्' : 'दर्शन व नीति (Philosophy)' },
-  ], [locale]);
+  ];
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#121216] text-[#1c1917] dark:text-stone-100 font-sans pb-24">
+    <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120b08] text-stone-900 dark:text-stone-100 pb-20 transition-colors">
       
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#24130b] via-[#331b0f] to-[#1a0e08] text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-b-2 border-amber-600/40">
-        <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
-
-        <div className="max-w-5xl mx-auto relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold border border-amber-500/30">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>॥ स्वाध्यायान्मा प्रमदः — स्वाध्याय में प्रमाद न करें ॥</span>
+      {/* Hero Header Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-amber-600 via-amber-700 to-amber-900 text-white py-14 sm:py-20 px-4 shadow-xl">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        
+        <div className="max-w-5xl mx-auto text-center space-y-4 relative z-10">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-serif">
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span className="text-amber-100">सनातन डिजिटल ग्रंथालय • Sanatan Digital Library</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold tracking-wide text-amber-100">
-            सनातन ग्रंथालय • Spiritual Books
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-amber-50 drop-shadow-md">
+            सनातन धर्मग्रंथ एवं पाण्डुलिपियां
           </h1>
 
-          <p className="text-stone-300 max-w-2xl mx-auto text-sm sm:text-base font-serif leading-relaxed">
-            वेद, उपनिषद, श्रीमद्भगवद्गीता, रामायण, पुराण एवं नीति ग्रंथों का संपूर्ण डिजिटल पुस्तकालय। भौतिक ग्रंथ रूप में सजे पावन शास्त्र।
+          <p className="max-w-3xl mx-auto text-stone-200 font-serif text-sm sm:text-base leading-relaxed">
+            वेद, उपनिषद, श्रीमद्भगवद्गीता, महाभारत, रामायण एवं नीति शास्त्रों की पावन डिजिटल पुस्तकें। 
+            प्रत्येक ग्रंथ को डिजिटल बुक रीडर में दो-पृष्ठ दृश्य के साथ पढ़ें अथवा सम्पूर्ण मूल PDF डाउनलोड करें।
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-md mx-auto pt-4 relative">
-            <Search className="w-5 h-5 absolute left-3.5 top-7 text-stone-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ग्रंथ का नाम, रचयिता अथवा विषय खोजें..."
-              className="w-full bg-black/40 border border-amber-500/40 text-white rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 backdrop-blur-md placeholder:text-stone-400"
-            />
+          {/* Search Box */}
+          <div className="max-w-xl mx-auto pt-4">
+            <div className="relative">
+              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ग्रंथ का नाम अथवा रचयिता खोजें (उदा. गीता, महाभारत, तुलसीदास)..."
+                className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/95 dark:bg-[#1f1510]/95 text-stone-900 dark:text-amber-100 border border-amber-300/40 shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm font-serif placeholder:text-stone-400"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -314,7 +290,7 @@ export default function SpiritualBooksPage() {
           ))}
         </div>
 
-        {/* Books Grid - ALL BOOKS ARE IN 3D BOOK FORMS */}
+        {/* Books Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
           {filteredBooks.map((book) => (
             <div
@@ -326,9 +302,12 @@ export default function SpiritualBooksPage() {
               <div className="bg-gradient-to-b from-stone-100 via-stone-50 to-stone-100/60 dark:from-[#211611] dark:via-[#19100c] dark:to-[#211611] pt-6 pb-2 border-b border-stone-200 dark:border-stone-800/80">
                 <Book3DForm book={book} onOpen={() => setPreviewBook(book)} />
                 <div className="text-center pb-2">
-                  <span className="text-[11px] font-serif text-stone-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition flex items-center justify-center space-x-1 cursor-pointer" onClick={() => setPreviewBook(book)}>
+                  <span
+                    className="text-[11px] font-serif text-stone-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition flex items-center justify-center space-x-1 cursor-pointer"
+                    onClick={() => setPreviewBook(book)}
+                  >
                     <BookOpen className="w-3.5 h-3.5" />
-                    <span>स्पर्श करके ग्रंथ खोलें (Click to Open Book)</span>
+                    <span>स्पर्श करके विवरण देखें (Click for Book Info)</span>
                   </span>
                 </div>
               </div>
@@ -340,11 +319,13 @@ export default function SpiritualBooksPage() {
                   {/* Badge Row */}
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-serif">
-                      {book.categoryLabel}
+                      {book.categoryLabel || 'सनातन ग्रंथ'}
                     </span>
-                    <span className="text-xs text-stone-500 dark:text-stone-400 font-serif font-semibold">
-                      {book.versesCount}
-                    </span>
+                    {book.pdfUrl && (
+                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-serif font-bold flex items-center gap-1">
+                        <Check className="w-3 h-3" /> PDF उपलब्ध
+                      </span>
+                    )}
                   </div>
 
                   {/* Title and Author */}
@@ -361,7 +342,7 @@ export default function SpiritualBooksPage() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 font-serif leading-relaxed line-clamp-2">
+                  <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 font-serif leading-relaxed line-clamp-3">
                     {book.shortSummary}
                   </p>
 
@@ -380,34 +361,37 @@ export default function SpiritualBooksPage() {
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="pt-4 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
-                  {book.pdfUrl ? (
+                <div className="pt-4 border-t border-stone-100 dark:border-stone-800/80 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    {/* Primary Button: Read Book */}
                     <Link
                       href={`/books/${book.id}`}
-                      className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-4 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
+                      className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-3.5 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
                     >
                       <BookOpen className="w-3.5 h-3.5" />
-                      <span>
-                        {locale === 'en' ? 'Read Book' : locale === 'sa' ? 'ग्रन्थं पठ्यताम्' : 'पुस्तक पढ़ें (Read Book)'}
-                      </span>
+                      <span>पुस्तक पढ़ें (Read)</span>
                     </Link>
-                  ) : (
-                    <Link
-                      href={book.readOnlineUrl || `/scriptures/${book.id}`}
-                      className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-4 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
-                    >
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>
-                        {locale === 'en' ? 'Read Scripture' : locale === 'sa' ? 'ग्रन्थं पठ्यताम्' : 'सम्पूर्ण ग्रंथ पढ़ें'}
-                      </span>
-                    </Link>
-                  )}
 
+                    {/* Secondary Button: Download PDF (Opens Pay Modal) */}
+                    {book.pdfUrl && (
+                      <button
+                        onClick={() => setPayBook(book)}
+                        className="inline-flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
+                        title="PDF डाउनलोड करें (₹20 / $5)"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>PDF (₹20)</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Tertiary: Preview / Details */}
                   <button
                     onClick={() => setPreviewBook(book)}
-                    className="inline-flex items-center space-x-1 text-xs font-serif text-stone-600 dark:text-stone-400 hover:text-amber-600 py-2 px-3 rounded-xl border border-stone-200 dark:border-stone-700 transition"
+                    className="inline-flex items-center space-x-1 text-xs font-serif text-stone-600 dark:text-stone-400 hover:text-amber-600 py-2 px-2.5 rounded-xl border border-stone-200 dark:border-stone-700 transition"
                   >
-                    <span>झलक (Preview)</span>
+                    <Info className="w-3.5 h-3.5" />
+                    <span>विवरण</span>
                   </button>
                 </div>
 
@@ -425,245 +409,121 @@ export default function SpiritualBooksPage() {
 
       </div>
 
-      {/* Reader / Sample Chapter Modal Preview */}
+      {/* Book Detail & Overview Modal (NO SHLOKAS / SLOG - PURE BOOK INFORMATION) */}
       {previewBook && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1a1411] rounded-3xl border border-amber-500/40 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in duration-200 relative">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#1c130e] rounded-3xl border border-amber-500/40 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-scale-up relative text-stone-900 dark:text-stone-100">
             
             <button
-              onClick={() => {
-                stopVoice();
-                setPreviewBook(null);
-              }}
+              onClick={() => setPreviewBook(null)}
               className="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-stone-900 dark:hover:text-white flex items-center justify-center transition"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-start gap-4">
+            {/* Book Header in Modal */}
+            <div className="flex items-start gap-4 pr-8">
               <div
-                className="w-16 h-22 rounded-r-md border border-amber-300 p-1.5 flex flex-col justify-between shrink-0 shadow-md"
+                className="w-16 h-22 rounded-r-md border border-amber-300 p-2 flex flex-col justify-between shrink-0 shadow-md text-stone-950 font-serif font-bold text-center"
                 style={{
                   backgroundColor: '#FF9933',
                   backgroundImage: 'linear-gradient(135deg, #FF9933 0%, #e67300 100%)',
                 }}
               >
-                <span className="text-[7px] text-amber-300 text-center block">
-                  {previewBook.coverTheme?.sacredHeader || '॥ ॐ श्री परमात्मने नमः ॥'}
-                </span>
-                <span className="text-center text-lg">{previewBook.coverTheme?.emblem || '🕉️'}</span>
-                <span className="text-[8px] text-amber-100 font-serif font-bold text-center block leading-tight">
-                  {previewBook.titleHi}
-                </span>
+                <span className="text-sm">🕉️</span>
+                <span className="text-[10px] leading-tight font-bold line-clamp-2">{previewBook.titleHi}</span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 font-serif">
-                  {previewBook.categoryLabel}
+                <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-serif">
+                  {previewBook.categoryLabel || 'सनातन ग्रंथ'}
                 </span>
-                <h2 className="text-2xl font-serif font-bold text-stone-900 dark:text-white">
+                <h3 className="text-2xl font-serif font-bold text-stone-900 dark:text-amber-100">
                   {previewBook.titleHi}
-                </h2>
-                <span className="text-xs text-stone-500 font-serif block">
-                  रचयिता: {previewBook.author} • {previewBook.versesCount}
-                </span>
+                </h3>
+                <p className="text-xs text-stone-500 dark:text-stone-400 font-mono">
+                  {previewBook.titleEn}
+                </p>
+                <p className="text-xs text-stone-600 dark:text-stone-300 font-serif pt-1">
+                  रचयिता: <strong className="text-amber-700 dark:text-amber-400">{previewBook.author}</strong>
+                </p>
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-serif leading-relaxed">
-              {previewBook.fullOverview}
-            </p>
+            {/* Short Summary Card */}
+            <div className="bg-[#faf6ee] dark:bg-[#251912] border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 space-y-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300 font-serif">
+                संक्षिप्त सार (Short Summary)
+              </h4>
+              <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-serif leading-relaxed">
+                {previewBook.shortSummary}
+              </p>
+            </div>
 
-            {(() => {
-              const scriptureData =
-                SCRIPTURES_STATIC_DATA[previewBook.id] ||
-                (previewBook.readOnlineUrl
-                  ? SCRIPTURES_STATIC_DATA[
-                      previewBook.readOnlineUrl.replace('/scriptures/', '')
-                    ]
-                  : null);
-              const chaptersCount = scriptureData?.chapters?.length || 0;
-              const totalVerses = scriptureData?.totalVerses || 0;
+            {/* Full Overview */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 font-serif">
+                सम्पूर्ण ग्रंथ परिचय एवं महत्व (Book Overview)
+              </h4>
+              <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-serif leading-relaxed whitespace-pre-line">
+                {previewBook.fullOverview || previewBook.shortSummary}
+              </p>
+            </div>
 
-              return (
-                <>
-                  {/* Modal Tabs */}
-                  <div className="flex items-center space-x-2 border-b border-stone-200 dark:border-stone-800 pb-2">
-                    <button
-                      onClick={() => setModalTab('CHAPTERS')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-serif font-bold transition flex items-center space-x-1.5 ${
-                        modalTab === 'CHAPTERS'
-                          ? 'bg-amber-600 text-white shadow-sm'
-                          : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <Layers className="w-3.5 h-3.5" />
-                      <span>सम्पूर्ण विषय-सूची ({chaptersCount} अध्याय/काण्ड)</span>
-                    </button>
-                    <button
-                      onClick={() => setModalTab('SAMPLE')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-serif font-bold transition flex items-center space-x-1.5 ${
-                        modalTab === 'SAMPLE'
-                          ? 'bg-amber-600 text-white shadow-sm'
-                          : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
-                      }`}
-                    >
-                      <BookOpen className="w-3.5 h-3.5" />
-                      <span>प्रतिनिधि पावन श्लोक</span>
-                    </button>
-                  </div>
+            {/* Languages and Availability */}
+            <div className="pt-2 border-t border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs font-serif">
+              <div className="flex items-center space-x-2 text-stone-500">
+                <span>उपलब्ध भाषाएँ:</span>
+                <div className="flex gap-1.5">
+                  {previewBook.languages.map((l, i) => (
+                    <span key={i} className="bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 px-2 py-0.5 rounded text-[10px]">
+                      {l}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {previewBook.pdfFileSize && (
+                <span className="text-stone-500 font-mono text-[11px]">
+                  PDF आकार: {previewBook.pdfFileSize}
+                </span>
+              )}
+            </div>
 
-                  {/* Tab 1: Full Chapters List */}
-                  {modalTab === 'CHAPTERS' && (
-                    <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
-                      {scriptureData?.chapters && scriptureData.chapters.length > 0 ? (
-                        scriptureData.chapters.map((ch: any) => (
-                          <div
-                            key={ch.id}
-                            className="p-3.5 rounded-2xl bg-[#faf6ee] dark:bg-[#20150d] border border-amber-300/60 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-500 transition"
-                          >
-                            <div className="space-y-1 flex-1">
-                              <div className="flex items-center space-x-2">
-                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-900 dark:text-amber-300">
-                                  अध्याय {ch.chapterNumber}
-                                </span>
-                                <span className="text-xs font-serif font-bold text-stone-900 dark:text-white">
-                                  {ch.titleHi || ch.titleEn}
-                                </span>
-                              </div>
-                              <p className="text-[11px] font-serif text-stone-600 dark:text-stone-400 line-clamp-2">
-                                {ch.summaryHi || ch.summaryEn}
-                              </p>
-                            </div>
-                            <Link
-                              href={`/scriptures/${scriptureData.slug || previewBook.id}?chapter=${ch.chapterNumber}`}
-                              className="inline-flex items-center space-x-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-serif font-bold px-3 py-1.5 rounded-xl shadow-sm shrink-0 self-start sm:self-center transition"
-                            >
-                              <span>अध्याय पढ़ें ({ch.verses?.length || 0} श्लोक)</span>
-                              <ChevronRight className="w-3.5 h-3.5" />
-                            </Link>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-xs font-serif text-stone-500">
-                          सम्पूर्ण ग्रंथ का पाठ ऑनलाइन उपलब्ध है।
-                        </div>
-                      )}
-                    </div>
-                  )}
+            {/* Modal Actions */}
+            <div className="pt-4 border-t border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-3">
+              <Link
+                href={`/books/${previewBook.id}`}
+                className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 px-6 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>डिजिटल ग्रंथालय में पढ़ें (Read Book)</span>
+              </Link>
 
-                  {/* Tab 2: Sample Verse Preview */}
-                  {modalTab === 'SAMPLE' && (
-                    <div className="bg-[#faf6ee] dark:bg-[#23170e] border border-amber-300 dark:border-amber-900/60 rounded-2xl p-5 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 font-serif block">
-                          📖 {previewBook.sampleChapterTitle}
-                        </span>
-                        <button
-                          onClick={() => handleSpeakVerse(previewBook.sampleVerseSanskrit, previewBook.sampleVerseHindi)}
-                          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-600/15 text-amber-900 dark:text-amber-300 text-xs font-serif font-bold hover:bg-amber-600/25 transition"
-                          title="श्लोक स्वर पाठ सुनें"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>{isVoiceSpeaking ? 'स्वर रोकें' : 'स्वर पाठ'}</span>
-                        </button>
-                      </div>
-
-                      <blockquote className="text-base sm:text-lg font-serif font-bold text-amber-950 dark:text-amber-100 whitespace-pre-line leading-relaxed">
-                        {previewBook.sampleVerseSanskrit}
-                      </blockquote>
-
-                      <div className="border-t border-amber-200 dark:border-amber-900/50 pt-2 space-y-2 text-xs sm:text-sm font-serif">
-                        <p className="text-stone-800 dark:text-stone-200 leading-relaxed">
-                          <strong className="text-amber-800 dark:text-amber-300">हिन्दी अनुवाद: </strong>
-                          {previewBook.sampleVerseHindi}
-                        </p>
-                        <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
-                          <strong className="text-stone-700 dark:text-stone-300">English: </strong>
-                          {previewBook.sampleVerseEnglish}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-stone-200 dark:border-stone-800">
-                    <div className="text-xs font-serif text-stone-500">
-                      {chaptersCount > 0
-                        ? `सम्पूर्ण ${chaptersCount} अध्याय • ${totalVerses} पावन श्लोक`
-                        : previewBook.versesCount}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {previewBook.pdfUrl ? (
-                        <>
-                          <Link
-                            href={`/books/${previewBook.id}`}
-                            className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
-                          >
-                            <BookOpen className="w-4 h-4" />
-                            <span>
-                              {locale === 'en'
-                                ? 'Read in Digital Reader'
-                                : locale === 'sa'
-                                ? 'ग्रन्थपाठकम् उद्घाटयन्तु'
-                                : 'पुस्तक पढ़ें (Digital Reader)'}
-                            </span>
-                          </Link>
-                          <a
-                            href={previewBook.pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download={previewBook.pdfFileName || `${previewBook.titleEn || 'scripture'}.pdf`}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
-                          >
-                            <Download className="w-4 h-4" />
-                            <span>
-                              {locale === 'en'
-                                ? 'Download PDF'
-                                : locale === 'sa'
-                                ? 'PDF डाउनलोडं कुर्वन्तु'
-                                : 'PDF डाउनलोड करें'}
-                              {previewBook.pdfFileSize ? ` (${previewBook.pdfFileSize})` : ''}
-                            </span>
-                          </a>
-                          <Link
-                            href={previewBook.readOnlineUrl || `/scriptures/${previewBook.id}`}
-                            className="border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-800 dark:text-stone-200 px-4 py-2.5 rounded-xl text-xs font-bold font-serif transition inline-flex items-center space-x-1.5"
-                          >
-                            <span>
-                              {locale === 'en'
-                                ? 'Shloka Verses'
-                                : locale === 'sa'
-                                ? 'श्लोकपाठः'
-                                : 'श्लोक पाठ एवं व्याख्या'}
-                            </span>
-                            <ChevronRight className="w-4 h-4" />
-                          </Link>
-                        </>
-                      ) : (
-                        <Link
-                          href={previewBook.readOnlineUrl || `/scriptures/${previewBook.id}`}
-                          className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
-                        >
-                          <BookOpen className="w-4 h-4" />
-                          <span>
-                            {locale === 'en'
-                              ? 'Read Complete Book'
-                              : locale === 'sa'
-                              ? 'सम्पूर्णग्रन्थं पठ्यताम्'
-                              : 'सम्पूर्ण ग्रंथ ऑनलाइन पढ़ें'}
-                          </span>
-                          <ChevronRight className="w-4 h-4" />
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </>
-              );
-            })()}
+              {previewBook.pdfUrl && (
+                <button
+                  onClick={() => {
+                    const b = previewBook;
+                    setPreviewBook(null);
+                    setPayBook(b);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>PDF डाउनलोड करें (₹20 / $5)</span>
+                </button>
+              )}
+            </div>
 
           </div>
         </div>
       )}
+
+      {/* Pay & Download Modal (₹20 / $5 with UPI & QR methods) */}
+      <BookPayModal
+        isOpen={!!payBook}
+        onClose={() => setPayBook(null)}
+        book={payBook}
+      />
 
       {/* Schema.org Book & ItemList Structured Data */}
       <script

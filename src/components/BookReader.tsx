@@ -22,6 +22,7 @@ import {
   HelpCircle,
   Bookmark,
 } from 'lucide-react';
+import BookPayModal from './BookPayModal';
 
 // Configure PDF.js worker
 if (typeof window !== 'undefined') {
@@ -59,6 +60,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
   const [containerWidth, setContainerWidth] = useState<number>(1000);
   const [inputPage, setInputPage] = useState<string>('1');
   const [showHelp, setShowHelp] = useState<boolean>(false);
+  const [isPayOpen, setIsPayOpen] = useState<boolean>(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const readerAreaRef = useRef<HTMLDivElement>(null);
@@ -369,17 +371,16 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
 
-          {/* Direct Download Button */}
+          {/* Download Button (₹20 / $5 Payment Modal) */}
           {book.pdfUrl && (
-            <a
-              href={book.pdfUrl}
-              download={book.pdfFileName || `${book.titleEn || 'sanatan-book'}.pdf`}
-              className="p-2 rounded-lg border border-red-500/50 bg-red-900/40 hover:bg-red-800/60 text-red-200 transition hidden md:inline-flex items-center space-x-1"
-              title="मूल PDF डाउनलोड करें"
+            <button
+              onClick={() => setIsPayOpen(true)}
+              className="p-2 rounded-lg border border-amber-500/50 bg-gradient-to-r from-amber-900/60 to-orange-950/60 hover:from-amber-800/80 hover:to-orange-900/80 text-amber-200 transition hidden md:inline-flex items-center space-x-1.5 shadow-sm"
+              title="PDF डाउनलोड करें (₹20 / $5)"
             >
-              <Download className="w-4 h-4" />
-              <span className="text-[11px] font-serif font-bold hidden xl:inline">PDF</span>
-            </a>
+              <Download className="w-4 h-4 text-amber-300" />
+              <span className="text-[11px] font-serif font-bold hidden xl:inline">PDF (₹20)</span>
+            </button>
           )}
 
           {/* Keyboard Shortcuts Help */}
@@ -627,6 +628,11 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
           </div>
         </div>
       </footer>
+      <BookPayModal
+        isOpen={isPayOpen}
+        onClose={() => setIsPayOpen(false)}
+        book={book}
+      />
     </div>
   );
 }
