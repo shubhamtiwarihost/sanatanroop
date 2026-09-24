@@ -405,17 +405,29 @@ export default function WordPressAdminPanel() {
       alert('कृपया आरती का शीर्षक (Title) दर्ज करें।');
       return;
     }
+    const categoryNormalized =
+      aartiForm.category === 'shiv'
+        ? 'shiva'
+        : aartiForm.category === 'laxmi'
+        ? 'lakshmi'
+        : aartiForm.category === 'jagdish' || aartiForm.category === 'krishna'
+        ? 'vishnu'
+        : aartiForm.category || 'shiva';
+
     if (editingAartiId) {
-      updateAarti(editingAartiId, aartiForm);
+      updateAarti(editingAartiId, {
+        ...aartiForm,
+        category: categoryNormalized,
+      });
       showNotice(`आरती "${aartiForm.titleHi}" अद्यतन (Updated) हो गई।`);
     } else {
       addAarti({
         titleHi: aartiForm.titleHi,
         titleEn: aartiForm.titleEn || aartiForm.titleHi,
-        deity: aartiForm.deity || 'श्री गणेश जी',
-        category: aartiForm.category || 'ganesha',
+        deity: aartiForm.deity || (categoryNormalized === 'shiva' ? 'भगवान शिव' : 'श्री गणेश जी'),
+        category: categoryNormalized,
         tagline: aartiForm.tagline || '',
-        youtubeId: aartiForm.youtubeId || 'Ll5Ccg1qWdc',
+        youtubeId: aartiForm.youtubeId || 'Yb2GMwJyGnE',
         singer: aartiForm.singer || 'अनुराधा पौडवाल',
         duration: aartiForm.duration || '5:00',
         lyricsHi: aartiForm.lyricsHi || '',
@@ -426,10 +438,10 @@ export default function WordPressAdminPanel() {
           id: `audio-${Date.now()}`,
           title: aartiForm.titleHi,
           audioUrl: '/audio/om_namah_shivaya.wav',
-          subtitle: aartiForm.deity || 'Devotional Aarti',
+          subtitle: aartiForm.deity || 'Devotional Aarti / Chalisa',
         },
       });
-      showNotice(`नई आरती "${aartiForm.titleHi}" सफलतापूर्वक जोड़ी गई।`);
+      showNotice(`नई आरती/चालीसा "${aartiForm.titleHi}" सफलतापूर्वक जोड़ी गई।`);
     }
     setAartiModalOpen(false);
   };
@@ -6148,18 +6160,20 @@ export default function WordPressAdminPanel() {
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">Category (श्रेणी)</label>
                   <select
-                    value={aartiForm.category || 'ganesha'}
+                    value={aartiForm.category || 'shiva'}
                     onChange={(e) => setAartiForm({ ...aartiForm, category: e.target.value })}
                     className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
                   >
+                    <option value="shiva">शिव जी (Lord Shiva)</option>
+                    <option value="chalisa">चालीसा संग्रह (Chalisa Sangrah)</option>
                     <option value="ganesha">गणेश जी (Ganesha)</option>
-                    <option value="jagdish">जगदीश / विष्णु जी (Jagdish)</option>
-                    <option value="shiv">शिव जी (Lord Shiva)</option>
+                    <option value="vishnu">विष्णु / कृष्ण जी (Lord Vishnu / Krishna)</option>
                     <option value="durga">माँ दुर्गा (Maa Durga)</option>
                     <option value="hanuman">हनुमान जी (Hanuman Ji)</option>
-                    <option value="laxmi">माँ लक्ष्मी (Maa Laxmi)</option>
-                    <option value="krishna">श्री कृष्ण (Lord Krishna)</option>
+                    <option value="lakshmi">माँ लक्ष्मी (Maa Lakshmi)</option>
                     <option value="ram">श्री राम (Lord Ram)</option>
+                    <option value="shiv">शिव जी (वैकल्पिक 'shiv')</option>
+                    <option value="laxmi">माँ लक्ष्मी (वैकल्पिक 'laxmi')</option>
                   </select>
                 </div>
                 <div>

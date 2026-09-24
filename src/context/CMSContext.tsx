@@ -978,12 +978,23 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
             }
             return item;
           });
-          if (changed) {
-            localStorage.setItem('sanatan_cms_aartis', JSON.stringify(cleaned));
+          // Merge any newly introduced defaults (such as aarti-shiv-chalisa) if missing
+          const existingIds = new Set(cleaned.map((a: any) => a.id));
+          const missingDefaults = DEFAULT_CMS_AARTIS.filter((a) => !existingIds.has(a.id));
+          let finalAartis = cleaned;
+          if (missingDefaults.length > 0) {
+            changed = true;
+            finalAartis = [...cleaned, ...missingDefaults];
           }
-          setAartis(cleaned);
+
+          if (changed) {
+            try {
+              localStorage.setItem('sanatan_cms_aartis', JSON.stringify(finalAartis));
+            } catch (e) {}
+          }
+          setAartis(finalAartis);
         } catch {
-          setAartis(JSON.parse(savedAartis));
+          setAartis(DEFAULT_CMS_AARTIS);
         }
       }
 

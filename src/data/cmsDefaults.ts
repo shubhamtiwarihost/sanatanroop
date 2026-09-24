@@ -657,6 +657,92 @@ Tulasi Bhavaanihi Pooji Puni Puni Mudita Mana Mandira Chalee ||`,
     },
     status: 'Published',
   },
+  {
+    id: 'aarti-shiv-chalisa',
+    deity: 'भगवान शिव',
+    category: 'shiva',
+    titleHi: 'श्री शिव चालीसा (Shri Shiv Chalisa)',
+    titleEn: 'Shri Shiv Chalisa',
+    tagline: 'देवाधिदेव महादेव शिव शंकर की परम कल्याणकारी चालीसा स्तुति',
+    lyricsHi: `॥ दोहा ॥
+जय गणेश गिरिजा सुवन, मंगल मूल सुजान ।
+कहत अयोध्यादास तुम, देहु अभय वरदान ॥
+
+॥ चौपाई ॥
+जय गिरिजापति दीन दयाला । सदा करत संतन प्रतिपाला ॥
+भाल चन्द्रमा सोहत नीके । कानन कुण्डल नागफनी के ॥
+अंग गौर शिर गंग बहाये । मुण्डमाल तन छार लगाये ॥
+वस्त्र खाल बाघम्बर सोहे । छवि को देख नाग मुनि मोहे ॥
+मैना मातु की हवै दुलारी । बाम अंग सोहत छवि न्यारी ॥
+कर त्रिशूल सोहत शुचि भालो । करत सदा शत्रुन क्षयकारी ॥
+नन्दि गणेश सोहैं तहँ कैसे । सागर मध्य कमल हैं जैसे ॥
+कार्तिक श्याम और गणराऊ । या छवि को कहि जात न काऊ ॥
+देवन जबहीं जाय पुकारा । तबहीं तुम प्रभु कष्ट निवारा ॥
+किया उपद्रव तारक भारी । देवन सब मिलि तुमहिं जुहारी ॥
+तुरत षडानन आप पठायो । लवनिमेष महँ मारि गिरायो ॥
+आप जलंधर असुर संहारा । सुयश तुम्हार विदित संसारा ॥
+त्रिपुरासुर सन युद्ध मचाई । सबहिं कृपा करि लीन बचाई ॥
+दानव बाल महा अति भारी । भये विप्र तुम प्रभु प्रतिपारी ॥
+कपिहिं प्रगट करि साख पसारी । लंका जारि दिए भट भारी ॥
+ऋषि मुनि देवन सबहिं मनावैं । शिव ओंकार सदा सुख पावैं ॥
+करि प्रनाम सब चरन पखारे । देवन्ह के सब कष्ट निवारे ॥
+जबहिं त्रिशूल करहिं तुम लीना । शत्रु दलहिं छन माहिं दलीना ॥
+कोटिन सूर्य समान प्रकाशा । सब जन के पूरन अभिलाषा ॥
+काशी विश्वनाथ मन भावन । गंगा तट पर पावन धामन ॥
+महाकाल उज्जैन विराजे । सोमनाथ अति सुंदर साजे ॥
+बैद्यनाथ केदार हिमानी । ओंकारेश्वर सुख की खानी ॥
+मल्लिकार्जुन त्र्यम्बक सोहे । रामेश्वर जन-जन मन मोहे ॥
+घृष्णेश्वर नागेश्वर देवा । द्वादश ज्योतिर्लिंग की सेवा ॥
+जो यह पाठ करे मन लाई । तापर होत शम्भु सहाई ॥
+ऋद्धिसिद्धि ताके घर आवैं । कष्ट रोग सब दूर नशावैं ॥
+पुत्र हीन करै ध्यान लगावै । निश्चय ही वह संतति पावै ॥
+पण्डित सुंदरदास बनायो । जो यह पढ़े अमर पद पायो ॥
+
+॥ दोहा ॥
+नित्त नेम करि प्रात ही, पाठ करै चालीस ।
+तुम मेरी मनकामना, पूर्ण करो जगदीश ॥
+मगसिर छठि हेमन्त ऋतु, संवत चौंसठ जान ।
+अस्तुति चालीसा शिवहि, पूर्ण कीन कल्यान ॥`,
+    lyricsEn: `Doha:
+Jai Ganesh Girija Suvan, Mangala Moola Sujan |
+Kahat Ayodhyadas Tum, Dehu Abhay Vardaan ||
+
+Chaupai:
+Jai Girijapati Deen Dayala, Sada Karat Santan Pratipala |
+Bhaal Chandrama Sohat Neeke, Kaanan Kundal Naagphani Ke ||
+Ang Gaur Shir Gang Bahaye, Mundamaal Tan Chhar Lagaye |
+Vastra Khaal Baaghambar Sohe, Chhavi Ko Dekh Naag Muni Mohe ||
+Maina Maatu Ki Havai Dulari, Baam Ang Sohat Chhavi Nyaari |
+Kar Trishul Sohat Shuchi Bhalo, Karat Sada Shatrun Kshayakari ||
+Nandi Ganesh Sohai Tahan Kaise, Sagar Madhya Kamal Hain Jaise |
+Kartik Shyam Aur Ganraau, Yaa Chhavi Ko Kahi Jaat Na Kaau ||
+Devan Jabahin Jaay Pukaara, Tabahin Tum Prabhu Kasht Nivara |
+Kiya Upadrav Taarak Bhaari, Devan Sab Mili Tumhin Juhaari ||
+Turat Shadaanana Aap Pathaayo, Lavnimesh Mahan Maari Giraayo |
+Aap Jalandhar Asur Sanhaara, Suyash Tumhaar Vidit Sansaara ||
+Tripurasur San Yuddh Machaai, Sabahin Kripa Kari Leen Bachaai |
+Kashi Vishwanath Manbhavan, Ganga Tat Par Paavan Dhaaman ||
+Mahakaal Ujjain Viraaje, Somnath Ati Sundar Saaje |
+Baidyanath Kedar Himaani, Omkareshwar Sukh Ki Khaani ||
+Mallikarjun Tryambak Sohe, Rameshwar Jan-Jan Man Mohe |
+Ghrishneshwar Nageshwar Deva, Dwaadash Jyotirling Ki Seva ||
+Jo Yeh Paath Kare Man Laai, Taapar Hot Shambhu Sahai ||
+
+Doha:
+Nitt Nem Kari Praat Hi, Paath Karai Chalees |
+Tum Meri Mankaamana, Pooran Karo Jagdeesh ||`,
+    meaning: 'Glory to Lord Shiva, the beloved consort of Girija (Parvati), the protector of the pious, adorned with the crescent moon on His forehead. Reciting the sacred 40 verses of Shiv Chalisa removes all fears, obstacles, illnesses, and bestows peace, devotion, and auspicious blessings of Mahadeva.',
+    youtubeId: 'Yb2GMwJyGnE',
+    singer: 'अनुराधा पौडवाल (Anuradha Paudwal)',
+    duration: '9:45',
+    audioTrack: {
+      id: 'audio-shiv-chalisa',
+      title: 'श्री शिव चालीसा',
+      audioUrl: '/audio/om_namah_shivaya.wav',
+      subtitle: 'Shri Shiv Chalisa Recitation',
+    },
+    status: 'Published',
+  },
 ];
 
 export const DEFAULT_CMS_KATHAS: CMSKathaItem[] = [
