@@ -169,38 +169,74 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
 export default function SpiritualBooksPage() {
   const { books } = useCMS();
   const allBooks = useMemo<BookItem[]>(() => {
-    if (!books || books.length === 0) return BOOKS_DATA;
-    return books.map((b) => {
-      const existing = BOOKS_DATA.find((item) => item.id === b.id);
+    const cmsList = books || [];
+    const cmsMap = new Map(cmsList.map((b) => [b.id, b]));
+
+    // Start with BOOKS_DATA (static canonical items)
+    const merged: BookItem[] = BOOKS_DATA.map((staticBook) => {
+      const cmsItem = cmsMap.get(staticBook.id);
+      if (!cmsItem) return staticBook;
       return {
-        id: b.id,
-        titleHi: b.titleHi,
-        titleEn: b.titleEn,
-        category: (b.category as any) || 'gita',
-        categoryLabel: b.categoryLabel || 'सनातन धर्मग्रंथ',
-        author: b.author || 'महर्षि वेदव्यास',
-        versesCount: b.versesCount || 'सम्पूर्ण पावन ग्रंथ',
-        languages: existing?.languages || ['संस्कृत', 'हिन्दी', 'English'],
-        coverTheme: existing?.coverTheme || {
-          bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
-          accentColor: b.colorCode || '#FF9933',
-          borderColor: 'border-[#FF9933]',
-          emblem: '🕉️',
-          sacredHeader: '॥ ॐ श्री परमात्मने नमः ॥',
-          spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
-        },
-        shortSummary: b.shortSummary || '',
-        fullOverview: b.fullOverview || '',
-        sampleChapterTitle: existing?.sampleChapterTitle || '',
-        sampleVerseSanskrit: '',
-        sampleVerseHindi: '',
-        sampleVerseEnglish: '',
-        readOnlineUrl: b.readOnlineUrl || `/books/${b.id}`,
-        pdfUrl: b.pdfUrl,
-        pdfFileName: b.pdfFileName,
-        pdfFileSize: b.pdfFileSize,
+        ...staticBook,
+        titleHi: cmsItem.titleHi || staticBook.titleHi,
+        titleEn: cmsItem.titleEn || staticBook.titleEn,
+        category: (cmsItem.category as any) || staticBook.category,
+        categoryLabel: cmsItem.categoryLabel || staticBook.categoryLabel,
+        author: cmsItem.author || staticBook.author,
+        versesCount: cmsItem.versesCount || staticBook.versesCount,
+        shortSummary: cmsItem.shortSummary || staticBook.shortSummary,
+        fullOverview: cmsItem.fullOverview || staticBook.fullOverview,
+        pdfUrl: cmsItem.pdfUrl || staticBook.pdfUrl,
+        pdfFileName: cmsItem.pdfFileName || staticBook.pdfFileName,
+        pdfFileSize: cmsItem.pdfFileSize || staticBook.pdfFileSize,
+        readOnlineUrl: cmsItem.readOnlineUrl || staticBook.readOnlineUrl,
       };
     });
+
+    // Append/Prepend any custom books created in CMS that aren't in BOOKS_DATA
+    for (const cmsItem of cmsList) {
+      if (!BOOKS_DATA.some((s) => s.id === cmsItem.id)) {
+        const isShiva = cmsItem.titleHi?.includes('शिव') || cmsItem.titleEn?.toLowerCase().includes('shiv');
+        const isHanuman = cmsItem.titleHi?.includes('हनुमान') || cmsItem.titleEn?.toLowerCase().includes('hanuman');
+        const isRam = cmsItem.titleHi?.includes('राम');
+
+        merged.unshift({
+          id: cmsItem.id,
+          titleHi: cmsItem.titleHi,
+          titleEn: cmsItem.titleEn || cmsItem.titleHi,
+          category: (cmsItem.category as any) || 'itihasa',
+          categoryLabel: cmsItem.categoryLabel || (cmsItem.titleHi?.includes('चालीसा') ? 'स्तोत्र एवं चालीसा' : 'सनातन धर्मग्रंथ'),
+          author: cmsItem.author || 'सनातन परम्परा',
+          versesCount: cmsItem.versesCount || 'सम्पूर्ण पावन ग्रंथ',
+          languages: cmsItem.languages || ['संस्कृत', 'हिन्दी', 'English'],
+          coverTheme: {
+            bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
+            accentColor: cmsItem.colorCode || '#FF9933',
+            borderColor: 'border-[#FF9933]',
+            emblem: isShiva ? '🔱' : isHanuman ? '🚩' : isRam ? '🏹' : '🕉️',
+            sacredHeader: isShiva
+              ? '॥ ॐ नमः शिवाय ॥'
+              : isHanuman
+              ? '॥ श्री गुरु चरन सरोज रज ॥'
+              : isRam
+              ? '॥ श्री रामचन्द्राय नमः ॥'
+              : '॥ ॐ श्री परमात्मने नमः ॥',
+            spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
+          },
+          shortSummary: cmsItem.shortSummary || '',
+          fullOverview: cmsItem.fullOverview || '',
+          sampleChapterTitle: '',
+          sampleVerseSanskrit: cmsItem.sampleVerseSanskrit || '',
+          sampleVerseHindi: cmsItem.sampleVerseHindi || '',
+          sampleVerseEnglish: cmsItem.sampleVerseEnglish || '',
+          readOnlineUrl: cmsItem.readOnlineUrl || `/books/${cmsItem.id}`,
+          pdfUrl: cmsItem.pdfUrl,
+          pdfFileName: cmsItem.pdfFileName,
+          pdfFileSize: cmsItem.pdfFileSize,
+        });
+      }
+    }
+    return merged;
   }, [books]);
 
   const { locale } = useLanguage();
@@ -211,21 +247,48 @@ export default function SpiritualBooksPage() {
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((b) => {
+      // Normalize category (handle 'ramayan' -> 'itihasa', 'chalisa' / 'stotra' -> 'itihasa', 'upanishad' -> 'upanishads', 'purana' -> 'puranas', 'darshan' -> 'darshana')
+      const catStr = (b.category as string) || '';
+      const normalizedCat =
+        catStr === 'ramayan' || catStr === 'chalisa' || catStr === 'stotra'
+          ? 'itihasa'
+          : catStr === 'upanishad'
+          ? 'upanishads'
+          : catStr === 'purana'
+          ? 'puranas'
+          : catStr === 'darshan'
+          ? 'darshana'
+          : catStr;
+
+      const isChalisa =
+        b.titleHi?.toLowerCase().includes('चालीसा') ||
+        b.titleEn?.toLowerCase().includes('chalisa') ||
+        catStr === 'chalisa' ||
+        b.categoryLabel?.toLowerCase().includes('चालीसा');
+
       const matchesCategory =
-        activeCategory === 'all' || b.category === activeCategory;
+        activeCategory === 'all' ||
+        normalizedCat === activeCategory ||
+        b.category === activeCategory ||
+        (activeCategory === 'chalisa' && isChalisa) ||
+        (activeCategory === 'itihasa' && isChalisa);
+
       const matchesSearch =
-        b.titleHi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.titleEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.shortSummary.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+        b.titleHi?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.titleEn?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.author?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.shortSummary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (b.categoryLabel && b.categoryLabel.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      return Boolean(matchesCategory && matchesSearch);
     });
   }, [allBooks, activeCategory, searchQuery]);
 
   const categories = [
-    { id: 'all', label: locale === 'en' ? 'All Books' : locale === 'sa' ? 'सर्वे ग्रन्थाः' : 'सभी ग्रंथ (All Books)' },
+    { id: 'all', label: locale === 'en' ? 'All Books & Chalisas' : locale === 'sa' ? 'सर्वे ग्रन्थाः' : 'सभी ग्रंथ व चालीसा' },
+    { id: 'chalisa', label: locale === 'en' ? 'Chalisas & Stotras' : locale === 'sa' ? 'चालीसा संग्रहः' : 'चालीसा व स्तोत्र संग्रह' },
     { id: 'gita', label: locale === 'en' ? 'Bhagavad Gita' : locale === 'sa' ? 'श्रीमद्भगवद्गीता' : 'श्रीमद्भगवद्गीता' },
-    { id: 'itihasa', label: locale === 'en' ? 'Itihasa & Stotras' : locale === 'sa' ? 'इतिहासः' : 'रामायण, महाभारत व स्तोत्र' },
+    { id: 'itihasa', label: locale === 'en' ? 'Itihasa & Epics' : locale === 'sa' ? 'इतिहासः' : 'रामायण, महाभारत व काव्य' },
     { id: 'upanishads', label: locale === 'en' ? 'Upanishads' : locale === 'sa' ? 'उपनिषदः' : 'उपनिषद (Upanishads)' },
     { id: 'vedas', label: locale === 'en' ? 'Four Vedas' : locale === 'sa' ? 'चत्वारः वेदाः' : 'चार वेद (Vedas)' },
     { id: 'puranas', label: locale === 'en' ? 'Maha Puranas' : locale === 'sa' ? 'महापुराणानि' : 'महापुराण (Puranas)' },

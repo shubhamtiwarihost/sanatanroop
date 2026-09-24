@@ -2,7 +2,7 @@ export interface BookItem {
   id: string;
   titleHi: string;
   titleEn: string;
-  category: 'all' | 'vedas' | 'upanishads' | 'itihasa' | 'gita' | 'puranas' | 'darshana';
+  category: 'all' | 'vedas' | 'upanishads' | 'itihasa' | 'gita' | 'puranas' | 'darshana' | 'chalisa' | string;
   categoryLabel: string;
   author: string;
   versesCount: string;
@@ -136,6 +136,34 @@ export const BOOKS_DATA: BookItem[] = [
     pdfUrl: '/books/hanuman-chalisa.pdf',
     pdfFileName: 'hanuman-chalisa.pdf',
     pdfFileSize: '38 KB',
+  },
+  {
+    id: 'shiv-chalisa',
+    titleHi: 'श्री शिव चालीसा',
+    titleEn: 'Shri Shiv Chalisa',
+    category: 'itihasa',
+    categoryLabel: 'स्तोत्र एवं चालीसा',
+    author: 'अयोध्यादास / सनातन परम्परा',
+    versesCount: '४० चौपाई • २ दोहे',
+    languages: ['संस्कृत', 'हिन्दी', 'English'],
+    coverTheme: {
+      bgGradient: 'from-[#FF9933] via-[#ff881a] to-[#e67300]',
+      accentColor: '#FF9933',
+      borderColor: 'border-[#FF9933]',
+      emblem: '🔱',
+      sacredHeader: '॥ ॐ नमः शिवाय ॥',
+      spineGradient: 'from-[#8c4300] via-[#b35600] to-[#733700]',
+    },
+    shortSummary: 'देवाधिदेव महादेव शिव शंकर की परम कल्याणकारी चालीसा स्तुति - भय, संताप, रोग-दोष निवारक एवं शिव कृपा प्रदाता।',
+    fullOverview: 'श्री शिव चालीसा भगवान शिव की स्तुति में रचित अत्यंत पावन एवं सिद्ध स्तोत्र है। इसमें देवाधिदेव महादेव के स्वरूप, महिमा, द्वादश ज्योतिर्लिंगों, उनके कल्याणकारी चरित्र और भक्तों पर उनकी अहैतुकी अनुकम्पा का भावपूर्ण गुणगान है। नित्य नियम से प्रातःकाल इसका पाठ करने से समस्त मनोकामनाएँ पूर्ण होती हैं।',
+    sampleChapterTitle: 'आरंभिक दोहा एवं प्रथम चौपाई',
+    sampleVerseSanskrit: 'जय गणेश गिरिजा सुवन, मंगल मूल सुजान ।\nकहत अयोध्यादास तुम, देहु अभय वरदान ॥\n\nजय गिरिजापति दीन दयाला । सदा करत संतन प्रतिपाला ॥',
+    sampleVerseHindi: 'हे माता पार्वती के पुत्र श्री गणेश जी! आप सभी मंगलों के मूल और परम ज्ञानी हैं। अयोध्यादास कहते हैं कि मुझे अभय वरदान दीजिए। हे गिरिजापति, दीनदयालु शिव शम्भू! आपकी जय हो, आप सदा संतों और भक्तों का प्रतिपालन करते हैं।',
+    sampleVerseEnglish: 'Victory to Lord Ganesha, son of Girija (Parvati), the source of all auspiciousness. Ayodhyadas prays for the boon of fearlessness. Victory to the Lord of Girija, the merciful Shiva who ever protects the pious.',
+    readOnlineUrl: '/books/shiv-chalisa',
+    pdfUrl: '/books/shiv-chalisa.pdf',
+    pdfFileName: 'shiv-chalisa.pdf',
+    pdfFileSize: '42 KB',
   },
   {
     id: 'isha-upanishad',

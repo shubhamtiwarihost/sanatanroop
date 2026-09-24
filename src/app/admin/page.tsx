@@ -754,17 +754,49 @@ export default function WordPressAdminPanel() {
       alert('कृपया ग्रंथ का नाम दर्ज करें।');
       return;
     }
+    const normalizedCat =
+      bookForm.category === 'ramayan' || bookForm.category === 'chalisa' || bookForm.category === 'stotra'
+        ? 'itihasa'
+        : bookForm.category === 'upanishad'
+        ? 'upanishads'
+        : bookForm.category === 'purana'
+        ? 'puranas'
+        : bookForm.category === 'darshan'
+        ? 'darshana'
+        : bookForm.category || 'itihasa';
+
+    const defaultLabel =
+      bookForm.titleHi?.includes('चालीसा')
+        ? 'स्तोत्र एवं चालीसा'
+        : normalizedCat === 'itihasa'
+        ? 'इतिहास एवं काव्य'
+        : normalizedCat === 'gita'
+        ? 'श्रीमद्भगवद्गीता'
+        : normalizedCat === 'upanishads'
+        ? 'उपनिषद'
+        : normalizedCat === 'vedas'
+        ? 'चार वेद'
+        : normalizedCat === 'puranas'
+        ? 'महापुराण'
+        : 'सनातन धर्मग्रंथ';
+
+    const categoryLabel = bookForm.categoryLabel?.trim() || defaultLabel;
+
     if (editingBookId) {
-      updateBook(editingBookId, bookForm);
+      updateBook(editingBookId, {
+        ...bookForm,
+        category: normalizedCat as any,
+        categoryLabel,
+      });
       showNotice(`ग्रंथ "${bookForm.titleHi}" अद्यतन (Updated) हो गया।`);
     } else {
       addBook({
         titleHi: bookForm.titleHi,
         titleEn: bookForm.titleEn || bookForm.titleHi,
-        category: bookForm.category || 'gita',
-        categoryLabel: bookForm.categoryLabel || 'श्रीमद्भगवद्गीता',
-        author: bookForm.author || 'महर्षि वेदव्यास',
-        versesCount: bookForm.versesCount || '१०० श्लोक',
+        category: normalizedCat as any,
+        categoryLabel,
+        author: bookForm.author || (bookForm.titleHi?.includes('शिव') ? 'अयोध्यादास / सनातन परम्परा' : 'महर्षि वेदव्यास'),
+        versesCount: bookForm.versesCount || (bookForm.titleHi?.includes('चालीसा') ? '४० चौपाई • २ दोहे' : 'सम्पूर्ण पावन ग्रंथ'),
         colorCode: bookForm.colorCode || '#FF9933',
         shortSummary: bookForm.shortSummary || '',
         fullOverview: bookForm.fullOverview || '',
@@ -6652,16 +6684,21 @@ export default function WordPressAdminPanel() {
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">श्रेणी (Category)</label>
                   <select
-                    value={bookForm.category || 'gita'}
+                    value={bookForm.category || 'itihasa'}
                     onChange={(e) => setBookForm({ ...bookForm, category: e.target.value as any })}
                     className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white focus:border-[#2271b1] focus:outline-none"
                   >
+                    <option value="itihasa">रामायण, महाभारत व काव्य (Itihasa & Epics)</option>
+                    <option value="chalisa">चालीसा व स्तोत्र संग्रह (Chalisas & Stotras)</option>
                     <option value="gita">भगवद्गीता (Gita)</option>
-                    <option value="ramayan">रामायण / रामचरितमानस (Ramayan)</option>
+                    <option value="upanishads">१०८ उपनिषद् (Upanishads)</option>
                     <option value="vedas">चार वेद (Vedas)</option>
-                    <option value="upanishad">१०८ उपनिषद् (Upanishads)</option>
-                    <option value="purana">१८ महापुराण (Puranas)</option>
-                    <option value="darshan">षड्दर्शन (Darshan)</option>
+                    <option value="puranas">१८ महापुराण (Puranas)</option>
+                    <option value="darshana">षड्दर्शन व नीति (Philosophy)</option>
+                    <option value="ramayan">रामायण / रामचरितमानस (Ramayan)</option>
+                    <option value="upanishad">उपनिषद (वैकल्पिक 'upanishad')</option>
+                    <option value="purana">महापुराण (वैकल्पिक 'purana')</option>
+                    <option value="darshan">दर्शन (वैकल्पिक 'darshan')</option>
                   </select>
                 </div>
                 <div>
