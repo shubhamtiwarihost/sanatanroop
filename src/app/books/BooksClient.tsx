@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCMS } from '@/context/CMSContext';
@@ -21,6 +22,23 @@ import {
 
 import { BOOKS_DATA, BookItem } from '@/data/booksData';
 import BookPayModal, { PayBookInfo } from '@/components/BookPayModal';
+
+// Dynamically import BookReader with SSR disabled to prevent Node/canvas issues during static export
+const BookReader = dynamic(() => import('@/components/BookReader'), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 z-50 bg-[#120d0a] flex flex-col items-center justify-center space-y-4">
+      <div className="relative w-16 h-16">
+        <div className="absolute inset-0 rounded-full border-4 border-[#c5a059]/20" />
+        <div className="absolute inset-0 rounded-full border-4 border-[#FF9933] border-t-transparent animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center text-xl animate-pulse">
+          🕉️
+        </div>
+      </div>
+      <p className="text-amber-200 font-serif text-sm">डिजिटल ग्रंथालय प्रारंभ हो रहा है...</p>
+    </div>
+  ),
+});
 
 export type { BookItem };
 export { BOOKS_DATA };
@@ -170,37 +188,33 @@ export default function SpiritualBooksPage() {
   const { books } = useCMS();
   const allBooks = useMemo<BookItem[]>(() => {
     const cmsList = books || [];
-    const cmsMap = new Map(cmsList.map((b) => [b.id, b]));
+    const staticMap = new Map(BOOKS_DATA.map((b) => [b.id, b]));
+    const merged: BookItem[] = [];
 
-    // Start with BOOKS_DATA (static canonical items)
-    const merged: BookItem[] = BOOKS_DATA.map((staticBook) => {
-      const cmsItem = cmsMap.get(staticBook.id);
-      if (!cmsItem) return staticBook;
-      return {
-        ...staticBook,
-        titleHi: cmsItem.titleHi || staticBook.titleHi,
-        titleEn: cmsItem.titleEn || staticBook.titleEn,
-        category: (cmsItem.category as any) || staticBook.category,
-        categoryLabel: cmsItem.categoryLabel || staticBook.categoryLabel,
-        author: cmsItem.author || staticBook.author,
-        versesCount: cmsItem.versesCount || staticBook.versesCount,
-        shortSummary: cmsItem.shortSummary || staticBook.shortSummary,
-        fullOverview: cmsItem.fullOverview || staticBook.fullOverview,
-        pdfUrl: cmsItem.pdfUrl || staticBook.pdfUrl,
-        pdfFileName: cmsItem.pdfFileName || staticBook.pdfFileName,
-        pdfFileSize: cmsItem.pdfFileSize || staticBook.pdfFileSize,
-        readOnlineUrl: cmsItem.readOnlineUrl || staticBook.readOnlineUrl,
-      };
-    });
-
-    // Append/Prepend any custom books created in CMS that aren't in BOOKS_DATA
     for (const cmsItem of cmsList) {
-      if (!BOOKS_DATA.some((s) => s.id === cmsItem.id)) {
+      const staticBook = staticMap.get(cmsItem.id);
+      if (staticBook) {
+        merged.push({
+          ...staticBook,
+          titleHi: cmsItem.titleHi || staticBook.titleHi,
+          titleEn: cmsItem.titleEn || staticBook.titleEn,
+          category: (cmsItem.category as any) || staticBook.category,
+          categoryLabel: cmsItem.categoryLabel || staticBook.categoryLabel,
+          author: cmsItem.author || staticBook.author,
+          versesCount: cmsItem.versesCount || staticBook.versesCount,
+          shortSummary: cmsItem.shortSummary || staticBook.shortSummary,
+          fullOverview: cmsItem.fullOverview || staticBook.fullOverview,
+          pdfUrl: cmsItem.pdfUrl || staticBook.pdfUrl,
+          pdfFileName: cmsItem.pdfFileName || staticBook.pdfFileName,
+          pdfFileSize: cmsItem.pdfFileSize || staticBook.pdfFileSize,
+          readOnlineUrl: cmsItem.readOnlineUrl || staticBook.readOnlineUrl,
+        });
+      } else {
         const isShiva = cmsItem.titleHi?.includes('शिव') || cmsItem.titleEn?.toLowerCase().includes('shiv');
         const isHanuman = cmsItem.titleHi?.includes('हनुमान') || cmsItem.titleEn?.toLowerCase().includes('hanuman');
         const isRam = cmsItem.titleHi?.includes('राम');
 
-        merged.unshift({
+        merged.push({
           id: cmsItem.id,
           titleHi: cmsItem.titleHi,
           titleEn: cmsItem.titleEn || cmsItem.titleHi,
@@ -229,7 +243,7 @@ export default function SpiritualBooksPage() {
           sampleVerseSanskrit: cmsItem.sampleVerseSanskrit || '',
           sampleVerseHindi: cmsItem.sampleVerseHindi || '',
           sampleVerseEnglish: cmsItem.sampleVerseEnglish || '',
-          readOnlineUrl: cmsItem.readOnlineUrl || `/books/${cmsItem.id}`,
+          readOnlineUrl: cmsItem.readOnlineUrl || `/books?read=${cmsItem.id}`,
           pdfUrl: cmsItem.pdfUrl,
           pdfFileName: cmsItem.pdfFileName,
           pdfFileSize: cmsItem.pdfFileSize,
@@ -244,6 +258,58 @@ export default function SpiritualBooksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [previewBook, setPreviewBook] = useState<BookItem | null>(null);
   const [payBook, setPayBook] = useState<PayBookInfo | null>(null);
+  const [activeReaderBook, setActiveReaderBook] = useState<BookItem | null>(null);
+  const [noPdfNoticeBook, setNoPdfNoticeBook] = useState<BookItem | null>(null);
+
+  const handleOpenReader = (book: BookItem) => {
+    if (!book.pdfUrl) {
+      setNoPdfNoticeBook(book);
+      return;
+    }
+    setActiveReaderBook(book);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('read', book.id);
+      window.history.pushState({ bookId: book.id }, '', url.toString());
+    }
+  };
+
+  const handleCloseReader = () => {
+    setActiveReaderBook(null);
+    setNoPdfNoticeBook(null);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('read');
+      const cleanUrl = url.pathname + (url.search ? url.search : '');
+      window.history.pushState({}, '', cleanUrl);
+    }
+  };
+
+  // Sync reader with URL parameter ?read=<bookId>
+  useEffect(() => {
+    const syncFromUrl = () => {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      const readId = params.get('read');
+      if (readId) {
+        const found = allBooks.find((b) => b.id === readId);
+        if (found) {
+          if (found.pdfUrl) {
+            setActiveReaderBook(found);
+          } else {
+            setNoPdfNoticeBook(found);
+          }
+        }
+      } else {
+        setActiveReaderBook(null);
+        setNoPdfNoticeBook(null);
+      }
+    };
+
+    syncFromUrl();
+    window.addEventListener('popstate', syncFromUrl);
+    return () => window.removeEventListener('popstate', syncFromUrl);
+  }, [allBooks]);
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((b) => {
@@ -427,13 +493,13 @@ export default function SpiritualBooksPage() {
                 <div className="pt-4 border-t border-stone-100 dark:border-stone-800/80 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     {/* Primary Button: Read Book */}
-                    <Link
-                      href={`/books/${book.id}`}
+                    <button
+                      onClick={() => handleOpenReader(book)}
                       className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold px-3.5 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
                     >
                       <BookOpen className="w-3.5 h-3.5" />
                       <span>पुस्तक पढ़ें (Read)</span>
-                    </Link>
+                    </button>
 
                     {/* Secondary Button: Download PDF (Opens Pay Modal) */}
                     {book.pdfUrl && (
@@ -554,13 +620,17 @@ export default function SpiritualBooksPage() {
 
             {/* Modal Actions */}
             <div className="pt-4 border-t border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                href={`/books/${previewBook.id}`}
+              <button
+                onClick={() => {
+                  const b = previewBook;
+                  setPreviewBook(null);
+                  handleOpenReader(b);
+                }}
                 className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 px-6 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>डिजिटल ग्रंथालय में पढ़ें (Read Book)</span>
-              </Link>
+              </button>
 
               {previewBook.pdfUrl && (
                 <button
@@ -587,6 +657,69 @@ export default function SpiritualBooksPage() {
         onClose={() => setPayBook(null)}
         book={payBook}
       />
+
+      {/* Dynamic Digital Book Reader Overlay */}
+      {activeReaderBook && activeReaderBook.pdfUrl && (
+        <BookReader
+          book={{
+            id: activeReaderBook.id,
+            titleHi: activeReaderBook.titleHi,
+            titleEn: activeReaderBook.titleEn,
+            author: activeReaderBook.author,
+            description: activeReaderBook.shortSummary || activeReaderBook.fullOverview,
+            pdfUrl: activeReaderBook.pdfUrl,
+            pdfFileName: activeReaderBook.pdfFileName,
+            pdfFileSize: activeReaderBook.pdfFileSize,
+            categoryLabel: activeReaderBook.categoryLabel,
+            versesCount: activeReaderBook.versesCount,
+          }}
+          onClose={handleCloseReader}
+        />
+      )}
+
+      {/* Notice Dialog if book has no PDF attached */}
+      {noPdfNoticeBook && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1c130e] text-white border border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center space-y-4 shadow-2xl relative">
+            <button
+              onClick={handleCloseReader}
+              className="absolute top-4 right-4 text-stone-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mx-auto">
+              🕉️
+            </div>
+            <h3 className="text-xl font-serif font-bold text-amber-200">
+              {noPdfNoticeBook.titleHi}
+            </h3>
+            <p className="text-xs text-stone-400 font-mono">{noPdfNoticeBook.titleEn}</p>
+            <div className="bg-[#241711] border border-[#c5a059]/25 rounded-2xl p-4 text-stone-300 font-serif text-sm leading-relaxed">
+              इस ग्रंथ की मूल हस्तलिखित / पाण्डुलिपि PDF शीघ्र ही डिजिटल रूप में जोड़ी जा रही है।
+              तब तक आप इसका सम्पूर्ण श्लोक पाठ, हिंदी भावार्थ एवं व्याख्या ऑनलाइन पढ़ सकते हैं।
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              {noPdfNoticeBook.readOnlineUrl &&
+                noPdfNoticeBook.readOnlineUrl !== '/books' &&
+                !noPdfNoticeBook.readOnlineUrl.startsWith('/books?read=') && (
+                  <Link
+                    href={noPdfNoticeBook.readOnlineUrl}
+                    className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-serif font-bold px-5 py-2.5 rounded-xl shadow-lg transition text-xs"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    <span>सम्पूर्ण पाठ पढ़ें</span>
+                  </Link>
+                )}
+              <button
+                onClick={handleCloseReader}
+                className="w-full sm:w-auto border border-[#c5a059]/40 bg-[#2b1e17] text-amber-200 hover:text-white px-5 py-2.5 rounded-xl text-xs font-serif transition"
+              >
+                <span>ग्रंथ सूची देखें</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Schema.org Book & ItemList Structured Data */}
       <script

@@ -67,6 +67,13 @@ export default function BookReaderClient({ bookId }: BookReaderClientProps) {
       }
     : null;
 
+  // If book not found statically, redirect to /books?read=bookId to allow CMS localStorage resolution
+  React.useEffect(() => {
+    if (!book && typeof window !== 'undefined') {
+      router.replace(`/books?read=${bookId}`);
+    }
+  }, [book, bookId, router]);
+
   // Book not found
   if (!book) {
     return (

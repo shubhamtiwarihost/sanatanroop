@@ -16,6 +16,13 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   RewriteCond %{HTTP_HOST} ^www\.sanatanroop\.com$ [NC]
   RewriteRule ^(.*)$ https://sanatanroop.com/$1 [L,R=301]
 
+  # Dynamic books fallback for books not pre-rendered statically (e.g. added via admin / CMS)
+  # Redirect /books/<id> or /books/<id>/ to /books/?read=<id>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/books/$1/index.html !-f
+  RewriteRule ^books/([^/]+)/?$ /books/?read=$1 [L,R=302]
+
   # Force trailing slash for existing directories
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteCond %{REQUEST_URI} !(.*)/$

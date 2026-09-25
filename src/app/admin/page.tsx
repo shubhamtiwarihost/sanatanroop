@@ -4263,7 +4263,7 @@ export default function WordPressAdminPanel() {
                                 <span>Edit</span>
                               </button>
                               <Link
-                                href="/books"
+                                href={`/books?read=${book.id}`}
                                 target="_blank"
                                 className="text-stone-600 hover:text-stone-900 font-semibold flex items-center space-x-1"
                                 title="View on website"

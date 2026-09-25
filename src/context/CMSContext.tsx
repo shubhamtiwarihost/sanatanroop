@@ -978,21 +978,13 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
             }
             return item;
           });
-          // Merge any newly introduced defaults (such as aarti-shiv-chalisa) if missing
-          const existingIds = new Set(cleaned.map((a: any) => a.id));
-          const missingDefaults = DEFAULT_CMS_AARTIS.filter((a) => !existingIds.has(a.id));
-          let finalAartis = cleaned;
-          if (missingDefaults.length > 0) {
-            changed = true;
-            finalAartis = [...cleaned, ...missingDefaults];
-          }
 
           if (changed) {
             try {
-              localStorage.setItem('sanatan_cms_aartis', JSON.stringify(finalAartis));
+              localStorage.setItem('sanatan_cms_aartis', JSON.stringify(cleaned));
             } catch (e) {}
           }
-          setAartis(finalAartis);
+          setAartis(cleaned);
         } catch {
           setAartis(DEFAULT_CMS_AARTIS);
         }
@@ -1005,17 +997,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedBooks) {
         try {
           const parsed = JSON.parse(savedBooks);
-          const existingIds = new Set(parsed.map((b: any) => b.id));
-          const missingDefaults = DEFAULT_CMS_BOOKS.filter((b) => !existingIds.has(b.id));
-          if (missingDefaults.length > 0) {
-            const merged = [...parsed, ...missingDefaults];
-            try {
-              localStorage.setItem('sanatan_cms_books', JSON.stringify(merged));
-            } catch (e) {}
-            setBooks(merged);
-          } else {
-            setBooks(parsed);
-          }
+          setBooks(parsed);
         } catch {
           setBooks(DEFAULT_CMS_BOOKS);
         }

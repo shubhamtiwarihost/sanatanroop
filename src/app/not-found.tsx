@@ -1,9 +1,21 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Home, Sparkles, BookOpen, Calendar, ShoppingBag, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      const match = pathname.match(/^\/books\/([^/]+)/);
+      if (match && match[1] && match[1] !== 'index.html') {
+        window.location.replace(`/books/?read=${match[1]}`);
+      }
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#faf8f5] dark:bg-[#120d0a] flex items-center justify-center px-4 py-20 relative overflow-hidden">
       {/* Spiritual background watermark */}
