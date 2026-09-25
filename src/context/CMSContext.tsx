@@ -1007,8 +1007,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       if (savedShlokas) {
         try {
           const parsed = JSON.parse(savedShlokas);
-          let changed = false;
-          const cleaned = parsed.map((item: any) => {
+          const parsedIds = new Set(parsed.map((item: any) => item.id));
+          const missingDefaults = DEFAULT_CMS_SHLOKAS.filter((d) => !parsedIds.has(d.id));
+          let changed = missingDefaults.length > 0;
+          const cleaned = [...parsed, ...missingDefaults].map((item: any) => {
             if (item.id === 'gita-9-22' && (item.youtubeId === '_jVVsBn2Fxc' || !item.youtubeId)) {
               changed = true;
               return { ...item, youtubeId: 'KOCublNlE-U' };
@@ -1024,8 +1026,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
           }
           setShlokas(cleaned);
         } catch {
-          setShlokas(JSON.parse(savedShlokas));
+          setShlokas(DEFAULT_CMS_SHLOKAS);
         }
+      } else {
+        setShlokas(DEFAULT_CMS_SHLOKAS);
       }
 
       const savedTemples = localStorage.getItem('sanatan_cms_temples');

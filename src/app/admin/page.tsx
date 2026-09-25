@@ -24,6 +24,7 @@ import {
   CMSSEOConfig,
 } from '@/context/CMSContext';
 import {
+  ShieldCheck,
   LayoutDashboard,
   Pin,
   FileText,
@@ -87,7 +88,14 @@ import {
 
 export default function WordPressAdminPanel() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login?redirect=/admin');
+    }
+  }, [user, isLoading, router]);
+
   const {
     mantras,
     addMantra,
@@ -1386,6 +1394,33 @@ export default function WordPressAdminPanel() {
       ],
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#1d2327] text-white flex flex-col items-center justify-center space-y-4 font-sans">
+        <RefreshCw className="w-8 h-8 text-amber-500 animate-spin" />
+        <p className="text-sm font-medium text-stone-300">Verifying Admin Credentials...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#1d2327] text-white flex flex-col items-center justify-center space-y-4 font-sans p-6 text-center">
+        <ShieldCheck className="w-12 h-12 text-amber-500" />
+        <h2 className="text-xl font-bold">Admin Authentication Required</h2>
+        <p className="text-sm text-stone-400 max-w-md">
+          Please log in with administrator credentials to access the SanatanRoop Control Panel.
+        </p>
+        <Link
+          href="/login?redirect=/admin"
+          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-md transition"
+        >
+          Go to Sign In
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f0f0f1] text-[#2c3338] font-sans antialiased text-[13px] flex flex-col selection:bg-[#2271b1] selection:text-white">

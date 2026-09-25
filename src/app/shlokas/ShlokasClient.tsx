@@ -516,7 +516,10 @@ export default function ShlokasPage() {
 
   const allShlokas = useMemo<ScriptureShloka[]>(() => {
     if (!shlokas || shlokas.length === 0) return CANONICAL_SHLOKAS;
-    return shlokas.map((s) => {
+    const cmsIds = new Set(shlokas.map((s) => s.id));
+    const missingCanonical = CANONICAL_SHLOKAS.filter((c) => !cmsIds.has(c.id));
+    const combined = [...shlokas, ...missingCanonical];
+    return combined.map((s) => {
       const canonical = CANONICAL_SHLOKAS.find((c) => c.id === s.id);
       const isBroken =
         !s.youtubeId ||
