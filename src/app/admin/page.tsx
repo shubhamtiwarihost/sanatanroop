@@ -91,15 +91,25 @@ export default function WordPressAdminPanel() {
   const router = useRouter();
   const { user, login, logout, isLoading } = useAuth();
 
+  const [adminEmailInput, setAdminEmailInput] = useState('');
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [adminLoginError, setAdminLoginError] = useState('');
+  const [adminLoginSubmitting, setAdminLoginSubmitting] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (mounted && !isLoading && !user) {
-      router.push('/login?redirect=/admin');
+  const handleAdminFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminLoginError('');
+    setAdminLoginSubmitting(true);
+    const res = await login(adminEmailInput, adminPasswordInput);
+    setAdminLoginSubmitting(false);
+    if (!res.success) {
+      setAdminLoginError(res.error || 'अमान्य क्रेडेंशियल (Invalid email or password)');
     }
-  }, [mounted, isLoading, user, router]);
+  };
 
   const {
     mantras,
@@ -1416,18 +1426,59 @@ export default function WordPressAdminPanel() {
           ॐ
         </div>
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold font-serif text-stone-100">SanatanRoop Admin Portal</h2>
-          <p className="text-xs text-stone-400">सुरक्षित प्रशासक प्रवेश • Administrator Access Required</p>
+          <h2 className="text-2xl font-bold font-serif text-stone-100">SanatanRoop Admin Control Panel</h2>
+          <p className="text-xs text-stone-400">सुरक्षित प्रशासक प्रवेश • Secure Admin Login</p>
         </div>
-        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/20 text-stone-300 text-xs text-left space-y-2 max-w-sm">
-          <p className="font-semibold text-amber-400">प्रशासक पहुँच (Admin Access):</p>
-          <p>एडमिन पैनल में प्रवेश करने के लिए कृपया प्रशासक खाते से लॉगिन करें।</p>
-        </div>
+
+        <form onSubmit={handleAdminFormSubmit} className="w-full max-w-sm space-y-4 text-left bg-stone-900/90 p-6 rounded-2xl border border-stone-800 shadow-xl">
+          {adminLoginError && (
+            <div className="p-3 rounded-xl bg-red-950/60 border border-red-800 text-red-300 text-xs font-medium">
+              {adminLoginError}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold text-stone-300 mb-1">
+              ईमेल / Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={adminEmailInput}
+              onChange={(e) => setAdminEmailInput(e.target.value)}
+              placeholder="admin@sanatanroop.com"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-stone-100 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-300 mb-1">
+              पासवर्ड / Password
+            </label>
+            <input
+              type="password"
+              required
+              value={adminPasswordInput}
+              onChange={(e) => setAdminPasswordInput(e.target.value)}
+              placeholder="••••••••"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-stone-100 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={adminLoginSubmitting}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs font-bold shadow-md transition"
+          >
+            {adminLoginSubmitting ? 'सत्यापित किया जा रहा है...' : 'प्रशासक प्रवेश करें (Log In)'}
+          </button>
+        </form>
+
         <Link
-          href="/login?redirect=/admin"
-          className="w-full max-w-sm py-3 px-6 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-lg transition text-center"
+          href="/login"
+          className="text-xs text-amber-400 hover:underline"
         >
-          Sign In to Access Admin Panel →
+          मुख्य लॉगिन पृष्ठ पर जाएँ (Go to Main Login) →
         </Link>
       </div>
     );
