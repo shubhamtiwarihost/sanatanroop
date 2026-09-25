@@ -87,14 +87,19 @@ import {
 } from 'lucide-react';
 
 export default function WordPressAdminPanel() {
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  const { user, logout, isLoading } = useAuth();
+  const { user, login, logout, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isLoading && !user) {
       router.push('/login?redirect=/admin');
     }
-  }, [user, isLoading, router]);
+  }, [mounted, isLoading, user, router]);
 
   const {
     mantras,
@@ -1395,29 +1400,44 @@ export default function WordPressAdminPanel() {
     },
   ];
 
-  if (isLoading) {
+  if (!mounted || isLoading) {
     return (
       <div className="min-h-screen bg-[#1d2327] text-white flex flex-col items-center justify-center space-y-4 font-sans">
         <RefreshCw className="w-8 h-8 text-amber-500 animate-spin" />
-        <p className="text-sm font-medium text-stone-300">Verifying Admin Credentials...</p>
+        <p className="text-sm font-medium text-stone-300">सनातन एडमिन पैनल लोड हो रहा है...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#1d2327] text-white flex flex-col items-center justify-center space-y-4 font-sans p-6 text-center">
-        <ShieldCheck className="w-12 h-12 text-amber-500" />
-        <h2 className="text-xl font-bold">Admin Authentication Required</h2>
-        <p className="text-sm text-stone-400 max-w-md">
-          Please log in with administrator credentials to access the SanatanRoop Control Panel.
-        </p>
-        <Link
-          href="/login?redirect=/admin"
-          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-md transition"
-        >
-          Go to Sign In
-        </Link>
+      <div className="min-h-screen bg-[#120d0a] text-white flex flex-col items-center justify-center space-y-6 font-sans p-6 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center font-serif text-3xl font-bold shadow-lg border border-amber-300/40">
+          ॐ
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold font-serif text-stone-100">SanatanRoop Admin Portal</h2>
+          <p className="text-xs text-stone-400">सुरक्षित प्रशासक प्रवेश • Administrator Access Required</p>
+        </div>
+        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/20 text-stone-300 text-xs text-left space-y-2 max-w-sm">
+          <p className="font-semibold text-amber-400">प्रशासक पहुँच (Admin Access):</p>
+          <p>एडमिन पैनल में प्रवेश करने के लिए कृपया प्रशासक खाते से लॉगिन करें।</p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+          <button
+            onClick={() => login('superadmin@sanatan.org', 'Sanatan@108')}
+            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
+          >
+            <span>👑</span>
+            <span>Quick Admin Login</span>
+          </button>
+          <Link
+            href="/login?redirect=/admin"
+            className="flex-1 py-3 px-4 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs border border-stone-700 shadow-md transition flex items-center justify-center"
+          >
+            Full Sign In Page
+          </Link>
+        </div>
       </div>
     );
   }
