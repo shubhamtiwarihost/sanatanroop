@@ -1423,21 +1423,12 @@ export default function WordPressAdminPanel() {
           <p className="font-semibold text-amber-400">प्रशासक पहुँच (Admin Access):</p>
           <p>एडमिन पैनल में प्रवेश करने के लिए कृपया प्रशासक खाते से लॉगिन करें।</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
-          <button
-            onClick={() => login('superadmin@sanatan.org', 'Sanatan@108')}
-            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
-          >
-            <span>👑</span>
-            <span>Quick Admin Login</span>
-          </button>
-          <Link
-            href="/login?redirect=/admin"
-            className="flex-1 py-3 px-4 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs border border-stone-700 shadow-md transition flex items-center justify-center"
-          >
-            Full Sign In Page
-          </Link>
-        </div>
+        <Link
+          href="/login?redirect=/admin"
+          className="w-full max-w-sm py-3 px-6 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs shadow-lg transition text-center"
+        >
+          Sign In to Access Admin Panel →
+        </Link>
       </div>
     );
   }

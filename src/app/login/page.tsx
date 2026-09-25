@@ -298,47 +298,6 @@ export default function LoginPage() {
                 : 'Create Devotee Account'}
             </button>
           </form>
-
-          {/* 1-Click Role Switcher */}
-          <div className="border-t border-amber-100 dark:border-stone-800 pt-5 space-y-3">
-            <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block text-center">
-              Demo 1-Click Role Logins:
-            </span>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => quickLogin('superadmin@sanatan.org')}
-                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-semibold text-center border border-amber-200/60 transition flex items-center justify-center space-x-1.5"
-              >
-                <span>👑</span>
-                <span>Super Admin</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => quickLogin('contentadmin@sanatan.org')}
-                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-semibold text-center border border-amber-200/60 transition flex items-center justify-center space-x-1.5"
-              >
-                <span>📖</span>
-                <span>Content Admin</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => quickLogin('storeadmin@sanatan.org')}
-                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-semibold text-center border border-amber-200/60 transition flex items-center justify-center space-x-1.5"
-              >
-                <span>🛍️</span>
-                <span>Store Admin</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => quickLogin('seeker@sanatan.org')}
-                className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-semibold text-center border border-amber-200/60 transition flex items-center justify-center space-x-1.5"
-              >
-                <span>🙏</span>
-                <span>Seeker User</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
