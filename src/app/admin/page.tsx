@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { ADMIN_ROLES } from '@/lib/adminAuth';
 import {
   useCMS,
   CMSMantraItem,
@@ -106,7 +107,8 @@ export default function WordPressAdminPanel() {
     setAdminLoginSubmitting(true);
     const res = await login(adminEmailInput, adminPasswordInput);
     setAdminLoginSubmitting(false);
-    if (!res.success) {
+    if (!res.success || !ADMIN_ROLES.includes(res.role || '')) {
+      if (res.success) logout();
       setAdminLoginError(res.error || 'अमान्य क्रेडेंशियल (Invalid email or password)');
     }
   };
@@ -1419,7 +1421,7 @@ export default function WordPressAdminPanel() {
     );
   }
 
-  if (!user) {
+  if (!user || !ADMIN_ROLES.includes(user.role)) {
     return (
       <div className="min-h-screen bg-[#120d0a] text-white flex flex-col items-center justify-center space-y-6 font-sans p-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 text-white flex items-center justify-center font-serif text-3xl font-bold shadow-lg border border-amber-300/40">

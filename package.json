@@ -11,6 +11,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:seed": "tsx prisma/seed.ts",
+    "admin:set-password": "node scripts/set-admin-password.mjs",
     "test:i18n": "tsx scripts/validate-i18n.ts",
     "test": "tsx scripts/run-all-tests.ts"
   },

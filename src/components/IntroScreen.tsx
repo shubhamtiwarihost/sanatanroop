@@ -15,9 +15,7 @@ export default function IntroScreen() {
   const [animStage, setAnimStage] = useState(0);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
+  const isAdminRoute = pathname?.startsWith('/admin');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -73,7 +71,7 @@ export default function IntroScreen() {
     }, 500);
   };
 
-  if (!visible) return null;
+  if (isAdminRoute || !visible) return null;
 
   return (
     <div

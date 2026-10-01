@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { ADMIN_ROLES, ADMIN_SESSION_TOKEN, verifyAdminCredentials } from '@/lib/adminAuth';
 
 export interface AuthUser {
   id: string;
@@ -14,7 +15,7 @@ interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
   isLoading: boolean;
-  login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, pass: string) => Promise<{ success: boolean; error?: string; role?: string }>;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
 }
@@ -32,8 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== 'undefined') {
           const localSaved = localStorage.getItem('sanatan_auth_user');
           if (localSaved) {
-            setUser(JSON.parse(localSaved));
-            setToken(localStorage.getItem('auth_token') || 'demo-token');
+            const savedUser = JSON.parse(localSaved);
+            const savedToken = localStorage.getItem('auth_token');
+            // Admin sessions are only valid if created by a verified admin login
+            if (ADMIN_ROLES.includes(savedUser?.role) && savedToken !== ADMIN_SESSION_TOKEN) {
+              localStorage.removeItem('sanatan_auth_user');
+              localStorage.removeItem('auth_token');
+              setIsLoading(false);
+              return;
+            }
+            setUser(savedUser);
+            setToken(savedToken || 'demo-token');
             setIsLoading(false);
             return;
           }
@@ -76,25 +86,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem('sanatan_auth_user', JSON.stringify(data.user));
           localStorage.setItem('auth_token', data.token);
         }
-        return { success: true };
+        return { success: true, role: data.user?.role };
       }
     } catch {
       // Backend route unavailable in static mode
     }
 
-    // Static / demo mode fallback login
-    let role = 'SEEKER';
-    let name = email.split('@')[0] || 'Sanatan Seeker';
-    if (email.includes('superadmin') || email.includes('admin') || email === 'superadmin@sanatan.org') {
-      role = 'SUPER_ADMIN';
-      name = 'Shubham Tiwari (Super Admin)';
-    } else if (email.includes('content')) {
-      role = 'CONTENT_ADMIN';
-      name = 'Acharya Vidyadhar';
-    } else if (email.includes('store')) {
-      role = 'STORE_ADMIN';
-      name = 'Govind Das';
-    }
+    // Static mode fallback login: admin role only for verified admin credentials
+    const isAdmin = await verifyAdminCredentials(email, pass);
+    const role = isAdmin ? 'SUPER_ADMIN' : 'SEEKER';
+    const name = isAdmin ? 'Shubham Tiwari (Super Admin)' : email.split('@')[0] || 'Sanatan Seeker';
+    const sessionToken = isAdmin ? ADMIN_SESSION_TOKEN : 'demo-token-108';
 
     const mockUser: AuthUser = {
       id: `usr-${Date.now()}`,
@@ -105,12 +107,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     setUser(mockUser);
-    setToken('demo-token-108');
+    setToken(sessionToken);
     if (typeof window !== 'undefined') {
       localStorage.setItem('sanatan_auth_user', JSON.stringify(mockUser));
-      localStorage.setItem('auth_token', 'demo-token-108');
+      localStorage.setItem('auth_token', sessionToken);
     }
-    return { success: true };
+    return { success: true, role };
   };
 
   const logout = () => {
