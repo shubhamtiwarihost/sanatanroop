@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import ArticleDetailClient from './ArticleDetailClient';
+// Renders the full post for this slug (shared with /blog/<slug>)
+import BlogDetailClient from '../../blog/[slug]/BlogDetailClient';
 
 interface Props {
   params: { slug: string };
@@ -206,7 +207,7 @@ export default function ArticleDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsLd) }}
       />
-      <ArticleDetailClient />
+      <BlogDetailClient />
     </>
   );
 }

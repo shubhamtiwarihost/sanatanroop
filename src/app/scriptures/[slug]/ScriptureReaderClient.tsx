@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useCMS } from '@/context/CMSContext';
@@ -32,7 +32,6 @@ import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
 
 export default function ScriptureReaderClient() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const slug = (params?.slug as string) || 'bhagavad-gita';
   const { locale, setLocale, t } = useLanguage();
   const { books } = useCMS();
@@ -59,6 +58,8 @@ export default function ScriptureReaderClient() {
     const staticData = SCRIPTURES_STATIC_DATA[slug] || SCRIPTURES_STATIC_DATA['bhagavad-gita'];
     if (staticData) {
       setScripture(staticData);
+      // Read the query on the client only, so the page itself is fully pre-rendered for search engines
+      const searchParams = new URLSearchParams(window.location.search);
       const qCh = searchParams.get('chapter');
       const qV = searchParams.get('verse');
       if (qCh && staticData.chapters) {
@@ -76,7 +77,7 @@ export default function ScriptureReaderClient() {
         }
       }
     }
-  }, [slug, searchParams]);
+  }, [slug]);
 
   useEffect(() => {
     const saved = localStorage.getItem('sanatan_saved_verses');

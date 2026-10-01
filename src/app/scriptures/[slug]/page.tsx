@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import ScriptureReaderClient from './ScriptureReaderClient';
+import { SCRIPTURES_STATIC_DATA } from '@/data/scripturesStaticData';
 
 interface Props {
   params: { slug: string };
@@ -157,6 +157,7 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function ScriptureReaderPage({ params }: Props) {
+  const scripture = SCRIPTURES_STATIC_DATA[params.slug];
   const meta = SCRIPTURE_METADATA[params.slug];
 
   const jsonLd = meta
@@ -216,15 +217,43 @@ export default function ScriptureReaderPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsLd) }}
       />
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-[#faf8f5] p-8 text-center font-serif text-stone-600">
-            Loading Scripture...
+      <ScriptureReaderClient />
+      {scripture && (
+        <section className="bg-[#faf8f5] dark:bg-[#120d0a] border-t border-amber-200/60 dark:border-stone-800 px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-4xl mx-auto space-y-10 font-serif">
+            <header className="space-y-3">
+              <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">
+                {scripture.titleHi} — सम्पूर्ण पाठ, हिंदी अर्थ सहित ({scripture.titleEn})
+              </h1>
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{scripture.descriptionHi}</p>
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{scripture.descriptionEn}</p>
+            </header>
+            {scripture.chapters.map((chapter) => (
+              <article key={chapter.id} className="space-y-4">
+                <h2 className="text-xl font-bold text-amber-800 dark:text-amber-400">
+                  {chapter.titleHi} <span className="text-sm font-normal text-stone-500">({chapter.titleEn})</span>
+                </h2>
+                <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{chapter.summaryHi}</p>
+                {chapter.verses.map((verse) => (
+                  <div key={verse.id} className="space-y-2 border-l-2 border-amber-300/70 pl-4">
+                    <h3 className="text-xs font-bold text-stone-500">श्लोक {chapter.chapterNumber}.{verse.verseNumber}</h3>
+                    <p lang="sa" className="text-base text-stone-900 dark:text-stone-100 whitespace-pre-line leading-relaxed">
+                      {verse.sanskritText}
+                    </p>
+                    <p className="text-xs italic text-stone-500 whitespace-pre-line">{verse.transliteration}</p>
+                    <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+                      <strong>हिंदी अर्थ:</strong> {verse.translationHi}
+                    </p>
+                    <p lang="en" className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+                      <strong>Meaning:</strong> {verse.translationEn}
+                    </p>
+                  </div>
+                ))}
+              </article>
+            ))}
           </div>
-        }
-      >
-        <ScriptureReaderClient />
-      </Suspense>
+        </section>
+      )}
     </>
   );
 }

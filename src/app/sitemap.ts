@@ -10,7 +10,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const sections = [
-    'scriptures',
     'shlokas',
     'aartis',
     'kathas',
@@ -23,7 +22,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'videos',
     'articles',
     'blog',
-    'store',
     'ai-guide',
     'community',
     'about',
