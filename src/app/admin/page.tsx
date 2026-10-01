@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
+import { CMS_SYNC_ERROR_EVENT, pushCmsValue, uploadPdf } from '@/lib/cmsSync';
 import {
   useCMS,
   CMSMantraItem,
@@ -728,7 +729,7 @@ export default function WordPressAdminPanel() {
     setBookModalOpen(true);
   };
 
-  const handlePdfFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -753,6 +754,15 @@ export default function WordPressAdminPanel() {
         setPdfUploadLoading(false);
         return;
       }
+    }
+
+    // Store the PDF on the server so every visitor can open it
+    const uploadedUrl = await uploadPdf(file);
+    if (uploadedUrl) {
+      setBookForm((prev) => ({ ...prev, pdfUrl: uploadedUrl, pdfFileName: file.name, pdfFileSize: fileSizeStr }));
+      setPdfUploadLoading(false);
+      showNotice(`PDF फाइल "${file.name}" (${fileSizeStr}) सर्वर पर सफलतापूर्वक अपलोड हो गई।`);
+      return;
     }
 
     const reader = new FileReader();
@@ -1153,6 +1163,12 @@ export default function WordPressAdminPanel() {
     setNoticeMessage(msg);
     setTimeout(() => setNoticeMessage(null), 4000);
   };
+
+  useEffect(() => {
+    const onSyncError = (e: Event) => showNotice((e as CustomEvent<string>).detail);
+    window.addEventListener(CMS_SYNC_ERROR_EVENT, onSyncError);
+    return () => window.removeEventListener(CMS_SYNC_ERROR_EVENT, onSyncError);
+  }, []);
 
   // Quick Draft Save
   const handleSaveQuickDraft = (e: React.FormEvent) => {
@@ -4056,6 +4072,7 @@ export default function WordPressAdminPanel() {
                       onClick={() => {
                         try {
                           localStorage.setItem('sanatan_live_festival', JSON.stringify(liveFestivalConfig));
+                          pushCmsValue('sanatan_live_festival', liveFestivalConfig);
                           window.dispatchEvent(new Event('sanatan_live_festival_updated'));
                           showNotice('Live Festival settings updated & synchronized successfully.');
                         } catch (e) {

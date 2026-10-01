@@ -1,6 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { fetchRemoteCms, getAdminToken, isServerToken, isSyncedKey, pushCmsValue, resetRemoteCms } from '@/lib/cmsSync';
+
+// Save locally and (for a logged-in admin) to the server so all visitors see it
+function persistCms(key: string, value: unknown) {
+  localStorage.setItem(key, JSON.stringify(value));
+  pushCmsValue(key, value);
+}
 import {
   CMSAartiItem,
   CMSKathaChapter,
@@ -888,6 +896,7 @@ export const DEFAULT_SEO_CONFIG: CMSSEOConfig = {
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export function CMSProvider({ children }: { children: React.ReactNode }) {
+  const { token } = useAuth();
   const [blocks, setBlocks] = useState<PageBlock[]>(DEFAULT_BLOCKS);
   const [headerMenu, setHeaderMenu] = useState<CMSMenuItem[]>(DEFAULT_MENU_ITEMS);
   const [siteIdentity, setSiteIdentity] = useState({
@@ -931,16 +940,17 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     borderRadius: '1rem',
   });
 
-  // Load from LocalStorage once on mount
-  useEffect(() => {
+  // Load from LocalStorage; server values (when given) take precedence
+  const loadFromStorage = (remote?: Record<string, string>) => {
+    const read = (key: string) => remote?.[key] ?? localStorage.getItem(key);
     try {
-      const savedBlocks = localStorage.getItem('hindu_dharma_cms_blocks');
+      const savedBlocks = read('hindu_dharma_cms_blocks');
       if (savedBlocks) setBlocks(JSON.parse(savedBlocks));
 
-      const savedMenu = localStorage.getItem('hindu_dharma_cms_menu');
+      const savedMenu = read('hindu_dharma_cms_menu');
       if (savedMenu) setHeaderMenu(JSON.parse(savedMenu));
 
-      const savedIdentity = localStorage.getItem('hindu_dharma_cms_identity');
+      const savedIdentity = read('hindu_dharma_cms_identity');
       if (savedIdentity) {
         const parsed = JSON.parse(savedIdentity);
         if (parsed.announcementText && parsed.announcementText.includes('SHUBH25')) {
@@ -951,10 +961,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         setSiteIdentity(parsed);
       }
 
-      const savedMantras = localStorage.getItem('hindu_dharma_cms_mantras');
+      const savedMantras = read('hindu_dharma_cms_mantras');
       if (savedMantras) setMantras(JSON.parse(savedMantras));
 
-      const savedAartis = localStorage.getItem('sanatan_cms_aartis');
+      const savedAartis = read('sanatan_cms_aartis');
       if (savedAartis) {
         try {
           const parsed = JSON.parse(savedAartis);
@@ -990,10 +1000,10 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const savedKathas = localStorage.getItem('sanatan_cms_kathas');
+      const savedKathas = read('sanatan_cms_kathas');
       if (savedKathas) setKathas(JSON.parse(savedKathas));
 
-      const savedBooks = localStorage.getItem('sanatan_cms_books');
+      const savedBooks = read('sanatan_cms_books');
       if (savedBooks) {
         try {
           const parsed = JSON.parse(savedBooks);
@@ -1003,7 +1013,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const savedShlokas = localStorage.getItem('sanatan_cms_shlokas');
+      const savedShlokas = read('sanatan_cms_shlokas');
       if (savedShlokas) {
         try {
           const parsed = JSON.parse(savedShlokas);
@@ -1032,16 +1042,16 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         setShlokas(DEFAULT_CMS_SHLOKAS);
       }
 
-      const savedTemples = localStorage.getItem('sanatan_cms_temples');
+      const savedTemples = read('sanatan_cms_temples');
       if (savedTemples) setTemples(JSON.parse(savedTemples));
 
-      const savedFestivals = localStorage.getItem('sanatan_cms_festivals');
+      const savedFestivals = read('sanatan_cms_festivals');
       if (savedFestivals) setFestivals(JSON.parse(savedFestivals));
 
-      const savedDeities = localStorage.getItem('sanatan_cms_deities');
+      const savedDeities = read('sanatan_cms_deities');
       if (savedDeities) setDeities(JSON.parse(savedDeities));
 
-      const savedVideos = localStorage.getItem('sanatan_cms_videos');
+      const savedVideos = read('sanatan_cms_videos');
       if (savedVideos) {
         try {
           const parsed = JSON.parse(savedVideos);
@@ -1086,30 +1096,64 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      const savedSEO = localStorage.getItem('sanatan_cms_seo');
+      const savedSEO = read('sanatan_cms_seo');
       if (savedSEO) setSeoConfig(JSON.parse(savedSEO));
 
-      const savedProducts = localStorage.getItem('hindu_dharma_cms_products');
+      const savedProducts = read('hindu_dharma_cms_products');
       if (savedProducts) setProducts(JSON.parse(savedProducts));
 
-      const savedArticles = localStorage.getItem('hindu_dharma_cms_articles');
+      const savedArticles = read('hindu_dharma_cms_articles');
       if (savedArticles) setArticles(JSON.parse(savedArticles));
 
-      const savedOrders = localStorage.getItem('hindu_dharma_cms_orders');
+      const savedOrders = read('hindu_dharma_cms_orders');
       if (savedOrders) setOrders(JSON.parse(savedOrders));
 
-      const savedPanchang = localStorage.getItem('hindu_dharma_cms_panchang');
+      const savedPanchang = read('hindu_dharma_cms_panchang');
       if (savedPanchang) setPanchangConfig(JSON.parse(savedPanchang));
 
-      const savedVibrations = localStorage.getItem('hindu_dharma_cms_divine_vibrations');
+      const savedVibrations = read('hindu_dharma_cms_divine_vibrations');
       if (savedVibrations) setDivineVibrations(JSON.parse(savedVibrations));
 
-      const savedTheme = localStorage.getItem('hindu_dharma_cms_theme');
+      const savedTheme = read('hindu_dharma_cms_theme');
       if (savedTheme) setThemeSettings(JSON.parse(savedTheme));
     } catch (e) {
       console.warn('Could not load CMS storage', e);
     }
+  };
+
+  // On mount: show local copy immediately, then apply shared content from the server
+  useEffect(() => {
+    loadFromStorage();
+    let cancelled = false;
+    fetchRemoteCms().then((remote) => {
+      if (cancelled || !remote) return;
+      for (const [key, value] of Object.entries(remote)) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (e) {}
+      }
+      loadFromStorage(remote);
+      window.dispatchEvent(new Event('sanatan_live_festival_updated'));
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  // After admin login: upload edits that exist only in this browser (made before server sync existed)
+  useEffect(() => {
+    if (!isServerToken(token)) return;
+    fetchRemoteCms().then((remote) => {
+      if (!remote) return;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !isSyncedKey(key) || key in remote) continue;
+        try {
+          pushCmsValue(key, JSON.parse(localStorage.getItem(key) || 'null'));
+        } catch (e) {}
+      }
+    });
+  }, [token]);
 
   // Cross-Tab Real-time Synchronization
   useEffect(() => {
@@ -1146,7 +1190,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveBlocks = (newBlocks: PageBlock[]) => {
     setBlocks(newBlocks);
     try {
-      localStorage.setItem('hindu_dharma_cms_blocks', JSON.stringify(newBlocks));
+      persistCms('hindu_dharma_cms_blocks', newBlocks);
     } catch (e) {}
   };
 
@@ -1201,7 +1245,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveMenu = (newMenu: CMSMenuItem[]) => {
     setHeaderMenu(newMenu);
     try {
-      localStorage.setItem('hindu_dharma_cms_menu', JSON.stringify(newMenu));
+      persistCms('hindu_dharma_cms_menu', newMenu);
     } catch (e) {}
   };
 
@@ -1225,7 +1269,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = { ...siteIdentity, ...data };
     setSiteIdentity(updated);
     try {
-      localStorage.setItem('hindu_dharma_cms_identity', JSON.stringify(updated));
+      persistCms('hindu_dharma_cms_identity', updated);
     } catch (e) {}
   };
 
@@ -1233,7 +1277,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveMantras = (items: CMSMantraItem[]) => {
     setMantras(items);
     try {
-      localStorage.setItem('hindu_dharma_cms_mantras', JSON.stringify(items));
+      persistCms('hindu_dharma_cms_mantras', items);
     } catch (e) {}
   };
 
@@ -1260,7 +1304,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveAartis = (items: CMSAartiItem[]) => {
     setAartis(items);
     try {
-      localStorage.setItem('sanatan_cms_aartis', JSON.stringify(items));
+      persistCms('sanatan_cms_aartis', items);
     } catch (e) {}
   };
 
@@ -1286,7 +1330,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveKathas = (items: CMSKathaItem[]) => {
     setKathas(items);
     try {
-      localStorage.setItem('sanatan_cms_kathas', JSON.stringify(items));
+      persistCms('sanatan_cms_kathas', items);
     } catch (e) {}
   };
 
@@ -1312,7 +1356,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveBooks = (items: CMSBookItem[]) => {
     setBooks(items);
     try {
-      localStorage.setItem('sanatan_cms_books', JSON.stringify(items));
+      persistCms('sanatan_cms_books', items);
     } catch (e) {}
   };
 
@@ -1338,7 +1382,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveShlokas = (items: CMSShlokaItem[]) => {
     setShlokas(items);
     try {
-      localStorage.setItem('sanatan_cms_shlokas', JSON.stringify(items));
+      persistCms('sanatan_cms_shlokas', items);
     } catch (e) {}
   };
 
@@ -1364,7 +1408,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveProducts = (items: CMSProductItem[]) => {
     setProducts(items);
     try {
-      localStorage.setItem('hindu_dharma_cms_products', JSON.stringify(items));
+      persistCms('hindu_dharma_cms_products', items);
     } catch (e) {}
   };
 
@@ -1390,7 +1434,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveArticles = (items: CMSArticleItem[]) => {
     setArticles(items);
     try {
-      localStorage.setItem('hindu_dharma_cms_articles', JSON.stringify(items));
+      persistCms('hindu_dharma_cms_articles', items);
     } catch (e) {}
   };
 
@@ -1429,7 +1473,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = [newOrder, ...orders];
     setOrders(updated);
     try {
-      localStorage.setItem('hindu_dharma_cms_orders', JSON.stringify(updated));
+      persistCms('hindu_dharma_cms_orders', updated);
     } catch (e) {}
   };
 
@@ -1437,7 +1481,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = orders.map((o) => (o.id === id ? { ...o, fulfillmentStatus } : o));
     setOrders(updated);
     try {
-      localStorage.setItem('hindu_dharma_cms_orders', JSON.stringify(updated));
+      persistCms('hindu_dharma_cms_orders', updated);
     } catch (e) {}
   };
 
@@ -1459,7 +1503,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setPanchangConfig((prev) => {
       const next = { ...prev, ...data, lastUpdated: new Date().toISOString() };
       try {
-        localStorage.setItem('hindu_dharma_cms_panchang', JSON.stringify(next));
+        persistCms('hindu_dharma_cms_panchang', next);
       } catch (e) {}
       return next;
     });
@@ -1470,12 +1514,13 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = { ...themeSettings, ...data };
     setThemeSettings(updated);
     try {
-      localStorage.setItem('hindu_dharma_cms_theme', JSON.stringify(updated));
+      persistCms('hindu_dharma_cms_theme', updated);
     } catch (e) {}
   };
 
   const resetToDefaults = () => {
     try {
+      resetRemoteCms(getAdminToken());
       localStorage.clear();
     } catch (e) {}
     setBlocks(DEFAULT_BLOCKS);
@@ -1500,7 +1545,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveTemples = (items: StaticTemple[]) => {
     setTemples(items);
     try {
-      localStorage.setItem('sanatan_cms_temples', JSON.stringify(items));
+      persistCms('sanatan_cms_temples', items);
     } catch (e) {}
   };
 
@@ -1526,7 +1571,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveFestivals = (items: StaticFestival[]) => {
     setFestivals(items);
     try {
-      localStorage.setItem('sanatan_cms_festivals', JSON.stringify(items));
+      persistCms('sanatan_cms_festivals', items);
     } catch (e) {}
   };
 
@@ -1552,7 +1597,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveDeities = (items: StaticDeity[]) => {
     setDeities(items);
     try {
-      localStorage.setItem('sanatan_cms_deities', JSON.stringify(items));
+      persistCms('sanatan_cms_deities', items);
     } catch (e) {}
   };
 
@@ -1578,7 +1623,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const saveVideos = (items: CMSVideoItem[]) => {
     setVideos(items);
     try {
-      localStorage.setItem('sanatan_cms_videos', JSON.stringify(items));
+      persistCms('sanatan_cms_videos', items);
     } catch (e) {}
   };
 
@@ -1605,7 +1650,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setSeoConfig((prev) => {
       const next = { ...prev, ...data };
       try {
-        localStorage.setItem('sanatan_cms_seo', JSON.stringify(next));
+        persistCms('sanatan_cms_seo', next);
       } catch (e) {}
       return next;
     });
@@ -1616,7 +1661,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setDivineVibrations((prev) => {
       const next = { ...prev, ...data, lastUpdated: new Date().toISOString() };
       try {
-        localStorage.setItem('hindu_dharma_cms_divine_vibrations', JSON.stringify(next));
+        persistCms('hindu_dharma_cms_divine_vibrations', next);
       } catch (e) {}
       return next;
     });
@@ -1627,7 +1672,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       const updatedTracks = prev.tracks.map((t) => (t.id === id ? { ...t, ...trackData } : t));
       const next = { ...prev, tracks: updatedTracks, lastUpdated: new Date().toISOString() };
       try {
-        localStorage.setItem('hindu_dharma_cms_divine_vibrations', JSON.stringify(next));
+        persistCms('hindu_dharma_cms_divine_vibrations', next);
       } catch (e) {}
       return next;
     });
@@ -1641,7 +1686,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setDivineVibrations((prev) => {
       const next = { ...prev, tracks: [newTrack, ...prev.tracks], lastUpdated: new Date().toISOString() };
       try {
-        localStorage.setItem('hindu_dharma_cms_divine_vibrations', JSON.stringify(next));
+        persistCms('hindu_dharma_cms_divine_vibrations', next);
       } catch (e) {}
       return next;
     });
@@ -1651,7 +1696,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     setDivineVibrations((prev) => {
       const next = { ...prev, tracks: prev.tracks.filter((t) => t.id !== id), lastUpdated: new Date().toISOString() };
       try {
-        localStorage.setItem('hindu_dharma_cms_divine_vibrations', JSON.stringify(next));
+        persistCms('hindu_dharma_cms_divine_vibrations', next);
       } catch (e) {}
       return next;
     });
