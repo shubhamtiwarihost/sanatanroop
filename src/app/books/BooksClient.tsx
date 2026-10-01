@@ -503,10 +503,10 @@ export default function SpiritualBooksPage() {
                       <button
                         onClick={() => setPayBook(book)}
                         className="inline-flex items-center space-x-1 bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2.5 rounded-xl text-xs font-serif shadow-md transition transform hover:-translate-y-0.5"
-                        title="PDF डाउनलोड करें (₹20 / $5)"
+                        title="PDF खरीदें (Buy PDF)"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        <span>PDF (₹20)</span>
+                        <span>PDF खरीदें</span>
                       </button>
                     )}
                   </div>
@@ -639,7 +639,7 @@ export default function SpiritualBooksPage() {
                   className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold font-serif shadow-md transition inline-flex items-center space-x-1.5"
                 >
                   <Download className="w-4 h-4" />
-                  <span>PDF डाउनलोड करें (₹20 / $5)</span>
+                  <span>PDF खरीदें (Buy PDF)</span>
                 </button>
               )}
             </div>
@@ -648,7 +648,7 @@ export default function SpiritualBooksPage() {
         </div>
       )}
 
-      {/* Pay & Download Modal (₹20 / $5 with UPI & QR methods) */}
+      {/* Buy PDF modal (links to the e-book store) */}
       <BookPayModal
         isOpen={!!payBook}
         onClose={() => setPayBook(null)}

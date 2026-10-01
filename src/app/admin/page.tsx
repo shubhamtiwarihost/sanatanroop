@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
 import PostEditor, { PostFormData } from '@/components/admin/PostEditor';
+import EbookStore from '@/components/admin/EbookStore';
 import { CMS_SYNC_ERROR_EVENT, pushCmsValue, uploadFile } from '@/lib/cmsSync';
 import {
   useCMS,
@@ -1340,6 +1341,13 @@ export default function WordPressAdminPanel() {
         { id: 'reports', label: 'Reports' },
         { id: 'woo-settings', label: 'Settings' },
       ],
+    },
+    {
+      id: 'ebooks',
+      label: 'E-Book Store',
+      icon: BookOpen,
+      badge: null,
+      subItems: [],
     },
     {
       id: 'products',
@@ -3411,6 +3419,8 @@ export default function WordPressAdminPanel() {
           {/* =========================================================================
               VIEW 4: WOOCOMMERCE / PRODUCTS
           ========================================================================= */}
+          {currentSection === 'ebooks' && <EbookStore onNotice={showNotice} />}
+
           {currentSection === 'products' && (
             <div className="space-y-4">
               <div className="flex items-center space-x-3 pb-1">

@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'aartis',
     'kathas',
     'books',
+    'ebooks',
     'calendar',
     'festivals',
     'deities',

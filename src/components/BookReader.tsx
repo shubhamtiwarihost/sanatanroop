@@ -371,15 +371,15 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
 
-          {/* Download Button (₹20 / $5 Payment Modal) */}
+          {/* Buy PDF button */}
           {book.pdfUrl && (
             <button
               onClick={() => setIsPayOpen(true)}
               className="p-2 rounded-lg border border-amber-500/50 bg-gradient-to-r from-amber-900/60 to-orange-950/60 hover:from-amber-800/80 hover:to-orange-900/80 text-amber-200 transition hidden md:inline-flex items-center space-x-1.5 shadow-sm"
-              title="PDF डाउनलोड करें (₹20 / $5)"
+              title="PDF खरीदें (Buy PDF)"
             >
               <Download className="w-4 h-4 text-amber-300" />
-              <span className="text-[11px] font-serif font-bold hidden xl:inline">PDF (₹20)</span>
+              <span className="text-[11px] font-serif font-bold hidden xl:inline">PDF खरीदें</span>
             </button>
           )}
 
