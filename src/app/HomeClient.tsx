@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { customPublishedPosts, postUrl } from '@/lib/posts';
 import Image from 'next/image';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
@@ -122,7 +123,7 @@ export default function HomePage() {
   ];
 
   // Latest Articles
-  const latestArticles = [
+  const staticLatestArticles = [
     {
       id: 'a1',
       title: 'Meditation: The Path to Inner Peace',
@@ -145,6 +146,17 @@ export default function HomePage() {
       slug: 'life-lessons-from-bhagavad-gita',
     },
   ];
+  // Newest admin-written posts first
+  const latestArticles = [
+    ...customPublishedPosts(cmsArticles).map((a) => ({
+      id: a.id,
+      title: a.title,
+      date: a.publishedDate,
+      img: a.image,
+      href: postUrl(a),
+    })),
+    ...staticLatestArticles.map((a) => ({ ...a, href: `/articles/${a.slug}` })),
+  ].slice(0, 3);
 
   // Dynamic Live Date values for Panchang Card (auto-updates daily)
   const today = new Date();
@@ -566,7 +578,7 @@ export default function HomePage() {
               {latestArticles.map((art) => (
                 <Link
                   key={art.id}
-                  href={`/articles/${art.slug}`}
+                  href={art.href}
                   className="bg-white dark:bg-[#1a1411] rounded-2xl overflow-hidden border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group flex flex-col justify-between"
                 >
                   <div className="w-full h-36 relative overflow-hidden bg-stone-100">

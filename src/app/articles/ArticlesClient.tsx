@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Search, ArrowRight, Calendar } from 'lucide-react';
+import { useCMS } from '@/context/CMSContext';
+import { customPublishedPosts, postUrl } from '@/lib/posts';
 
 export default function ArticlesPage() {
   const { locale, t } = useLanguage();
@@ -21,7 +23,9 @@ export default function ArticlesPage() {
     'Lifestyle',
   ];
 
-  const articles = [
+  const { articles: cmsArticles } = useCMS();
+
+  const staticArticles = [
     {
       id: 'a1',
       title: 'Meditation: The Path to Inner Peace',
@@ -96,6 +100,20 @@ export default function ArticlesPage() {
     },
   ];
 
+  // Posts written in the admin come first, then the built-in articles
+  const articles = [
+    ...customPublishedPosts(cmsArticles).map((a) => ({
+      id: a.id,
+      title: a.title,
+      date: a.publishedDate,
+      category: a.category,
+      slug: a.slug,
+      img: a.image,
+      href: postUrl(a),
+    })),
+    ...staticArticles.map((a) => ({ ...a, href: `/articles/${a.slug}` })),
+  ];
+
   const filteredArticles = articles.filter((art) => {
     const matchesCategory =
       activeCategory === 'All' || art.category.toLowerCase() === activeCategory.toLowerCase();
@@ -163,7 +181,7 @@ export default function ArticlesPage() {
           {filteredArticles.slice(0, visibleCount).map((art) => (
             <Link
               key={art.id}
-              href={`/articles/${art.slug}`}
+              href={art.href}
               className="bg-white dark:bg-[#1a1411] rounded-2xl overflow-hidden border border-stone-200/90 dark:border-stone-800 shadow-sm hover:shadow-md transition group flex flex-col justify-between"
             >
               <div className="w-full h-48 relative overflow-hidden bg-stone-100">

@@ -23,6 +23,12 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   RewriteCond %{DOCUMENT_ROOT}/books/$1/index.html !-f
   RewriteRule ^books/([^/]+)/?$ /books/?read=$1 [L,R=302]
 
+  # Posts written in the admin have no pre-built page; send them to the dynamic post viewer
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/$1/$2/index.html !-f
+  RewriteRule ^(articles|blog)/([^/]+)/?$ /articles/post/?slug=$2 [L,R=302]
+
   # Force trailing slash for existing directories
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteCond %{REQUEST_URI} !(.*)/$

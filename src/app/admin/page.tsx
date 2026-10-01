@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
-import { CMS_SYNC_ERROR_EVENT, pushCmsValue, uploadPdf } from '@/lib/cmsSync';
+import PostEditor, { PostFormData } from '@/components/admin/PostEditor';
+import { CMS_SYNC_ERROR_EVENT, pushCmsValue, uploadFile } from '@/lib/cmsSync';
 import {
   useCMS,
   CMSMantraItem,
@@ -87,6 +88,21 @@ import {
   Film,
   Play,
 } from 'lucide-react';
+
+const EMPTY_POST: PostFormData = {
+  title: '',
+  slug: '',
+  excerpt: '',
+  author: 'Shubham Tiwari',
+  category: 'Philosophy',
+  readingTime: '1 min read',
+  image: '/images/article_meditation.jpg',
+  status: 'Draft',
+  content: '',
+  tags: [],
+  seoTitle: '',
+  seoDescription: '',
+};
 
 export default function WordPressAdminPanel() {
   const [mounted, setMounted] = useState(false);
@@ -226,18 +242,7 @@ export default function WordPressAdminPanel() {
   // Post Editor State (Add / Edit Post)
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [editorTab, setEditorTab] = useState<'visual' | 'text'>('visual');
-  const [postForm, setPostForm] = useState({
-    title: '',
-    slug: '',
-    excerpt: '',
-    author: 'Acharya Vidyadhar',
-    category: 'Philosophy',
-    readingTime: '5 min read',
-    image: '/images/article_meditation.jpg',
-    status: 'Published' as 'Published' | 'Draft' | 'Scheduled',
-    content: 'Sanatan Dharma is the eternal cosmic order that upholds all beings with righteousness, wisdom, and devotion.\n\nClassical Upanishads affirm that Truth is One, though the wise speak of it in various ways. Daily contemplation and adherence to Dharma leads the seeker to peace and inner liberation.',
-  });
+  const [postForm, setPostForm] = useState<PostFormData>(EMPTY_POST);
 
   // Media Library State
   const [mediaViewMode, setMediaViewMode] = useState<'grid' | 'list'>('grid');
@@ -757,7 +762,7 @@ export default function WordPressAdminPanel() {
     }
 
     // Store the PDF on the server so every visitor can open it
-    const uploadedUrl = await uploadPdf(file);
+    const uploadedUrl = await uploadFile(file);
     if (uploadedUrl) {
       setBookForm((prev) => ({ ...prev, pdfUrl: uploadedUrl, pdfFileName: file.name, pdfFileSize: fileSizeStr }));
       setPdfUploadLoading(false);
@@ -1188,52 +1193,46 @@ export default function WordPressAdminPanel() {
 
   // Open Post Editor
   const handleOpenPostEditor = (post?: CMSArticleItem) => {
-    if (post) {
-      setEditingPostId(post.id);
-      setPostForm({
-        title: post.title,
-        slug: post.slug,
-        excerpt: post.excerpt,
-        author: post.author,
-        category: post.category,
-        readingTime: post.readingTime,
-        image: post.image,
-        status: post.status,
-        content: `Sanatan Dharma exploration of ${post.title}.\n\nClassical wisdom teaches righteousness, devotion, and alignment with the cosmic order.`,
-      });
-    } else {
-      setEditingPostId(null);
-      setPostForm({
-        title: '',
-        slug: '',
-        excerpt: '',
-        author: 'Acharya Vidyadhar',
-        category: 'Philosophy',
-        readingTime: '5 min read',
-        image: '/images/article_meditation.jpg',
-        status: 'Draft',
-        content: '',
-      });
-    }
+    setEditingPostId(post ? post.id : null);
+    setPostForm(
+      post
+        ? {
+            ...EMPTY_POST,
+            title: post.title,
+            slug: post.slug,
+            excerpt: post.excerpt,
+            author: post.author,
+            category: post.category,
+            readingTime: post.readingTime,
+            image: post.image,
+            status: post.status,
+            content: post.content || '',
+            tags: post.tags || [],
+            seoTitle: post.seoTitle || '',
+            seoDescription: post.seoDescription || '',
+          }
+        : { ...EMPTY_POST, author: user?.name?.replace(/\s*\(.*\)$/, '') || EMPTY_POST.author }
+    );
     setEditorOpen(true);
   };
 
   // Save Post
-  const handleSavePost = () => {
-    if (!postForm.title.trim()) {
-      alert('Please provide a title for the post.');
-      return;
+  const handleSavePost = (post: PostFormData) => {
+    // Keep slugs unique so every post has its own URL
+    let slug = post.slug;
+    for (let n = 2; articles.some((a) => a.slug === slug && a.id !== editingPostId); n++) {
+      slug = `${post.slug}-${n}`;
     }
+    const data = { ...post, slug };
     if (editingPostId) {
-      updateArticle(editingPostId, postForm);
-      showNotice(`Post "${postForm.title}" updated.`);
+      updateArticle(editingPostId, data);
     } else {
       addArticle({
-        ...postForm,
+        ...data,
         publishedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       });
-      showNotice(`Post "${postForm.title}" published.`);
     }
+    showNotice(`Post "${post.title}" ${post.status === 'Published' ? 'published' : 'saved as draft'}.`);
     setEditorOpen(false);
   };
 
@@ -5917,140 +5916,16 @@ export default function WordPressAdminPanel() {
       )}
 
       {/* =========================================================================
-          4. WORDPRESS CLASSIC EDITOR MODAL (Add / Edit Post)
+          4. POST EDITOR (Add / Edit Post)
       ========================================================================= */}
       {editorOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-2xl border border-[#c3c4c7] w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">
-            {/* Modal Header */}
-            <div className="px-6 py-3.5 border-b border-[#dcdcde] flex items-center justify-between bg-[#f6f7f7]">
-              <h3 className="font-bold text-[#1d2327] text-base">
-                {editingPostId ? 'Edit Post' : 'Add New Post'} — WordPress Classic Editor
-              </h3>
-              <button onClick={() => setEditorOpen(false)} className="text-stone-400 hover:text-stone-700">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
-              <div>
-                <label className="block font-bold text-stone-800 mb-1">Title</label>
-                <input
-                  type="text"
-                  value={postForm.title}
-                  onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
-                  placeholder="Enter title here..."
-                  className="w-full text-base font-medium border border-[#8c8f94] rounded px-3 py-2 focus:border-[#2271b1] focus:outline-none"
-                />
-              </div>
-
-              {/* Permalink Preview */}
-              <div className="text-[11px] text-stone-500 flex items-center space-x-1">
-                <span>Permalink:</span>
-                <span className="text-[#2271b1] underline">http://localhost:3000/articles/{postForm.slug || 'post-title'}</span>
-              </div>
-
-              {/* Classic Editor Formatting Toolbar */}
-              <div className="border border-[#c3c4c7] rounded overflow-hidden">
-                <div className="bg-[#f6f7f7] border-b border-[#c3c4c7] p-2 flex flex-wrap gap-1 items-center">
-                  <div className="flex space-x-1">
-                    <button
-                      type="button"
-                      onClick={() => setEditorTab('visual')}
-                      className={`px-2.5 py-1 text-xs font-semibold rounded ${editorTab === 'visual' ? 'bg-white border border-[#8c8f94] shadow-sm' : 'text-stone-600'}`}
-                    >
-                      Visual
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditorTab('text')}
-                      className={`px-2.5 py-1 text-xs font-semibold rounded ${editorTab === 'text' ? 'bg-white border border-[#8c8f94] shadow-sm' : 'text-stone-600'}`}
-                    >
-                      Text
-                    </button>
-                  </div>
-                  <span className="w-px h-5 bg-stone-300 mx-2"></span>
-                  <button type="button" className="px-2 py-1 font-bold border border-[#8c8f94] rounded bg-white hover:bg-stone-100">B</button>
-                  <button type="button" className="px-2 py-1 italic border border-[#8c8f94] rounded bg-white hover:bg-stone-100">I</button>
-                  <button type="button" className="px-2 py-1 underline border border-[#8c8f94] rounded bg-white hover:bg-stone-100">U</button>
-                  <span className="w-px h-5 bg-stone-300 mx-1"></span>
-                  <button type="button" className="px-2 py-1 border border-[#8c8f94] rounded bg-white hover:bg-stone-100">• Bullet</button>
-                  <button type="button" className="px-2 py-1 border border-[#8c8f94] rounded bg-white hover:bg-stone-100">1. Number</button>
-                  <span className="w-px h-5 bg-stone-300 mx-1"></span>
-                  <button type="button" className="px-2 py-1 border border-[#8c8f94] rounded bg-white hover:bg-stone-100">Link</button>
-                  <button type="button" className="px-2 py-1 border border-[#8c8f94] rounded bg-white hover:bg-stone-100">Add Media</button>
-                </div>
-                <textarea
-                  rows={8}
-                  value={postForm.content}
-                  onChange={(e) => setPostForm({ ...postForm, content: e.target.value })}
-                  placeholder="Type your spiritual content or commentary here..."
-                  className="w-full p-3 focus:outline-none font-sans text-stone-800"
-                />
-                <div className="bg-[#f6f7f7] border-t border-[#c3c4c7] px-3 py-1.5 text-[11px] text-stone-500">
-                  Word count: {postForm.content.split(/\s+/).filter(Boolean).length}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-stone-800 mb-1">Category</label>
-                  <select
-                    value={postForm.category}
-                    onChange={(e) => setPostForm({ ...postForm, category: e.target.value })}
-                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 bg-white"
-                  >
-                    <option value="Philosophy">Philosophy (दर्शन)</option>
-                    <option value="Rituals">Rituals (कर्मकाण्ड)</option>
-                    <option value="Meditation">Meditation (ध्यान)</option>
-                    <option value="Festivals">Festivals (पर्व एवं उत्सव)</option>
-                    <option value="Veda">Vedic Shastras (वेद व उपनिषद्)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-stone-800 mb-1">Author</label>
-                  <input
-                    type="text"
-                    value={postForm.author}
-                    onChange={(e) => setPostForm({ ...postForm, author: e.target.value })}
-                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-3 border-t border-[#dcdcde] bg-[#f6f7f7] flex items-center justify-between">
-              <button
-                onClick={() => setEditorOpen(false)}
-                className="text-stone-600 hover:text-stone-900 font-semibold"
-              >
-                Cancel
-              </button>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => {
-                    setPostForm({ ...postForm, status: 'Draft' });
-                    handleSavePost();
-                  }}
-                  className="bg-[#f6f7f7] border border-[#2271b1] text-[#2271b1] hover:bg-stone-100 px-3 py-1.5 rounded font-semibold text-xs"
-                >
-                  Save Draft
-                </button>
-                <button
-                  onClick={() => {
-                    setPostForm({ ...postForm, status: 'Published' });
-                    handleSavePost();
-                  }}
-                  className="bg-[#2271b1] hover:bg-[#135e96] text-white px-4 py-1.5 rounded font-semibold text-xs"
-                >
-                  Publish
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PostEditor
+          key={editingPostId || 'new'}
+          initial={postForm}
+          isEditing={!!editingPostId}
+          onSave={handleSavePost}
+          onClose={() => setEditorOpen(false)}
+        />
       )}
 
       {/* =========================================================================

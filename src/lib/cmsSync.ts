@@ -83,7 +83,8 @@ export async function fetchRemoteCms(): Promise<Record<string, string> | null> {
   }
 }
 
-export async function uploadPdf(file: File): Promise<string | null> {
+// Stores a PDF or image on the server and returns its public URL
+export async function uploadFile(file: File): Promise<string | null> {
   const token = getAdminToken();
   if (!token) return null;
   try {

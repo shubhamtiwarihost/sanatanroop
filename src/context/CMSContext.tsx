@@ -107,6 +107,11 @@ export interface CMSArticleItem {
   publishedDate: string;
   status: 'Published' | 'Draft' | 'Scheduled';
   views: number;
+  // Written in the admin post editor
+  content?: string;
+  tags?: string[];
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export interface CMSOrderItem {
@@ -196,6 +201,8 @@ export interface CMSSEOConfig {
 }
 
 export interface CMSContextType {
+  // True once shared content from the server has been applied (or the request failed)
+  cmsReady: boolean;
   // Page Builder Blocks
   blocks: PageBlock[];
   reorderBlocks: (startIndex: number, endIndex: number) => void;
@@ -897,6 +904,7 @@ const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export function CMSProvider({ children }: { children: React.ReactNode }) {
   const { token } = useAuth();
+  const [cmsReady, setCmsReady] = useState(false);
   const [blocks, setBlocks] = useState<PageBlock[]>(DEFAULT_BLOCKS);
   const [headerMenu, setHeaderMenu] = useState<CMSMenuItem[]>(DEFAULT_MENU_ITEMS);
   const [siteIdentity, setSiteIdentity] = useState({
@@ -1126,7 +1134,9 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     loadFromStorage();
     let cancelled = false;
     fetchRemoteCms().then((remote) => {
-      if (cancelled || !remote) return;
+      if (cancelled) return;
+      setCmsReady(true);
+      if (!remote) return;
       for (const [key, value] of Object.entries(remote)) {
         try {
           localStorage.setItem(key, value);
@@ -1761,6 +1771,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         updateProduct,
         deleteProduct,
         articles,
+        cmsReady,
         addArticle,
         updateArticle,
         deleteArticle,

@@ -490,12 +490,15 @@ const CANONICAL_SHLOKAS: ScriptureShloka[] = [
   },
 ];
 
+const SHLOKAS_PER_PAGE = 10;
+
 export default function ShlokasPage() {
   const { locale } = useLanguage();
   const { shlokas } = useCMS();
   const { isPlaying, playAudio, pauseAudio } = useAudio();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const categories = useMemo(() => [
@@ -588,6 +591,14 @@ export default function ShlokasPage() {
     return matchCat && matchSearch;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / SHLOKAS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+
+  const goToPage = (next: number) => {
+    setPage(next);
+    document.getElementById('shlokas-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="min-h-screen bg-[#faf8f5] text-[#1c1917] font-sans pb-16">
       {/* Hero Header */}
@@ -610,7 +621,10 @@ export default function ShlokasPage() {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
               placeholder="श्लोक, अर्थ या ग्रंथ द्वारा खोजें..."
               className="w-full bg-white/95 text-stone-900 placeholder-stone-400 text-sm rounded-full py-3 pl-5 pr-12 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-lg"
             />
@@ -641,7 +655,10 @@ export default function ShlokasPage() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
+              onClick={() => {
+                setActiveCategory(cat.id);
+                setPage(1);
+              }}
               className={`px-4 py-2 rounded-full text-xs font-semibold transition whitespace-nowrap ${
                 activeCategory === cat.id
                   ? 'bg-[#ea580c] text-white shadow-sm font-bold'
@@ -654,14 +671,17 @@ export default function ShlokasPage() {
         </div>
 
         {/* Shlokas List */}
-        <div className="space-y-6">
-          {filtered.map((shloka) => {
+        <div id="shlokas-list" className="space-y-6 scroll-mt-40">
+          {filtered.map((shloka, index) => {
             const isSongActive = activeSongShloka?.id === shloka.id;
             const isSpeaking = speakingShlokaId === shloka.id;
+            // Other pages stay in the HTML (hidden) so search engines still read every shloka
+            const onCurrentPage = Math.floor(index / SHLOKAS_PER_PAGE) + 1 === currentPage;
 
             return (
               <article
                 key={shloka.id}
+                hidden={!onCurrentPage}
                 className="bg-white border border-stone-200/90 rounded-2xl p-6 sm:p-8 shadow-sm hover:border-orange-300 transition space-y-4"
               >
                 {/* Header */}
@@ -778,6 +798,40 @@ export default function ShlokasPage() {
             );
           })}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <nav aria-label="Shlokas pages" className="flex flex-wrap items-center justify-center gap-2 pt-4">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-full text-xs font-semibold bg-white border border-stone-200 text-stone-700 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ← पिछला
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                onClick={() => goToPage(n)}
+                aria-current={n === currentPage ? 'page' : undefined}
+                className={`w-9 h-9 rounded-full text-xs font-semibold transition ${
+                  n === currentPage
+                    ? 'bg-[#ea580c] text-white shadow-sm font-bold'
+                    : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-full text-xs font-semibold bg-white border border-stone-200 text-stone-700 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              अगला →
+            </button>
+          </nav>
+        )}
       </main>
 
       {/* Active Shloka Song Player Modal */}

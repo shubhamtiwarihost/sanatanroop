@@ -565,22 +565,6 @@ export default function CommunityPage() {
                 ))}
               </div>
             </div>
-
-            {/* Daily Satsang Banner */}
-            <div className="p-5 rounded-3xl bg-gradient-to-br from-amber-700 to-amber-900 text-white shadow-md space-y-3">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-amber-200">
-                Daily Online Satsang
-              </span>
-              <h4 className="font-serif font-bold text-base text-amber-100">
-                Join Evening Bhagavad Gita Chanting
-              </h4>
-              <p className="text-xs text-amber-200/80">
-                Every evening at 7:00 PM IST. Over 2,000 devotees chant together live with verse-by-verse commentary.
-              </p>
-              <button className="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-900 text-xs font-bold shadow transition">
-                Register for Free
-              </button>
-            </div>
           </div>
         </div>
       </div>
