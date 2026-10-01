@@ -6,7 +6,7 @@ import { Calendar, Clock, ChevronLeft, Share2, Check, User } from 'lucide-react'
 import { useCMS } from '@/context/CMSContext';
 import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
-import { plainTextToHtml, sanitizePostHtml } from '@/lib/posts';
+import { plainTextToHtml, postUrl, sanitizePostHtml } from '@/lib/posts';
 
 export default function PostViewClient() {
   const { articles, cmsReady } = useCMS();
@@ -15,7 +15,10 @@ export default function PostViewClient() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setSlug(new URLSearchParams(window.location.search).get('slug') || '');
+    // /articles/<slug>/ is served by this viewer for admin-written posts; ?slug= is the older link form
+    const fromQuery = new URLSearchParams(window.location.search).get('slug');
+    const fromPath = window.location.pathname.match(/^\/(?:articles|blog)\/([^/]+)\/?$/);
+    setSlug(fromQuery || (fromPath && fromPath[1] !== 'post' ? decodeURIComponent(fromPath[1]) : ''));
   }, []);
 
   const isAdmin = !!user && ADMIN_ROLES.includes(user.role);
@@ -38,7 +41,7 @@ export default function PostViewClient() {
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', `https://sanatanroop.com/articles/post/?slug=${encodeURIComponent(post.slug)}`);
+    canonical.setAttribute('href', `https://sanatanroop.com${encodeURI(postUrl(post))}`);
   }, [post]);
 
   const handleShare = () => {

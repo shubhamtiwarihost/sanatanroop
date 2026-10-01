@@ -6,8 +6,11 @@ import type { CMSArticleItem } from '@/context/CMSContext';
 const STATIC_ARTICLE_SLUGS = BLOG_POSTS.map((p) => p.slug);
 
 export function postUrl(post: Pick<CMSArticleItem, 'slug' | 'content'>): string {
-  if (STATIC_ARTICLE_SLUGS.includes(post.slug) && !post.content) return `/articles/${post.slug}`;
-  return `/articles/post/?slug=${encodeURIComponent(post.slug)}`;
+  // A rewritten built-in article keeps the viewer URL, since /articles/<slug>/ is its pre-built page
+  if (STATIC_ARTICLE_SLUGS.includes(post.slug) && post.content) {
+    return `/articles/post/?slug=${encodeURIComponent(post.slug)}`;
+  }
+  return `/articles/${post.slug}/`;
 }
 
 // Published posts that only exist in the CMS (or whose content was rewritten there)

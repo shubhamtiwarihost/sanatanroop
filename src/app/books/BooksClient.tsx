@@ -268,9 +268,7 @@ export default function SpiritualBooksPage() {
     }
     setActiveReaderBook(book);
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.set('read', book.id);
-      window.history.pushState({ bookId: book.id }, '', url.toString());
+      window.history.pushState({ bookId: book.id }, '', `/books/${encodeURIComponent(book.id)}/`);
     }
   };
 
@@ -278,19 +276,18 @@ export default function SpiritualBooksPage() {
     setActiveReaderBook(null);
     setNoPdfNoticeBook(null);
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('read');
-      const cleanUrl = url.pathname + (url.search ? url.search : '');
-      window.history.pushState({}, '', cleanUrl);
+      window.history.pushState({}, '', '/books/');
     }
   };
 
-  // Sync reader with URL parameter ?read=<bookId>
+  // Sync reader with the URL
   useEffect(() => {
     const syncFromUrl = () => {
       if (typeof window === 'undefined') return;
+      // Book id comes from /books/<id>/ (or the older ?read=<id> links)
       const params = new URLSearchParams(window.location.search);
-      const readId = params.get('read');
+      const pathMatch = window.location.pathname.match(/^\/books\/([^/]+)\/?$/);
+      const readId = params.get('read') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
       if (readId) {
         const found = allBooks.find((b) => b.id === readId);
         if (found) {
