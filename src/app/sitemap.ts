@@ -1,59 +1,50 @@
 import { MetadataRoute } from 'next';
-import { prisma } from '@/lib/prisma';
+import { BOOKS_DATA } from '@/data/booksData';
+import { ALL_STORE_PRODUCTS } from '@/data/storeProducts';
+import { generateStaticParams as articleParams } from './articles/[slug]/page';
+import { generateStaticParams as scriptureParams } from './scriptures/[slug]/page';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+// Only canonical, indexable URLs (trailing slash matches the served pages)
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://sanatanroop.com';
+  const now = new Date();
 
-  const staticRoutes = [
-    '',
-    '/about',
-    '/blog',
-    '/privacy',
-    '/terms',
-    '/contact',
-    '/scriptures',
-    '/shlokas',
-    '/books',
-    '/aartis',
-    '/kathas',
-    '/divine-vibrations',
-    '/deities',
-    '/temples',
-    '/festivals',
-    '/calendar',
-    '/articles',
-    '/videos',
-    '/search',
-    '/ai-guide',
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: route === '' ? 1.0 : (route === '/about' || route === '/blog' || route === '/contact' ? 0.9 : 0.8),
-  }));
+  const sections = [
+    'scriptures',
+    'shlokas',
+    'aartis',
+    'kathas',
+    'books',
+    'calendar',
+    'festivals',
+    'deities',
+    'temples',
+    'divine-vibrations',
+    'videos',
+    'articles',
+    'blog',
+    'store',
+    'ai-guide',
+    'community',
+    'about',
+    'contact',
+    'privacy',
+    'terms',
+  ];
 
-  try {
-    const [scriptures, articles] = await Promise.all([
-      prisma.scripture.findMany({ select: { slug: true, updatedAt: true } }),
-      prisma.post.findMany({ where: { status: 'PUBLISHED' }, select: { slug: true, updatedAt: true } }),
-    ]);
+  const entry = (path: string, priority: number, changeFrequency: 'daily' | 'weekly' | 'monthly') => ({
+    url: `${baseUrl}/${path}${path ? '/' : ''}`,
+    lastModified: now,
+    changeFrequency,
+    priority,
+  });
 
-    const scriptureUrls = scriptures.map((s) => ({
-      url: `${baseUrl}/scriptures/${s.slug}`,
-      lastModified: s.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.9,
-    }));
-
-    const articleUrls = articles.map((a) => ({
-      url: `${baseUrl}/articles/${a.slug}`,
-      lastModified: a.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }));
-
-    return [...staticRoutes, ...scriptureUrls, ...articleUrls];
-  } catch {
-    return staticRoutes;
-  }
+  return [
+    entry('', 1.0, 'daily'),
+    ...sections.map((s) => entry(s, 0.8, 'daily' as const)),
+    ...scriptureParams().map((p) => entry(`scriptures/${p.slug}`, 0.9, 'weekly')),
+    ...BOOKS_DATA.map((b) => entry(`books/${b.id}`, 0.9, 'weekly')),
+    ...articleParams().map((p) => entry(`articles/${p.slug}`, 0.8, 'weekly')),
+    ...ALL_STORE_PRODUCTS.map((p) => entry(`store/${p.slug}`, 0.6, 'weekly')),
+  ];
 }
