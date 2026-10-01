@@ -311,6 +311,7 @@ export default function WordPressAdminPanel() {
     wpUrl: 'http://localhost:3000',
     siteUrl: 'http://localhost:3000',
     adminEmail: 'superadmin@sanatan.org',
+    whatsappNumber: siteIdentity.contactPhone || '',
     anyoneCanRegister: true,
     defaultRole: 'Subscriber',
     language: 'English (United States)',
@@ -1248,12 +1249,18 @@ export default function WordPressAdminPanel() {
     showNotice('Post updated via Quick Edit.');
   };
 
+  // Saved WhatsApp number arrives after the server content loads
+  useEffect(() => {
+    setGeneralSettings((prev) => ({ ...prev, whatsappNumber: siteIdentity.contactPhone || '' }));
+  }, [siteIdentity.contactPhone]);
+
   // Save General Settings
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
     updateSiteIdentity({
       brandName: generalSettings.siteTitle,
       tagline: generalSettings.tagline,
+      contactPhone: generalSettings.whatsappNumber.trim(),
     });
     showNotice('Settings saved.');
   };
@@ -5389,6 +5396,20 @@ export default function WordPressAdminPanel() {
                           onChange={(e) => setGeneralSettings({ ...generalSettings, siteUrl: e.target.value })}
                           className="w-full max-w-md border border-[#8c8f94] rounded px-3 py-1.5 text-xs focus:border-[#2271b1] focus:outline-none bg-stone-50"
                         />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-6 items-start">
+                      <label className="font-bold text-stone-800 sm:text-right pt-2">WhatsApp Number</label>
+                      <div className="sm:col-span-3">
+                        <input
+                          type="tel"
+                          value={generalSettings.whatsappNumber}
+                          onChange={(e) => setGeneralSettings({ ...generalSettings, whatsappNumber: e.target.value })}
+                          placeholder="+91 98765 43210"
+                          className="w-full max-w-md border border-[#8c8f94] rounded px-3 py-1.5 text-xs focus:border-[#2271b1] focus:outline-none"
+                        />
+                        <p className="text-stone-500 text-[11px] mt-1">Visitors can message this number from the WhatsApp box under every post. Leave empty to hide the box.</p>
                       </div>
                     </div>
 

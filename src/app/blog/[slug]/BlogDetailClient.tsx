@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import PostShare from '@/components/PostShare';
 import {
   Calendar,
   Clock,
@@ -564,6 +565,10 @@ export default function BlogDetailClient() {
             </div>
 
           </div>
+        </div>
+
+        <div className="bg-white dark:bg-[#1a1411] border border-stone-200/90 dark:border-stone-800 rounded-3xl p-6 sm:p-8 shadow-sm">
+          <PostShare title={article.title} />
         </div>
 
         {/* Related Articles */}

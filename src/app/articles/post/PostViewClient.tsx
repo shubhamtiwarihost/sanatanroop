@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Calendar, Clock, ChevronLeft, Share2, Check, User } from 'lucide-react';
+import PostShare from '@/components/PostShare';
 import { useCMS } from '@/context/CMSContext';
 import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
@@ -125,6 +126,8 @@ export default function PostViewClient() {
                 ))}
               </div>
             )}
+
+            <PostShare title={post.title} />
           </div>
         </div>
       </article>
