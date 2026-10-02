@@ -22,6 +22,9 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   # Protected e-book download
   RewriteRule ^download/book/([^/]+)/?$ /api/download.php?book=$1 [QSA,L]
 
+  # PDF proxy for the book reader (archive.org blocks direct browser fetches); never compress the stream
+  RewriteRule ^api/pdf/?$ /api/pdf.php [QSA,L,E=no-gzip:1]
+
   # E-book product pages are rendered by one viewer page that reads the name from the URL
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

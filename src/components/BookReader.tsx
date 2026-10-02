@@ -48,6 +48,19 @@ interface BookReaderProps {
   onClose: () => void;
 }
 
+// archive.org sends no CORS headers, so its PDFs are read through our own proxy (/api/pdf)
+function readerSource(pdfUrl: string): string {
+  try {
+    const { protocol, hostname } = new URL(pdfUrl, window.location.href);
+    if (protocol === 'https:' && (hostname === 'archive.org' || hostname.endsWith('.archive.org'))) {
+      return `/api/pdf?url=${encodeURIComponent(pdfUrl)}`;
+    }
+  } catch {
+    // not a valid URL: let the reader report it
+  }
+  return pdfUrl;
+}
+
 export default function BookReader({ book, onClose }: BookReaderProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -61,6 +74,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
   const [inputPage, setInputPage] = useState<string>('1');
   const [showHelp, setShowHelp] = useState<boolean>(false);
   const [isPayOpen, setIsPayOpen] = useState<boolean>(false);
+  const [loadAttempt, setLoadAttempt] = useState<number>(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const readerAreaRef = useRef<HTMLDivElement>(null);
@@ -225,8 +239,16 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
   const handleDocumentLoadError = (err: any) => {
     console.error('PDF Load Error:', err);
     setIsLoading(false);
-    setError('यह पावन ग्रंथ लोड करने में असमर्थ। कृपया पुनः प्रयास करें अथवा सीधे PDF डाउनलोड करें।');
+    setError(
+      err?.status === 502
+        ? 'archive.org अभी उत्तर नहीं दे रहा है (सर्वर व्यस्त है)। कृपया कुछ देर बाद पुनः प्रयास करें।'
+        : err?.status === 404
+        ? 'यह PDF स्रोत पर उपलब्ध नहीं है। कृपया लिंक जाँचें।'
+        : 'यह पावन ग्रंथ लोड करने में असमर्थ। कृपया पुनः प्रयास करें अथवा सीधे PDF डाउनलोड करें।'
+    );
   };
+
+  const pdfSource = useMemo(() => readerSource(book.pdfUrl), [book.pdfUrl]);
 
   // Calculate dynamic page width for sharp rendering
   const computedPageWidth = useMemo(() => {
@@ -489,6 +511,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
                 onClick={() => {
                   setIsLoading(true);
                   setError(null);
+                  setLoadAttempt((n) => n + 1);
                 }}
                 className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-serif font-bold text-xs shadow-md transition"
               >
@@ -511,7 +534,8 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
         {/* PDF Book View Canvas */}
         <div className={`transition-opacity duration-300 ${isLoading || error ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100'}`}>
           <Document
-            file={book.pdfUrl}
+            key={loadAttempt}
+            file={pdfSource}
             onLoadSuccess={handleDocumentLoadSuccess}
             onLoadError={handleDocumentLoadError}
             loading={null}
