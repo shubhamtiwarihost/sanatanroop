@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   Search,
@@ -37,6 +38,7 @@ interface Aarti {
   youtubeId: string;
   singer: string;
   duration: string;
+  image?: string;
   audioTrack?: {
     id: string;
     title: string;
@@ -1021,6 +1023,12 @@ export default function AartisPage() {
           <div className="lg:col-span-7">
             <div className="sticky top-24 bg-white dark:bg-[#1a1411] rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl p-6 sm:p-8 space-y-6">
               
+              <ContentImage
+                src={selectedAarti.image}
+                alt={selectedAarti.titleHi}
+                className="w-full max-h-80 object-cover rounded-2xl border border-stone-200 dark:border-stone-800"
+              />
+
               {/* Reader Top Controls */}
               <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-800">
                 <div>

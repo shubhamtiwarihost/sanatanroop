@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import { Calendar, Sparkles, Flame, CheckCircle2 } from 'lucide-react';
 import { DEFAULT_FESTIVALS } from '@/data/sanatanContent';
 
@@ -36,6 +37,11 @@ export default function FestivalsPage() {
               key={f.id}
               className="rounded-3xl bg-white dark:bg-stone-900 border border-amber-200/80 dark:border-amber-900/60 p-6 sm:p-8 shadow-sm hover:shadow-md transition space-y-4"
             >
+              <ContentImage
+                src={f.imageUrl}
+                alt={f.nameEn}
+                className="w-full max-h-80 object-cover rounded-2xl border border-amber-100 dark:border-stone-800"
+              />
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-100 dark:border-stone-800 pb-3 gap-2">
                 <div>
                   <span className="text-xs uppercase tracking-wider font-bold text-amber-800 dark:text-amber-400">

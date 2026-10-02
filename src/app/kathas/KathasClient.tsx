@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import {
   Search,
   BookOpen,
@@ -33,6 +34,7 @@ interface Katha {
   vidhi: string[];
   chapters: KathaChapter[];
   phalaShruti: string;
+  image?: string;
 }
 
 const KATHAS_DATA: Katha[] = [
@@ -400,6 +402,12 @@ export default function KathasPage() {
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white dark:bg-[#1a1411] rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl p-6 sm:p-10 space-y-8">
               
+              <ContentImage
+                src={selectedKatha.image}
+                alt={selectedKatha.titleHi}
+                className="w-full max-h-96 object-cover rounded-2xl border border-stone-200 dark:border-stone-800"
+              />
+
               {/* Top Header of Reader */}
               <div className="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-stone-200 dark:border-stone-800">
                 <div className="space-y-1">

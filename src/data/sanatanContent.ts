@@ -50,6 +50,7 @@ export interface StaticFestival {
   pujaVidhiHi?: string;
   associatedDeity?: string;
   isMajor?: boolean;
+  imageUrl?: string;
 }
 
 export interface StaticScripture {

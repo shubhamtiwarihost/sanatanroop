@@ -14,6 +14,7 @@ export interface CMSAartiItem {
   youtubeId: string;
   singer: string;
   duration: string;
+  image?: string;
   audioTrack?: {
     id: string;
     title: string;
@@ -39,6 +40,7 @@ export interface CMSKathaItem {
   vidhi: string[];
   chapters: CMSKathaChapter[];
   phalaShruti: string;
+  image?: string;
   status: 'Published' | 'Draft';
 }
 
@@ -70,6 +72,7 @@ export interface CMSBookItem {
   pdfUrl?: string;
   pdfFileName?: string;
   pdfFileSize?: string;
+  image?: string;
   status: 'Published' | 'Draft';
 }
 
@@ -85,6 +88,7 @@ export interface CMSShlokaItem {
   category: string;
   scriptureSlug: string;
   youtubeId?: string;
+  image?: string;
   status: 'Published' | 'Draft';
 }
 

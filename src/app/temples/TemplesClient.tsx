@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import { MapPin, Clock, BookOpen, ChevronRight, Sparkles } from 'lucide-react';
 import { DEFAULT_TEMPLES } from '@/data/sanatanContent';
 
@@ -66,6 +67,11 @@ export default function TemplesPage() {
               className="rounded-3xl bg-gradient-to-br from-[#fbf8f2] via-[#f7f0e3] to-[#ebdcc4] dark:from-[#1b1a23] dark:via-[#14131a] dark:to-[#0f0e13] border border-[#dfceb0] dark:border-[#382b1b] p-6 shadow-[0_4px_25px_rgba(42,23,14,0.05)] hover:shadow-[0_8px_30px_rgba(197,160,89,0.2)] transition-all flex flex-col justify-between space-y-5"
             >
               <div className="space-y-3">
+                <ContentImage
+                  src={tm.imageUrl}
+                  alt={tm.nameEn}
+                  className="w-full h-44 object-cover rounded-2xl border border-[#dfceb0] dark:border-[#382b1b]"
+                />
                 <div className="flex items-center justify-between text-[11px] font-serif">
                   <span className="font-bold text-saffron-700 dark:text-gold-400 uppercase bg-gold-100 dark:bg-charcoal-800 px-2.5 py-0.5 rounded-full border border-gold-300/50">
                     {tm.deityName}

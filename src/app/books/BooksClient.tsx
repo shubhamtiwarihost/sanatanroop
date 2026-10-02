@@ -23,6 +23,7 @@ import {
 import { BOOKS_DATA, BookItem } from '@/data/booksData';
 import BookPayModal, { PayBookInfo } from '@/components/BookPayModal';
 import { slugify } from '@/lib/posts';
+import ContentImage from '@/components/ContentImage';
 
 // Dynamically import BookReader with SSR disabled to prevent Node/canvas issues during static export
 const BookReader = dynamic(() => import('@/components/BookReader'), {
@@ -127,6 +128,13 @@ function Book3DForm({ book, onOpen }: { book: BookItem; onOpen: () => void }) {
           </div>
         )}
 
+        {/* Cover image added in the admin sits over the drawn cover */}
+        <ContentImage
+          src={book.image}
+          alt={book.titleHi}
+          className="absolute inset-0 z-20 w-full h-full object-cover"
+        />
+
         {/* Ornate Double-Line Border (Front Cover) */}
         <div className="relative z-10 m-2.5 ml-7 p-3 border-2 border-amber-100/90 rounded-r-lg h-[calc(100%-20px)] flex flex-col justify-between bg-black/10 backdrop-blur-[0.5px]">
           
@@ -198,6 +206,7 @@ export default function SpiritualBooksPage() {
         merged.push({
           ...staticBook,
           titleHi: cmsItem.titleHi || staticBook.titleHi,
+          image: cmsItem.image,
           titleEn: cmsItem.titleEn || staticBook.titleEn,
           category: (cmsItem.category as any) || staticBook.category,
           categoryLabel: cmsItem.categoryLabel || staticBook.categoryLabel,
@@ -248,6 +257,7 @@ export default function SpiritualBooksPage() {
           pdfUrl: cmsItem.pdfUrl,
           pdfFileName: cmsItem.pdfFileName,
           pdfFileSize: cmsItem.pdfFileSize,
+          image: cmsItem.image,
         });
       }
     }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAudio } from '@/context/AudioContext';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import { speakVedicVoice, stopVedicVoice, isVoiceSupported } from '@/lib/voice';
 import {
   Search,
@@ -32,6 +33,7 @@ interface ScriptureShloka {
   category: string;
   scriptureSlug: string;
   youtubeId?: string;
+  image?: string;
 }
 
 const CANONICAL_SHLOKAS: ScriptureShloka[] = [
@@ -684,6 +686,11 @@ export default function ShlokasPage() {
                 hidden={!onCurrentPage}
                 className="bg-white border border-stone-200/90 rounded-2xl p-6 sm:p-8 shadow-sm hover:border-orange-300 transition space-y-4"
               >
+                <ContentImage
+                  src={shloka.image}
+                  alt={`${shloka.source} ${shloka.chapterVerse}`}
+                  className="w-full max-h-80 object-cover rounded-xl border border-stone-200"
+                />
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
                   <div>

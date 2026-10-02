@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { ADMIN_ROLES } from '@/lib/adminAuth';
 import PostEditor, { PostFormData } from '@/components/admin/PostEditor';
 import EbookStore from '@/components/admin/EbookStore';
+import ImageField from '@/components/admin/ImageField';
 import { CMS_SYNC_ERROR_EVENT, pushCmsValue, uploadFile } from '@/lib/cmsSync';
 import {
   useCMS,
@@ -411,6 +412,7 @@ export default function WordPressAdminPanel() {
         lyricsHi: item.lyricsHi,
         lyricsEn: item.lyricsEn,
         meaning: item.meaning,
+        image: item.image || '',
         status: item.status,
       });
     } else {
@@ -466,6 +468,7 @@ export default function WordPressAdminPanel() {
         lyricsHi: aartiForm.lyricsHi || '',
         lyricsEn: aartiForm.lyricsEn || '',
         meaning: aartiForm.meaning || '',
+        image: aartiForm.image || '',
         status: aartiForm.status || 'Published',
         audioTrack: {
           id: `audio-${Date.now()}`,
@@ -509,6 +512,7 @@ export default function WordPressAdminPanel() {
         category: item.category,
         scriptureSlug: item.scriptureSlug,
         youtubeId: item.youtubeId || 'Vnz8rJX9w-E',
+        image: item.image || '',
         status: item.status,
       });
     } else {
@@ -550,6 +554,7 @@ export default function WordPressAdminPanel() {
         category: shlokaForm.category || 'Gita Shlokas',
         scriptureSlug: shlokaForm.scriptureSlug || 'bhagavad-gita',
         youtubeId: shlokaForm.youtubeId || 'Vnz8rJX9w-E',
+        image: shlokaForm.image || '',
         status: shlokaForm.status || 'Published',
       });
       showNotice(`नया श्लोक सफलतापूर्वक जोड़ा गया।`);
@@ -570,6 +575,7 @@ export default function WordPressAdminPanel() {
     vidhiText: string;
     storyText: string;
     phalaShruti: string;
+    image?: string;
     status: 'Published' | 'Draft';
   }>({
     titleHi: '',
@@ -599,6 +605,7 @@ export default function WordPressAdminPanel() {
           ? item.chapters.map((c) => `### ${c.title}\n${c.content}`).join('\n\n')
           : '',
         phalaShruti: item.phalaShruti || '',
+        image: item.image || '',
         status: item.status,
       });
     } else {
@@ -649,6 +656,7 @@ export default function WordPressAdminPanel() {
       vidhi: vidhiArray.length > 0 ? vidhiArray : ['स्नानादि कर शुद्ध भाव से कथा श्रवण करें।'],
       chapters: chapters.length > 0 ? chapters : [{ title: 'सम्पूर्ण कथा', content: kathaForm.storyText }],
       phalaShruti: kathaForm.phalaShruti,
+      image: kathaForm.image || '',
       status: kathaForm.status,
     };
 
@@ -709,6 +717,7 @@ export default function WordPressAdminPanel() {
         pdfUrl: item.pdfUrl || '',
         pdfFileName: item.pdfFileName || '',
         pdfFileSize: item.pdfFileSize || '',
+        image: item.image || '',
         status: item.status,
       });
     } else {
@@ -849,6 +858,7 @@ export default function WordPressAdminPanel() {
         pdfUrl: bookForm.pdfUrl || '',
         pdfFileName: bookForm.pdfFileName || '',
         pdfFileSize: bookForm.pdfFileSize || '',
+        image: bookForm.image || '',
         status: bookForm.status || 'Published',
       });
       showNotice(`नया ग्रंथ "${bookForm.titleHi}" सफलतापूर्वक जोड़ा गया।`);
@@ -870,7 +880,7 @@ export default function WordPressAdminPanel() {
     country: 'Bharat (India)',
     timings: '04:00 AM - 11:00 PM',
     significance: '',
-    imageUrl: '/images/hero_diya.jpg',
+    imageUrl: '',
     historyHi: '',
     historyEn: '',
   });
@@ -892,7 +902,7 @@ export default function WordPressAdminPanel() {
         country: 'Bharat (India)',
         timings: '04:00 AM - 11:00 PM',
         significance: '',
-        imageUrl: '/images/hero_diya.jpg',
+        imageUrl: '',
         historyHi: '',
         historyEn: '',
       });
@@ -1016,7 +1026,7 @@ export default function WordPressAdminPanel() {
     significanceSa: '',
     storyHi: '',
     storyEn: '',
-    imageUrl: '/images/hero_diya.jpg',
+    imageUrl: '',
     popularTemples: '[]',
     festivals: '[]',
     scripturalRefs: '[]',
@@ -1040,7 +1050,7 @@ export default function WordPressAdminPanel() {
         significanceSa: '',
         storyHi: '',
         storyEn: '',
-        imageUrl: '/images/hero_diya.jpg',
+        imageUrl: '',
         popularTemples: '[]',
         festivals: '[]',
         scripturalRefs: '[]',
@@ -6175,6 +6185,11 @@ export default function WordPressAdminPanel() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <ImageField
+                label="आरती का चित्र (Image)"
+                value={aartiForm.image || ''}
+                onChange={(url) => setAartiForm({ ...aartiForm, image: url })}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">
@@ -6362,6 +6377,11 @@ export default function WordPressAdminPanel() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <ImageField
+                label="श्लोक का चित्र (Image)"
+                value={shlokaForm.image || ''}
+                onChange={(url) => setShlokaForm({ ...shlokaForm, image: url })}
+              />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">
@@ -6519,6 +6539,11 @@ export default function WordPressAdminPanel() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <ImageField
+                label="कथा का चित्र (Image)"
+                value={kathaForm.image || ''}
+                onChange={(url) => setKathaForm({ ...kathaForm, image: url })}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">
@@ -6677,6 +6702,11 @@ export default function WordPressAdminPanel() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <ImageField
+                label="ग्रंथ का आवरण चित्र (Cover Image)"
+                value={bookForm.image || ''}
+                onChange={(url) => setBookForm({ ...bookForm, image: url })}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">
@@ -7103,14 +7133,11 @@ export default function WordPressAdminPanel() {
                     className="w-full border border-[#8c8f94] rounded px-3 py-1.5 focus:border-[#2271b1] focus:outline-none"
                   />
                 </div>
-                <div>
-                  <label className="block font-bold text-stone-800 mb-1">Image URL</label>
-                  <input
-                    type="text"
+                <div className="md:col-span-2">
+                  <ImageField
+                    label="मंदिर का चित्र (Image)"
                     value={templeForm.imageUrl || ''}
-                    onChange={(e) => setTempleForm({ ...templeForm, imageUrl: e.target.value })}
-                    placeholder="/images/hero_diya.jpg"
-                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                    onChange={(url) => setTempleForm({ ...templeForm, imageUrl: url })}
                   />
                 </div>
               </div>
@@ -7183,6 +7210,11 @@ export default function WordPressAdminPanel() {
             </div>
 
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <ImageField
+                label="पर्व का चित्र (Image)"
+                value={festivalForm.imageUrl || ''}
+                onChange={(url) => setFestivalForm({ ...festivalForm, imageUrl: url })}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-stone-800 mb-1">
@@ -7368,14 +7400,11 @@ export default function WordPressAdminPanel() {
                     className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
                   />
                 </div>
-                <div>
-                  <label className="block font-bold text-stone-800 mb-1">Image URL</label>
-                  <input
-                    type="text"
+                <div className="md:col-span-2">
+                  <ImageField
+                    label="देवता का चित्र (Image)"
                     value={deityForm.imageUrl || ''}
-                    onChange={(e) => setDeityForm({ ...deityForm, imageUrl: e.target.value })}
-                    placeholder="/images/hero_diya.jpg"
-                    className="w-full border border-[#8c8f94] rounded px-3 py-1.5 font-mono focus:border-[#2271b1] focus:outline-none"
+                    onChange={(url) => setDeityForm({ ...deityForm, imageUrl: url })}
                   />
                 </div>
               </div>

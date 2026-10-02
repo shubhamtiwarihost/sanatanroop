@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useCMS } from '@/context/CMSContext';
+import ContentImage from '@/components/ContentImage';
 import { Sparkles, MapPin, Calendar, BookOpen, ChevronRight } from 'lucide-react';
 import { DEFAULT_DEITIES } from '@/data/sanatanContent';
 
@@ -51,6 +52,11 @@ export default function DeitiesPage() {
                 className="rounded-3xl bg-gradient-to-br from-[#fbf8f2] via-[#f7f0e3] to-[#ebdcc4] dark:from-[#1b1a23] dark:via-[#14131a] dark:to-[#0f0e13] border border-[#dfceb0] dark:border-[#382b1b] p-6 sm:p-7 shadow-[0_4px_25px_rgba(42,23,14,0.05)] hover:shadow-[0_8px_30px_rgba(197,160,89,0.2)] transition-all flex flex-col justify-between space-y-6"
               >
                 <div className="space-y-4">
+                  <ContentImage
+                    src={d.imageUrl}
+                    alt={d.nameEn}
+                    className="w-full h-56 object-cover rounded-2xl border border-[#dfceb0] dark:border-[#382b1b]"
+                  />
                   {/* Sanctum Icon & Mantra Header */}
                   <div className="flex items-center justify-between border-b border-[#e8dac1] dark:border-[#2f2317] pb-3">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#3a2012] via-[#24150b] to-[#150c06] text-gold-300 flex items-center justify-center font-serif text-2xl font-bold shadow-md border border-gold-500/60">

@@ -25,6 +25,7 @@ export interface BookItem {
   pdfUrl?: string;
   pdfFileName?: string;
   pdfFileSize?: string;
+  image?: string;
 }
 
 export const BOOKS_DATA: BookItem[] = [
