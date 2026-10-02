@@ -22,6 +22,7 @@ import {
 
 import { BOOKS_DATA, BookItem } from '@/data/booksData';
 import BookPayModal, { PayBookInfo } from '@/components/BookPayModal';
+import { slugify } from '@/lib/posts';
 
 // Dynamically import BookReader with SSR disabled to prevent Node/canvas issues during static export
 const BookReader = dynamic(() => import('@/components/BookReader'), {
@@ -261,6 +262,20 @@ export default function SpiritualBooksPage() {
   const [activeReaderBook, setActiveReaderBook] = useState<BookItem | null>(null);
   const [noPdfNoticeBook, setNoPdfNoticeBook] = useState<BookItem | null>(null);
 
+  // Books added in the admin have ids like "book-1790939876370": their URL uses the title instead
+  const bookSlug = useMemo(() => {
+    const slugs = new Map<string, string>();
+    const taken = new Set(allBooks.map((b) => b.id));
+    for (const b of allBooks) {
+      const named = /^book-\d+$/.test(b.id) ? slugify(b.titleEn || b.titleHi) : '';
+      const slug = named && !taken.has(named) ? named : b.id;
+      taken.add(slug);
+      slugs.set(b.id, slug);
+    }
+    return (book: BookItem) => slugs.get(book.id) || book.id;
+  }, [allBooks]);
+  const bookPath = (book: BookItem) => `/books/${encodeURIComponent(bookSlug(book))}/`;
+
   const handleOpenReader = (book: BookItem) => {
     if (!book.pdfUrl) {
       setNoPdfNoticeBook(book);
@@ -268,7 +283,7 @@ export default function SpiritualBooksPage() {
     }
     setActiveReaderBook(book);
     if (typeof window !== 'undefined') {
-      window.history.pushState({ bookId: book.id }, '', `/books/${encodeURIComponent(book.id)}/`);
+      window.history.pushState({ bookId: book.id }, '', bookPath(book));
     }
   };
 
@@ -284,13 +299,17 @@ export default function SpiritualBooksPage() {
   useEffect(() => {
     const syncFromUrl = () => {
       if (typeof window === 'undefined') return;
-      // Book id comes from /books/<id>/ (or the older ?read=<id> links)
+      // Book comes from /books/<slug>/ (or the older /books/<id>/ and ?read=<id> links)
       const params = new URLSearchParams(window.location.search);
       const pathMatch = window.location.pathname.match(/^\/books\/([^/]+)\/?$/);
       const readId = params.get('read') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
       if (readId) {
-        const found = allBooks.find((b) => b.id === readId);
+        const found = allBooks.find((b) => bookSlug(b) === readId) || allBooks.find((b) => b.id === readId);
         if (found) {
+          // Old id links are rewritten to the clean address
+          if (window.location.pathname !== bookPath(found) || params.has('read')) {
+            window.history.replaceState({ bookId: found.id }, '', bookPath(found));
+          }
           if (found.pdfUrl) {
             setActiveReaderBook(found);
           } else {
@@ -306,7 +325,7 @@ export default function SpiritualBooksPage() {
     syncFromUrl();
     window.addEventListener('popstate', syncFromUrl);
     return () => window.removeEventListener('popstate', syncFromUrl);
-  }, [allBooks]);
+  }, [allBooks, bookSlug]);
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((b) => {

@@ -248,6 +248,11 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
     );
   };
 
+  // Each new page starts from its top
+  useEffect(() => {
+    readerAreaRef.current?.scrollTo({ top: 0 });
+  }, [currentPage]);
+
   const pdfSource = useMemo(() => readerSource(book.pdfUrl), [book.pdfUrl]);
 
   // Calculate dynamic page width for sharp rendering
@@ -457,13 +462,13 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
       {/* ===== MAIN BOOK READING STAGE ===== */}
       <main
         ref={readerAreaRef}
-        className="flex-1 overflow-auto relative flex items-center justify-center p-2 sm:p-6 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d140e] via-[#120d0a] to-[#0a0705]"
+        className="flex-1 overflow-auto relative flex p-2 sm:p-6 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d140e] via-[#120d0a] to-[#0a0705]"
       >
         {/* Floating Left Page Turn Trigger Button */}
         <button
           onClick={goToPrevPage}
           disabled={currentPage <= 1 || isLoading}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-16 sm:w-12 sm:h-20 rounded-r-xl bg-[#20150f]/80 hover:bg-amber-600/30 text-amber-200 border-y border-r border-[#c5a059]/40 flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 pointer-events-auto shadow-xl group"
+          className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-16 sm:w-12 sm:h-20 rounded-r-xl bg-[#20150f]/80 hover:bg-amber-600/30 text-amber-200 border-y border-r border-[#c5a059]/40 flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 pointer-events-auto shadow-xl group"
           title="पिछला पृष्ठ"
         >
           <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
@@ -473,7 +478,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
         <button
           onClick={goToNextPage}
           disabled={currentPage >= numPages || isLoading}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-16 sm:w-12 sm:h-20 rounded-l-xl bg-[#20150f]/80 hover:bg-amber-600/30 text-amber-200 border-y border-l border-[#c5a059]/40 flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 pointer-events-auto shadow-xl group"
+          className="fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-16 sm:w-12 sm:h-20 rounded-l-xl bg-[#20150f]/80 hover:bg-amber-600/30 text-amber-200 border-y border-l border-[#c5a059]/40 flex items-center justify-center backdrop-blur-sm transition-all disabled:opacity-0 pointer-events-auto shadow-xl group"
           title="अगला पृष्ठ"
         >
           <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
@@ -481,7 +486,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
 
         {/* Loading Indicator */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center p-8 space-y-4 z-10 text-center">
+          <div className="m-auto flex flex-col items-center justify-center p-8 space-y-4 z-10 text-center">
             <div className="relative w-20 h-20">
               <div className="absolute inset-0 rounded-full border-4 border-[#c5a059]/20" />
               <div className="absolute inset-0 rounded-full border-4 border-[#FF9933] border-t-transparent animate-spin" />
@@ -498,7 +503,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
 
         {/* Error State */}
         {error && !isLoading && (
-          <div className="max-w-md bg-[#231812] border-2 border-red-500/40 rounded-3xl p-6 text-center space-y-4 shadow-2xl z-10">
+          <div className="m-auto max-w-md bg-[#231812] border-2 border-red-500/40 rounded-3xl p-6 text-center space-y-4 shadow-2xl z-10">
             <div className="w-14 h-14 mx-auto rounded-full bg-red-950/60 border border-red-500/40 flex items-center justify-center text-red-400">
               <AlertCircle className="w-8 h-8" />
             </div>
@@ -532,7 +537,7 @@ export default function BookReader({ book, onClose }: BookReaderProps) {
         )}
 
         {/* PDF Book View Canvas */}
-        <div className={`transition-opacity duration-300 ${isLoading || error ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`transition-opacity duration-300 ${isLoading || error ? 'opacity-0 h-0 w-0 overflow-hidden pointer-events-none' : 'm-auto opacity-100'}`}>
           <Document
             key={loadAttempt}
             file={pdfSource}
