@@ -16,6 +16,9 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   RewriteCond %{HTTP_HOST} ^www\.sanatanroop\.com$ [NC]
   RewriteRule ^(.*)$ https://sanatanroop.com/$1 [L,R=301]
 
+  # Blog posts live under /articles/: send the old /blog/<slug>/ copies there for good
+  RewriteRule ^blog/([^/]+)/?$ https://sanatanroop.com/articles/$1/ [L,R=301]
+
   # Pass the Authorization header to PHP (needed for the PhonePe webhook)
   RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
@@ -44,7 +47,7 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{DOCUMENT_ROOT}/$1/$2/index.html !-f
-  RewriteRule ^(articles|blog)/([^/]+)/?$ /api/post.php?slug=$2 [QSA,L]
+  RewriteRule ^(articles)/([^/]+)/?$ /api/post.php?slug=$2 [QSA,L]
 
   # Force trailing slash for existing directories
   RewriteCond %{REQUEST_FILENAME} -d
