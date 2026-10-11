@@ -91,15 +91,4 @@ npm run build
 
 ---
 
-## 🔑 Default Seeded Accounts
 
-| Role | Email | Password | Entitlements |
-| :--- | :--- | :--- | :--- |
-| **Super Admin** | `superadmin@sanatan.org` | `Sanatan@108` | Full platform access, audit logs, user governance |
-| **Content Admin** | `contentadmin@sanatan.org` | `Sanatan@108` | Scriptures, shlokas, and articles publishing |
-| **Store Admin** | `storeadmin@sanatan.org` | `Sanatan@108` | Product catalog, inventory, orders management |
-| **Senior Editor** | `editor@sanatan.org` | `Sanatan@108` | Create/edit content, review and approve drafts |
-| **Dharma Author** | `author@sanatan.org` | `Sanatan@108` | Create and draft original philosophical essays |
-| **Devotee Seeker** | `seeker@sanatan.org` | `Sanatan@108` | Personal bookmarks, reading history, cart & orders |
-
-*(Note: You can also use the 1-click role buttons on `/login` to test any role instantly).*
