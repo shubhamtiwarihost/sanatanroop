@@ -32,7 +32,7 @@ import {
   plainTextToHtml,
   postUrl,
   sanitizePostHtml,
-  slugify,
+  postSlug,
   youtubeId,
 } from '@/lib/posts';
 
@@ -267,14 +267,14 @@ export default function PostEditor({ initial, isEditing, onSave, onClose }: Post
       ...form,
       status,
       content,
-      slug: slugify(form.slug || form.title) || `post-${Date.now()}`,
+      slug: postSlug(form.slug || form.title) || 'post',
       excerpt: form.excerpt.trim() || text.slice(0, 180),
       readingTime: estimateReadingTime(content),
     });
   };
 
   const wordCount = htmlToText(form.content).split(' ').filter(Boolean).length;
-  const slugPreview = slugify(form.slug || form.title) || 'post-title';
+  const slugPreview = postSlug(form.slug || form.title) || 'post-title';
 
   const inputClass =
     'w-full border border-[#8c8f94] rounded px-2.5 py-1.5 text-xs bg-white focus:border-[#2271b1] focus:outline-none';
@@ -315,7 +315,7 @@ export default function PostEditor({ initial, isEditing, onSave, onClose }: Post
               value={form.title}
               onChange={(e) => {
                 const title = e.target.value;
-                set(slugTouched ? { title } : { title, slug: slugify(title) });
+                set(slugTouched ? { title } : { title, slug: postSlug(title) });
               }}
               placeholder="Add title"
               className="w-full text-xl font-semibold border border-[#8c8f94] rounded px-3 py-2.5 bg-white focus:border-[#2271b1] focus:outline-none"

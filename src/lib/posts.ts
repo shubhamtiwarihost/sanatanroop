@@ -31,6 +31,22 @@ export function slugify(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+const MONTHS =
+  'january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec|जनवरी|फरवरी|मार्च|अप्रैल|मई|जून|जुलाई|अगस्त|सितंबर|अक्टूबर|नवंबर|दिसंबर';
+const CONNECTORS = 'ya|aur|or|and|to|se|ki|ka|ke|vs|या|और|से|की|का|के';
+
+// Post URLs carry no dates or numbers: drop digits, month names and connectors left dangling by them
+export function postSlug(title: string): string {
+  const words = slugify(title)
+    .replace(/[0-9०-९]+/g, '')
+    .split('-')
+    .filter((w) => w && !new RegExp(`^(${MONTHS})$`).test(w));
+  const isConnector = (w: string) => new RegExp(`^(${CONNECTORS})$`).test(w);
+  while (words.length && isConnector(words[words.length - 1])) words.pop();
+  while (words.length && isConnector(words[0])) words.shift();
+  return words.filter((w, i) => !(isConnector(w) && isConnector(words[i + 1] || ''))).join('-');
+}
+
 export function plainTextToHtml(text: string): string {
   if (!text || text.includes('<')) return text || '';
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
