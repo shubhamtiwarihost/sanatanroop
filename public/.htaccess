@@ -22,6 +22,9 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   # Protected e-book download
   RewriteRule ^download/book/([^/]+)/?$ /api/download.php?book=$1 [QSA,L]
 
+  # Admin-written posts for the sitemap
+  RewriteRule ^sitemap-posts\.xml$ /api/sitemap-posts.php [L]
+
   # PDF proxy for the book reader (archive.org blocks direct browser fetches); never compress the stream
   RewriteRule ^api/pdf/?$ /api/pdf.php [QSA,L,E=no-gzip:1]
 
@@ -41,7 +44,7 @@ AddCharset UTF-8 .html .css .js .json .xml .txt
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{DOCUMENT_ROOT}/$1/$2/index.html !-f
-  RewriteRule ^(articles|blog)/([^/]+)/?$ /articles/post/index.html [L]
+  RewriteRule ^(articles|blog)/([^/]+)/?$ /api/post.php?slug=$2 [QSA,L]
 
   # Force trailing slash for existing directories
   RewriteCond %{REQUEST_FILENAME} -d
