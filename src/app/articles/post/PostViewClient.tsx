@@ -97,7 +97,7 @@ export default function PostViewClient() {
               <span className="px-3 py-1 bg-orange-100 dark:bg-orange-950/50 text-[#ea580c] text-xs font-bold rounded-md">
                 {post.category}
               </span>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold leading-tight">{post.title}</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold leading-[1.45] sm:leading-[1.4]">{post.title}</h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-stone-500">
                 <span className="flex items-center gap-1">
                   <User className="w-3.5 h-3.5" /> {post.author}
